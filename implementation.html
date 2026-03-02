@@ -1,0 +1,1070 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>System Implementation Details - TiPToP</title>
+    <link rel="icon" type="image/jpeg" href="assets/favicon.jpg">
+
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-4W4CFWR9GR"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+
+      gtag('config', 'G-4W4CFWR9GR');
+    </script>
+
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Lora:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+
+    <!-- KaTeX -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css" integrity="sha384-n8MVd4RsNIU0tAv4ct0nTaAbDJwPJzDEaqSD1odI+WdtXRGWt2kTvGFasHpSy3SV" crossorigin="anonymous">
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js" integrity="sha384-XjKyOOlGwcjNTAIQHIpgOno0Hl1YQqzUOEleOLALmuqehneUG+vnGctmUb0ZY0l8" crossorigin="anonymous"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js" integrity="sha384-+VBxd3r6XgURycqtZ117nYw44OOcIax56Z4dCRWbxyPt0Koah1uHoK0o4+/RRE05" crossorigin="anonymous"></script>
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            renderMathInElement(document.body, {
+                delimiters: [
+                    {left: '$$', right: '$$', display: true},
+                    {left: '\\[', right: '\\]', display: true},
+                    {left: '\\(', right: '\\)', display: false}
+                ],
+                throwOnError: false
+            });
+        });
+    </script>
+
+    <!-- Three.js for point cloud visualization -->
+    <script type="importmap">
+    {
+        "imports": {
+            "three": "https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js",
+            "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/"
+        }
+    }
+    </script>
+
+    <!-- Custom Stylesheet -->
+    <link rel="stylesheet" href="assets/styles.css">
+</head>
+<body class="page-implementation">
+
+    <div class="page-layout">
+        <!-- Table of Contents -->
+        <div class="toc-container" id="toc">
+            <div class="toc-title">Contents</div>
+            <nav class="toc-nav" id="toc-nav">
+                <!-- Will be auto-populated by JavaScript -->
+            </nav>
+        </div>
+
+        <!-- Main Content Wrapper -->
+        <div class="main-content-wrapper">
+        <!-- Article Header -->
+        <article class="max-w-5xl mx-auto px-5 sm:px-6 pb-12 sm:pb-16 pt-6 sm:pt-12">
+
+        <!-- Title -->
+        <h1 class="text-4xl sm:text-5xl md:text-6xl font-bold sm:mb-6 mb-4 leading-tight">
+            System Implementation Details
+        </h1>
+
+        <!-- In-article navigation -->
+        <div class="text-sm sm:text-base flex flex-wrap items-center gap-x-2 gap-y-1 mb-8">
+            <span class="text-gray-500">More pages:</span>
+            <a href="/" class="page-link font-medium">Home</a>
+            <span class="text-gray-400">•</span>
+            <a href="/results" class="page-link font-medium">Results</a>
+        </div>
+
+        <!-- Article Content -->
+        <div class="article-content">
+            <p>
+                <span class="font-semibold">TiPToP</span> is composed of three separate high-level modules:
+            </p>
+
+
+             <ol>
+                <li>
+                    <span class="font-semibold">Perception:</span> Constructs an object-centric 3D scene representation from posed RGB images and a natural-language instruction. The output includes object meshes, candidate grasps, and symbolic goal propositions.
+                </li>
+                <li>
+                    <span class="font-semibold">Planning:</span> Uses <a href="https://cutamp.github.io/" target="_blank" rel="noopener">cuTAMP</a>, a GPU-parallelized Task and Motion Planning (TAMP) solver, to search over high-level task plans and optimize low-level robot motions and gripper actions.
+                </li>
+                <li>
+                    <span class="font-semibold">Execution:</span> Executes the resulting trajectory open loop using a joint impedance controller, sending joint position and velocity targets directly to the robot.
+                </li>
+            </ol>
+
+            <p>
+                Despite this modular structure, TiPToP's overall input-output (I/O) interface mirrors that of VLAs such as \(\pi_{0.5}\): RGB images and a natural-language instruction in, and low-level robot actions out. However, the modular design enables compositional generalization and the ability to solve novel tasks involving unseen objects without any task-specific data or training. When failures occur, they can be traced to specific modules for targeted debugging.
+            </p>
+
+
+            <!-- Overall Pipeline Figure -->
+            <div class="my-8 expandable-media">
+                <img src="media/implementation/overall_pipeline.png" alt="TiPToP overall system pipeline" class="w-full rounded-lg border border-gray-200 cursor-pointer transition" onclick="openLightbox(this)" data-caption="TiPToP system pipeline: from RGB images and natural language instruction to robot execution">
+                <p class="text-sm text-gray-600 text-center mt-2">TiPToP Pipeline Overview: from RGB images and natural language instruction to robot execution</p>
+            </div>
+
+            <p>
+                <span class="font-semibold">Illustrative Example.</span> We illustrate the different stages of TiPToP on the DROID setup (Franka FR3 with a ZED Mini stereo camera mounted on the wrist) with the instruction "serve peanut butter crackers on each tray" and the scene in the figure below. This task requires identifying peanut butter crackers among visually similar snacks (Goldfish, Cheez-Its), requiring common-sense understanding and strong visual knowledge to distinguish them. Additionally, a Sprite can obstructs all grasps on the left peanut butter cracker package, complicating depth estimation due to its reflective surface and requiring the robot to move the can out of the way before grasping the crackers. We provide detailed implementation information for each module in service of a full end-to-end walkthrough of this example.
+            </p>
+
+
+            <h3 id="scene-capture" class="heading-anchor">
+                <a href="#scene-capture" class="anchor-link">#</a>
+                Scene Capture
+            </h2>
+
+            <p>
+                TiPToP first moves the robot to a predefined <strong>capture joint position</strong> that provides a clear view of the workspace from the wrist-mounted ZED Mini camera. We then capture a stereo RGB image pair and compute the camera pose in the world frame (camera-to-world extrinsics) using forward kinematics and the calibrated wrist-to-camera extrinsics. The stereo pair, along with the camera intrinsics and stereo baseline, is passed to the <a href="#perception">perception module</a>.
+            </p>
+
+            <p>
+                TiPToP currently assumes a single fixed viewpoint, requiring all task-relevant objects to be at least partially visible. Objects that fall outside the camera's field of view or are fully occluded cannot be perceived and hence manipulated. We discuss this assumption and potential extensions further below in <a href="#limitations">Assumptions and Future Directions</a>.
+            </p>
+
+            <div class="my-8">
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4 items-center">
+                    <div class="expandable-media">
+                        <img src="media/implementation/robot_capture_no-bg.jpg" alt="Robot in capture joint position" class="w-full rounded-lg border border-gray-200 cursor-pointer transition" onclick="openLightbox(this)" data-caption="Robot in capture joint position">
+                        <p class="text-center mt-2">Robot in capture joint position</p>
+                    </div>
+                    <div class="expandable-media md:col-span-2">
+                        <img src="media/implementation/left_rgb.png" alt="Captured RGB image from wrist camera" class="w-full rounded-lg border border-gray-200 cursor-pointer transition" onclick="openLightbox(this)" data-caption="Captured image from the left camera">
+                        <p class="text-center mt-2">Captured image from the left camera</p>
+                    </div>
+                </div>
+            </div>
+
+            <h2 id="perception" class="heading-anchor">
+                <a href="#perception" class="anchor-link">#</a>
+                Perception Module
+            </h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 my-4">
+                <div class="info-box">
+                    <div class="info-box-title">
+                        <span>📥</span>
+                        <span>Inputs</span>
+                    </div>
+                    <ul class="space-y-2 text-sm !mb-0">
+                        <li>Natural language instruction</li>
+                        <li>Stereo RGB image pair</li>
+                        <li>Camera intrinsics and stereo baseline</li>
+                        <li>Camera-to-world extrinsics</li>
+                    </ul>
+                </div>
+
+                <div class="info-box">
+                    <div class="info-box-title">
+                        <span>📤</span>
+                        <span>Outputs</span>
+                    </div>
+                    <ul class="space-y-2 text-sm !mb-0">
+                        <li>Detected objects with completed 3D meshes</li>
+                        <li>Candidate grasp poses for each object</li>
+                        <li>Symbolic initial state and goal condition(s)</li>
+                    </ul>
+                </div>
+            </div>
+
+            <p>
+                The perception module constructs an object-centric 3D scene representation from the stereo RGB image pair and the natural-language instruction. Two branches run in parallel: (1) the <strong>3D Vision Branch</strong>, which extracts geometry and grasp poses, and (2) the <strong>Semantic Branch</strong>, which identifies objects and grounds the task goal. These outputs are then combined to create an object-centric representation where each object is associated with a segmented point cloud, a completed mesh, and candidate grasps. The task instruction is grounded into symbolic goal propositions defined over this object-centric representation.
+            </p>
+
+            <!-- Perception Pipeline Figure -->
+            <div class="my-8 expandable-media">
+                <img src="media/implementation/perception_pipeline.png" alt="TiPToP perception module pipeline" class="w-full rounded-lg border border-gray-200 cursor-pointer transition" onclick="openLightbox(this)" data-caption="Perception module pipeline: 3D Vision Branch and Semantic Branch run in parallel, then outputs are combined">
+                <p class="text-sm text-gray-600 text-center mt-2">Perception module pipeline: the 3D Vision Branch and Semantic Branch run in parallel, then outputs are combined</p>
+            </div>
+
+            <h3 id="3d-vision-branch" class="heading-anchor">
+                <a href="#3d-vision-branch" class="anchor-link">#</a>
+                3D Vision Branch
+            </h3>
+
+            <h4 class="!mt-3">Depth Estimation (stereo RGB → depth map)</h4>
+
+            <p>
+                We use <a href="https://nvlabs.github.io/FoundationStereo/" target="_blank" rel="noopener">FoundationStereo</a>, a foundation model for stereo depth estimation, which takes a stereo RGB pair, camera intrinsics, and the stereo baseline as input to predict a dense depth map. While the ZED Mini camera provides its own depth estimates via <a href="https://www.stereolabs.com/docs/depth-sensing/depth-modes" target="_blank" rel="noopener">proprietary learned stereo matching</a>, we found that FoundationStereo produces substantially less noisy depth maps, with reduced edge artifacts, particularly on challenging materials such as transparent and specular objects, as well as textureless surfaces commonly encountered in in-the-wild scenes.
+            </p>
+
+            <!-- FoundationStereo Figure -->
+            <div class="my-8">
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-8 items-center">
+                    <div class="flex flex-col gap-4">
+                        <div class="expandable-media">
+                            <img src="media/implementation/stereo_rgb.png" alt="Left stereo image" class="w-full cursor-pointer transition" onclick="openLightbox(this)" data-caption="Input: Stereo image pair">
+                            <p class="text-sm text-gray-600 text-center mt-2 !mb-0">Input: Stereo image pair</p>
+                        </div>
+                    </div>
+                    <div class="expandable-media md:col-span-2">
+                        <img src="media/implementation/depth_turbo.png" alt="FoundationStereo depth map" class="w-full rounded-lg border border-gray-200 cursor-pointer transition" onclick="openLightbox(this)" data-caption="Output: Predicted depth map">
+                        <p class="text-sm text-gray-600 text-center mt-2">Output: Predicted depth map</p>
+                    </div>
+                </div>
+            </div>
+
+            <h4>Point Cloud Unprojection (depth map → point cloud)</h4>
+
+            <p>
+                We unproject the depth map to a 3D using the camera intrinsics and then transform the points to the world frame using the camera pose. This produces a dense point cloud of the scene. For visualization purposes, we display a downsampled version of the point cloud below.
+            </p>
+
+            <!-- Point Cloud Visualization -->
+            <div class="mt-4 mb-6">
+                <div id="pointcloud-container" style="width: 100%; height: 400px; border-radius: 8px; border: 1px solid var(--color-border); overflow: hidden; background: #ffffff;">
+                    <canvas id="pointcloud-canvas"></canvas>
+                </div>
+                <p class="text-sm text-gray-600 text-center mt-2">Interactive point cloud <span class="!text-gray-400">(drag to rotate, scroll to zoom, right-click to pan)</span></p>
+            </div>
+
+            <h4>Grasp Generation (point cloud → grasp poses)</h4>
+
+            <p>
+                We use <a href="https://m2-t2.github.io/" target="_blank" rel="noopener">M2T2</a> (Multi-Task Masked Transformer) to predict 6-DoF grasp poses given the entire scene point cloud. Object-to-grasp association is performed later using segmentation masks from the Semantic Branch. Because M2T2 reasons over the full scene, its predictions are informed by surrounding geometry, though they are not guaranteed to be collision-free. Having a large set of candidate grasps at this stage allows the planner to later select appropriate grasps based on the task requirements and collision constraints.
+            </p>
+
+            <p>
+                In our illustrative example, M2T2 generates candidate grasps on the trays, one cracker package, and the soda can. Note that some objects may not have predicted grasps; in such cases, we fall back to a heuristic 4-DoF grasp sampler in the planning module.
+            </p>
+
+            <!-- M2T2 Grasp Generation Figure - Point Cloud with Grasps -->
+            <div class="mt-4 mb-6">
+                <div id="pointcloud-container-grasps" style="width: 100%; height: 400px; border-radius: 8px; border: 1px solid var(--color-border); overflow: hidden; background: #ffffff;">
+                    <canvas id="pointcloud-canvas-grasps"></canvas>
+                </div>
+                <p class="text-sm text-gray-600 text-center mt-2">Interactive grasp visualization with candidate gripper poses <span class="!text-gray-400">(drag to rotate, scroll to zoom, right-click to pan)</span></p>
+            </div>
+
+            <p>We have now extracted scene-level geometry in the form of a point cloud, along with a set of candidate grasp poses. Next, we describe the Semantic Branch which runs concurrently to the 3D Vision Branch.</p>
+
+            <h3 id="semantic-branch" class="heading-anchor">
+                <a href="#semantic-branch" class="anchor-link">#</a>
+                Semantic Branch
+            </h3>
+
+            <h4 class="!mt-3">Object Detection and Goal Grounding (RGB + instruction → bounding boxes + goal)</h4>
+
+            <p>
+                We use the <a href="https://deepmind.google/models/gemini-robotics/gemini-robotics-er/" target="_blank" rel="noopener">Gemini Robotics-ER 1.5</a> Vision-Language Model (VLM) to jointly perform object detection and goal grounding from the natural-language instruction and RGB image. VLMs provide strong semantic scene understanding, common-sense reasoning, cultural knowledge, and open-vocabulary language grounding, enabling TiPToP to interpret and ground diverse instructions and images into an object-centric scene representation.
+            </p>
+
+            <p class="!mb-2">
+                With a single query, the VLM extracts two types of information:
+            </p>
+            <ol>
+                <li><strong>Object Detection:</strong> Labels and 2D bounding boxes for objects in the scene</li>
+                <li><strong>Goal Grounding:</strong> The natural-language instruction is translated to a symbolic goal expressed as a conjunction of predicates (i.e., logical relations between objects). For example, <code>On(block, tray)</code> specifies the block should be on the tray. Though we currently support one predicate <code>On</code>, we demonstrate defining additional predicates for new skills in <a href="/#beyond-pick-and-place">Extending Beyond Pick-and-Place</a>.</li>
+            </ol>
+
+            <p>
+                The VLM leverages its vision-language capabilities to identify task-relevant objects, assign appropriate labels, resolve references in the instruction, and ground the instruction into a symbolic goal accordingly. In our example with "serve peanut butter crackers on each tray", the VLM correctly identifies that "peanut butter crackers" refers to the two Lance cracker packages among other snacks (Goldfish crackers, Cheez-It crackers, nuts), and reasons that "each tray" requires placing one package on each.
+            </p>
+
+            <details class="my-6 bg-gray-50 border border-gray-200 rounded-lg">
+                <summary class="cursor-pointer px-4 py-3 font-semibold text-gray-700 hover:bg-gray-100 rounded-lg">View Gemini Prompt Template</summary>
+                <div class="px-4 pb-4">
+                    <pre class="text-xs text-gray-600 overflow-x-auto whitespace-pre-wrap bg-gray-100 p-4 rounded mt-2">Perform two tasks on this image based on the task instruction: "{task_instruction}".
+
+TASK 1 - OBJECT DETECTION:
+Detect and return bounding boxes for objects in the image.
+- DO NOT include the robot, robot gripper, or table surface
+- DO NOT include objects or surfaces irrelevant to the task or too far away to matter (e.g. walls, things on the wall that are far away, things on the floor below the table, people who might be in the scene, etc.)
+- Limit to 25 objects
+- If an object appears multiple times, name them by unique characteristics (color, size, position, etc.). If they seem the same, then just use numbers (e.g. 'soda_can1' and 'soda_can2', ... for identical-looking soda cans)
+- An object **cannot have the same name** as another under any circumstance.
+- Format: normalized coordinates 0-1000 as integers
+
+Be very careful to identify objects and name them in a way that's relevant to the task. If the task involves picking up a red apple, make sure that 'red' appears in the name of the apple.
+
+
+TASK 2 - TASK TRANSLATION:
+Translate this natural language instruction into some conjunction of formal predicates:
+
+AVAILABLE PREDICATES:
+- on(movable, surface): Object A is placed on top of object B
+
+It is very important that the goal is exact: use your visual recognition, common-sense and reasoning abilities to make sure the goal expression is perfectly accurate.
+
+For instance - for the task "throw away the trash in the bin" when there is a bin, an open empty chips packet, an empty soda can, a closed and full soda bottle, and several full candy bars on the table, the goal should be:
+
+"predicates": [
+        {"name": "on", "args": ["chips_packet", "bin"]},
+        {"name": "on", "args": ["soda_can", "bin"]},
+]
+
+This is because only the chips and soda are empty and clearly trash. Everything else is still usable!
+
+
+Return a single JSON object with this structure (no code fencing):
+{
+    "bboxes": [
+        {"box_2d": [ymin, xmin, ymax, xmax], "label": "object name"},
+        ...
+    ],
+    "predicates": [
+        {"name": "predicate_name", "args": ["object1", "object2"]},
+        ...
+    ]
+}
+
+Use the object labels you detect in Task 1 when creating predicates in Task 2.
+Only reference objects that you actually detected in the image.</pre>
+                </div>
+            </details>
+
+            <!-- Gemini Detection Figure -->
+            <div class="mt-4 mb-8 expandable-media">
+                <img src="media/implementation/gemini_bboxes.png" alt="Gemini detection output" class="w-full rounded-lg border border-gray-200 cursor-pointer transition" onclick="openLightbox(this)" data-caption="&lt;b&gt;Task instruction:&lt;/b&gt; &quot;Serve peanut butter crackers on each tray&quot;&lt;br&gt;&lt;b&gt;Grounded goal:&lt;/b&gt; &lt;code&gt;On(lance_peanut_butter_crackers_right, white_tray_right) ∧ On(lance_peanut_butter_crackers_left, white_tray_left)&lt;/code&gt;">
+                <p class="caption mt-2">
+                    <b>Task instruction:</b> "Serve peanut butter crackers on each tray"<br>
+                    <b>Grounded goal:</b> <code>On(lance_peanut_butter_crackers_right, white_tray_right) ∧ On(lance_peanut_butter_crackers_left, white_tray_left)</code>
+                </p>
+            </div>
+
+            <h4>Object Segmentation (bounding boxes → segmentation masks)</h4>
+
+            <p>
+                For each detected bounding box from the VLM, we use <a href="https://github.com/facebookresearch/segment-anything-2" target="_blank" rel="noopener">Segment Anything Model 2 (SAM 2)</a> to generate pixel-level segmentation masks for each object, delineating object boundaries. These masks are later combined with the scene point cloud (from the <a href="#3d-vision-branch">3D Vision Branch</a>) to extract per-object geometry and assign grasps to specific objects.
+            </p>
+
+            <!-- SAM 2 Segmentation Figure -->
+            <div class="mt-4 mb-8">
+                <div class="expandable-media">
+                    <img src="media/implementation/sam_masks.png" alt="SAM 2 segmentation masks" class="w-full rounded-lg border border-gray-200 cursor-pointer transition" onclick="openLightbox(this)" data-caption="Output: segmentation masks for each object">
+                    <p class="text-sm text-gray-600 text-center mt-2">Output: segmentation masks for each object</p>
+                </div>
+            </div>
+
+            <h3 id="combination-phase" class="heading-anchor">
+                <a href="#combination-phase" class="anchor-link">#</a>
+                Combining Outputs
+            </h3>
+
+            <p>
+                We combine scene-level geometry and candidate grasps from the <a href="#3d-vision-branch">3D Vision Branch</a> with object identities and segmentation masks from the <a href="#semantic-branch">Semantic Branch</a> into an object-centric 3D scene representation, producing per-object meshes with assigned grasps for the <a href="#planning">Planning module</a>.
+            </p>
+
+            <h4>Table Detection</h4>
+
+            <p>
+                We apply RANSAC to the scene point cloud to fit the dominant horizontal planar surface, which we assume to be the table. This assumption could be relaxed by detecting multiple support surfaces (e.g., tables, floors, cabinets) via semantic segmentation or multi-plane fitting.
+            </p>
+
+            <h4>Per-Object Mesh Reconstruction</h4>
+
+            <p>
+                We use the segmentation mask of each detected object to extract the corresponding points from the scene point cloud, project them downward along the z-axis to the object's lowest observed point, and compute the convex hull to form a watertight mesh. We project to each object's own lowest point rather than to the table, as objects may rest on each other. However, as TiPToP only uses a single input viewpoint, some objects may have incomplete geometry due to partial observability.
+                Despite this, we find that the convex-hull approximation is sufficient for many pick-and-place tasks, as they usually result in overapproximations which are preferable for collision avoidance.
+            </p>
+
+            <h4>Grasp-to-Object Assignment</h4>
+
+            <p>
+                Each grasp predicted by M2T2 is assigned to the nearest object by querying its contact point against a KDTree built from all object point clouds. Grasps whose nearest object point exceeds a distance threshold are discarded, as these typically arise from point cloud noise or partial observability.
+            </p>
+
+            <!-- Scene Completion Figure -->
+            <div class="my-8 expandable-media">
+                <img src="media/implementation/scene_completion.png" alt="Completed object meshes" class="w-full rounded-lg border border-gray-200 cursor-pointer transition" onclick="openLightbox(this)" data-caption="Completed object meshes from convex hull completion, used for collision checking and placement planning">
+                <p class="text-sm text-gray-600 text-center mt-2">Completed object meshes from convex hull completion with assigned 6-DoF grasps, used for collision checking, grasp planning, and placement planning in the <a href="#planning">Planning module</a>.</p>
+            </div>
+
+            <h2 id="planning" class="heading-anchor">
+                <a href="#planning" class="anchor-link">#</a>
+                Planning Module
+            </h2>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mt-4 mb-6">
+                <div class="info-box">
+                    <div class="info-box-title">
+                        <span>📥</span>
+                        <span>Inputs</span>
+                    </div>
+                    <ul class="space-y-2 text-sm !mb-0">
+                        <li>Object-Centric 3D Scene representation</li>
+                        <li>Symbolic goal propositions (from VLM)</li>
+                    </ul>
+                </div>
+
+                <div class="info-box">
+                    <div class="info-box-title">
+                        <span>📤</span>
+                        <span>Outputs</span>
+                    </div>
+                    <ul class="space-y-2 text-sm !mb-0">
+                        <li>Sequence of joint trajectories (positions and velocities) with gripper open and close commands</li>
+                    </ul>
+                </div>
+            </div>
+
+            <p>
+                TiPToP uses <a href="https://cutamp.github.io/" target="_blank" rel="noopener">cuTAMP</a>, a GPU-parallelized Task and Motion Planning (TAMP) algorithm, to search over discrete high-level <em>plan skeletons</em> (sequences of symbolic actions such as <em>pick</em> and <em>place</em>) and optimize low-level continuous parameters (grasp poses, placement poses, and collision-free trajectories) to produce a full manipulation plan. The object-centric 3D scene representation is used to evaluate these actions by reasoning over their kinematic and geometric feasibility, while the symbolic goal propositions are used by a PDDL-style symbolic planner to generate plan skeletons.
+            </p>
+
+            <p>
+                cuTAMP operates primarily over pick-and-place primitives, though it can be extended to support additional primitives such as wiping (see <a href="/#beyond-pick-and-place">Extending Beyond Pick-and-Place</a>). We chose cuTAMP for its fast solution times on a single GPU and its ease of installation, and made several extensions to improve its real-world deployability (see Appendix A in the accompanying TiPToP paper). We refer the reader to the <a href="https://arxiv.org/abs/2411.11833" target="_blank" rel="noopener">cuTAMP paper</a> for additional details about cuTAMP, and provide a walkthrough below.
+            </p>
+
+            <div class="info-box my-6">
+                <p class="font-semibold mb-2">cuTAMP Pipeline</p>
+                <ol class="text-sm space-y-1 !mb-0">
+                    <li><strong>Plan Skeleton Enumeration.</strong> Given the symbolic goal, cuTAMP uses a PDDL-style symbolic planner to enumerate candidate plan skeletons without committed continuous parameters.</li>
+                    <li><strong>Particle Initialization.</strong> For each skeleton, cuTAMP initializes a large batch of candidate solutions called <em>particles</em> by sampling continuous parameters in parallel.</li>
+                    <li><strong>Particle Optimization.</strong> cuTAMP ranks skeletons and performs differentiable GPU-parallelized optimization to refine all the particles toward satisfying the plan skeleton's constraints (e.g., collision-free grasps, stable placements, collision-free trajectories).</li>
+                    <li><strong>Motion Planning.</strong> For each satisfying particle, cuTAMP invokes cuRobo, a GPU-accelerated motion planner, to solve for collision-free, time-parameterized trajectories.</li>
+                </ol>
+            </div>
+
+            <h3 id="cutamp-walkthrough" class="heading-anchor">
+                <a href="#cutamp-walkthrough" class="anchor-link">#</a>
+                cuTAMP Walkthrough
+            </h3>
+
+            <p>
+                We continue our walkthrough with the grounded goal from the perception module:
+            </p>
+
+            <div class="info-box my-6">
+                <p class="!mb-1"><strong>Task instruction:</strong> "Serve peanut butter crackers on each tray"</p>
+                <p class="!mb-0"><strong>Grounded goal:</strong><br>
+                <code>On(lance_peanut_butter_crackers_right, white_tray_right)</code><br>
+                <code>∧ On(lance_peanut_butter_crackers_left, white_tray_left)</code></p>
+            </div>
+
+            <div class="my-6 expandable-media">
+                <img src="media/implementation/gemini_bboxes.png" alt="Gemini detection output with bounding boxes" class="w-full rounded-lg border border-gray-200 cursor-pointer transition" onclick="openLightbox(this)" data-caption="Object detection from the <a href=&quot;#semantic-branch&quot;>Semantic Branch</a>">
+                <p class="text-sm text-gray-600 text-center mt-2">Object detection from the <a href="#semantic-branch">Semantic Branch</a></p>
+            </div>
+
+            <p>
+                Given the symbolic goal propositions, cuTAMP first enumerates candidate high-level <em>plan skeletons</em> using a PDDL-style symbolic planner. Each plan skeleton specifies a sequence of symbolic actions (e.g., <em>pick</em> and <em>place</em>) without committing to continuous parameters such as grasp poses, placement poses, or robot trajectories. The symbolic planner generates multiple candidate skeletons that differ in action ordering, and may also include actions to move potentially obstructing objects out of the way. At this stage, the planner does not consider explicit object or scene geometry, nor robot feasibility; these aspects are considered later during <em>particle initialization</em> and optimization.
+            </p>
+
+            <details class="my-6 bg-gray-50 border border-gray-200 rounded-lg">
+                <summary class="cursor-pointer px-4 py-3 font-semibold text-gray-700 hover:bg-gray-100 rounded-lg">Example Plan Skeletons</summary>
+                <div class="px-4 pb-4">
+                    <p class="text-sm text-gray-600 mt-2 mb-3">Skeletons 1 and 2 differ only in the order objects are picked and placed. Skeleton 9 includes an additional <code>Pick</code> and <code>Place</code> to move the <code>soda_can_green</code> out of the way first. We omit <code>MoveFree</code> and <code>MoveHolding</code> actions for collision-free trajectories between picks and places for clarity; see Listing 1 in the <a href="https://arxiv.org/abs/2411.11833" target="_blank" rel="noopener">cuTAMP paper</a> for details.</p>
+
+                    <p class="text-xs font-semibold text-gray-500 mt-4 mb-1">Skeleton 1: Serve right cracker first, then left cracker</p>
+                    <pre class="text-xs text-gray-700 overflow-x-auto whitespace-pre-wrap bg-gray-100 p-3 rounded">1. Pick(lance_peanut_butter_crackers_right, grasp1, q1)
+2. Place(lance_peanut_butter_crackers_right, grasp1, pose1, white_tray_right, q2)
+3. Pick(lance_peanut_butter_crackers_left, grasp2, q3)
+4. Place(lance_peanut_butter_crackers_left, grasp2, pose2, white_tray_left, q4)</pre>
+
+                    <p class="text-xs font-semibold text-gray-500 mt-4 mb-1">Skeleton 2: Serve left cracker first, then right cracker</p>
+                    <pre class="text-xs text-gray-700 overflow-x-auto whitespace-pre-wrap bg-gray-100 p-3 rounded">1. Pick(lance_peanut_butter_crackers_left, grasp1, q1)
+2. Place(lance_peanut_butter_crackers_left, grasp1, pose1, white_tray_left, q2)
+3. Pick(lance_peanut_butter_crackers_right, grasp2, q3)
+4. Place(lance_peanut_butter_crackers_right, grasp2, pose2, white_tray_right, q4)</pre>
+
+                    <p class="text-xs font-semibold text-gray-500 mt-4 mb-1">Skeleton 9: Serve right cracker, move soda can out of the way, then serve left cracker</p>
+                    <pre class="text-xs text-gray-700 overflow-x-auto whitespace-pre-wrap bg-gray-100 p-3 rounded">1. Pick(lance_peanut_butter_crackers_right, grasp1, q1)
+2. Place(lance_peanut_butter_crackers_right, grasp1, pose1, white_tray_right, q2)
+3. Pick(soda_can_green, grasp2, q3)
+4. Place(soda_can_green, grasp2, pose2, table, q4)
+5. Pick(lance_peanut_butter_crackers_left, grasp3, q5)
+6. Place(lance_peanut_butter_crackers_left, grasp3, pose3, white_tray_left, q6)</pre>
+                </div>
+            </details>
+
+            <p>
+                For each plan skeleton, cuTAMP initializes a large batch of continuous candidate solutions, called <em>particles</em>, by sampling action-specific parameters. Grasp poses are sampled from M2T2 predictions when available (or using a 4-DoF heuristic sampler otherwise). Placement poses are sampled on target surfaces conditioned on the sampled grasps, and corresponding robot configurations are computed via inverse kinematics. At this stage, the initialized particles may violate the plan skeleton's constraints, including stable placement, kinematic feasibility, and collision avoidance.
+            </p>
+
+            <p>
+                cuTAMP ranks the plan skeletons using a heuristic based on the feasibility of the initialized particles, and optimizes them in ranked order. For each skeleton, cuTAMP performs differentiable GPU-parallelized optimization over the associated particle batch to satisfy all low-level constraints. The optimization jointly determines feasible grasp poses, placement poses, and intermediate robot configurations, while motion planning connects these configurations with collision-free trajectories. If optimization succeeds, cuTAMP invokes collision-free motion planning via <a href="https://curobo.org/" target="_blank" rel="noopener">cuRobo</a> to generate smooth, time-parameterized trajectories consisting of joint positions, joint velocities, and gripper commands. If either optimization or motion planning fails, cuTAMP moves on to the next skeleton until a valid solution is found or the planning budget is exhausted.
+            </p>
+
+            <p>
+                In our example, cuTAMP ranks <strong>Skeleton 1</strong> (serve right cracker first) highest and optimizes it first, with 256 particles and 36 degrees of freedom per particle (9,216 parameters). Skeletons 1 and 2 both fail to find any satisfying particles due to kinematic constraints, as the <code>soda_can_green</code> obstructs all grasps to <code>lance_peanut_butter_crackers_left</code>. cuTAMP then moves on to <strong>Skeleton 9</strong>, which first moves the obstruction out of the way. This skeleton has 54 degrees of freedom per particle (13,824 parameters) due to the additional pick-and-place. cuTAMP finds 28 satisfying particles and then proceeds to motion planning.
+            </p>
+
+            <details class="my-4 bg-gray-50 border border-gray-200 rounded-lg">
+                <summary class="cursor-pointer px-4 py-3 font-semibold text-gray-700 hover:bg-gray-100 rounded-lg">Optimization Log</summary>
+                <div class="px-4 pb-4">
+                    <p class="text-sm text-gray-600 mt-2 mb-3">cuTAMP uses gradient-based optimization to satisfy constraints across all particles in parallel. The log below (condensed for presentation) shows the constraint satisfaction after optimization:</p>
+                    <pre class="text-xs text-gray-700 overflow-x-auto whitespace-pre-wrap bg-gray-100 p-3 rounded">[Opt 1] Skeleton 1: Serve right cracker first, then left cracker
+Optimizing 9,216 parameters (256 particles × 36 DOF)
+0/256 satisfying after optimization (KinematicConstraint pos_err failed)
+
+[Opt 2] Skeleton 2: Serve left cracker first, then right cracker
+Optimizing 9,216 parameters (256 particles × 36 DOF)
+0/256 satisfying after optimization (KinematicConstraint pos_err failed)
+
+[Opt 3] Skeleton 9: Serve right cracker, move soda can, then serve left cracker
+Optimizing 13,824 parameters (256 particles × 54 DOF)
+
+Found first solution in 18.82s
+Found 28 satisfying particles (10.9% of 256)
+
+Constraint satisfaction (satisfying / total):
+├─ Collision: robot_to_world         249/256
+├─ Collision: movable_to_world       246/256
+├─ Collision: robot_to_movables      142/256
+├─ Collision: object_to_object       251-256/256 (all pairs)
+├─ StablePlacement: white_tray_right 236/256 (in_xy), 252/256 (support)
+├─ StablePlacement: table            253/256 (in_xy), 238/256 (support)
+├─ StablePlacement: white_tray_left  241/256 (in_xy), 254/256 (support)
+├─ Motion: joint_limits              251/256
+├─ Motion: self_collision            256/256
+├─ Kinematic: position_error ≤ 5mm    96/256
+└─ Kinematic: rotation_error ≤ 0.05  131/256
+
+Final: 28/256 particles satisfy ALL constraints</pre>
+                </div>
+            </details>
+
+            <div class="my-4">
+                <video autoplay controls loop muted playsinline class="w-full" style="border-radius: 8px; border: 1px solid var(--color-border);">
+                    <source src="media/implementation/cutamp-optimization.mp4" type="video/mp4">
+                    Your browser does not support the video tag.
+                </video>
+                <p class="text-sm text-gray-600 text-center mt-2">Visualization of the cuTAMP optimization, which depicts the placement poses and robot configuration in the final state. Note the dark green object, which corresponds to the Sprite can, moving around. The spheres protruding from the objects correspond to the spheres used by cuTAMP for collision checking.</p>
+            </div>
+
+            <p>
+   
+            </p>
+
+            <details class="my-4 bg-gray-50 border border-gray-200 rounded-lg">
+                <summary class="cursor-pointer px-4 py-3 font-semibold text-gray-700 hover:bg-gray-100 rounded-lg">Motion Planning Log</summary>
+                <div class="px-4 pb-4">
+                    <p class="text-sm text-gray-600 mt-2 mb-3">cuRobo generates collision-free trajectories for each segment: <code>MoveFree</code> (moving with empty gripper), <code>MoveHolding</code> (moving while holding an object), and approach/retract motions for picks and places. If motion planning fails for any segment, cuTAMP tries the next satisfying particle. Log condensed for presentation:</p>
+                    <pre class="text-xs text-gray-700 overflow-x-auto whitespace-pre-wrap bg-gray-100 p-3 rounded">Trying cuRobo planning with satisfying particle 1/28
+ 1. MoveFree(q0 → q1)                    ✓
+ 2. Pick approach                        ✓
+ 3. MoveHolding(q1 → q2)                 ✓
+ 4. Place approach                       ✓
+ 5. MoveFree(q2 → q3)                    ✓
+ 6. Pick approach                        ✓
+ 7. MoveHolding(q3 → q4)                 ✓
+ 8. Place approach                       ✓
+ 9. MoveFree(q4 → q5)                    ✓
+10. Pick approach                        ✗ Failed
+    Failed to plan from approach to end for Pick(lance_peanut_butter_crackers_left, ...)
+
+Trying cuRobo planning with satisfying particles 2-4/28...
+    All failed at Pick(lance_peanut_butter_crackers_left, ...)
+
+Trying cuRobo planning with satisfying particle 5/28
+ 1. MoveFree(q0 → q1)                    ✓
+ 2. Pick approach                        ✓
+ 3. MoveHolding(q1 → q2)                 ✓
+ 4. Place approach                       ✓
+ 5. MoveFree(q2 → q3)                    ✓
+ 6. Pick approach                        ✓
+ 7. MoveHolding(q3 → q4)                 ✓
+ 8. Place approach                       ✓
+ 9. MoveFree(q4 → q5)                    ✓
+10. Pick approach                        ✓
+11. MoveHolding(q5 → q6)                 ✓
+12. Place approach                       ✓
+13. Return to home                       ✓
+
+Motion planning complete (13 trajectory segments)</pre>
+                </div>
+            </details>
+
+            <div class="my-4">
+                <video controls loop muted playsinline class="w-full" style="border-radius: 8px; border: 1px solid var(--color-border);" poster="media/implementation/cutamp-curobo-poster.jpg">
+                    <source src="media/implementation/cutamp-curobo.mp4" type="video/mp4">
+                    Your browser does not support the video tag.
+                </video>
+                <p class="text-sm text-gray-600 text-center mt-2">Final planned trajectory from cuRobo (1x speed)</p>
+            </div>
+
+            <h2 id="execution" class="heading-anchor">
+                <a href="#execution" class="anchor-link">#</a>
+                Execution Module
+            </h2>
+
+            <p>
+                The execution module executes the planned trajectory, which includes joint positions, joint velocities and gripper commands, on the robot. Accurately tracking trajectories is crucial, since the planner assumes consistency between the robot's joint-space execution and the resulting scene configuration. Even sub-centimeter tracking errors can cause grasps or placements to fail. We implemented our own joint-space impedance controller for Franka arms called <a href="https://github.com/chsahit/bamboo/" target="_blank">Bamboo</a>, because existing open-source controllers, including DROID's default Polymetis controller, were unable to track timed trajectories sufficiently precisely.
+            </p>
+
+            <p>
+                TiPToP does not monitor execution or replan based on execution-time observations (i.e., it is <strong>open-loop</strong> with respect to visual observations). This succeeds when the world is static and trajectories are tracked accurately, but fails when objects move unexpectedly or grasps slip.
+            </p>
+
+            <h3 id="control" class="heading-anchor">
+                <a href="#control" class="anchor-link">#</a>
+                Joint Impedance Controller
+            </h3>
+
+            <p>
+                For the Franka FR3 robot used as part of the DROID setup, we implemented a joint impedance controller to track the planned trajectory waypoints by computing joint torques at each control timestep:
+            </p>
+
+            <p class="text-center">
+            \( \tau = K_p \odot (q_d - q) + K_d \odot (\dot{q}_d - \dot{q}) + \tau_{\text{coriolis}} + \tau_g + M\ddot{q}_d \)
+            </p>
+
+            <p>
+                where \( K_p \) and \( K_d \) are per-joint position and velocity gains, \( \tau_{\text{coriolis}} \) compensates for Coriolis forces, \( \tau_g \) compensates for gravity, \( M \) is the mass matrix, and \( \ddot{q}_d \) is the desired acceleration estimated via filtered numerical differentiation of \( \dot{q}_d \). The term \( M\ddot{q}_d \) compensates for the robot's inertia. The gains \( K_p \) and \( K_d \) were tuned to improve trajectory tracking, though the controller still exhibits small deviations during execution at high speeds (typically up to 5mm position error).
+            </p>
+
+            <p>
+                We have open-sourced our controller for the Franka FR3 and Panda robots, called <strong>Bamboo</strong>, on GitHub: <a href="https://github.com/chsahit/bamboo" target="_blank" rel="noopener">https://github.com/chsahit/bamboo</a>.
+            </p>
+
+            <div class="my-8">
+                <video controls loop muted playsinline class="w-full" style="border-radius: 8px; border: 1px solid var(--color-border);" poster="media/implementation/cutamp-real-combined-poster.jpg">
+                    <source src="media/implementation/cutamp-real-combined.mp4" type="video/mp4">
+                    Your browser does not support the video tag.
+                </video>
+                <p class="text-sm text-gray-600 text-center mt-2">Real robot execution for "Serve peanut butter crackers on each tray" (1x speed)</p>
+            </div>
+
+            <h2 id="limitations" class="heading-anchor">
+                <a href="#limitations" class="anchor-link">#</a>
+                Assumptions and Future Directions
+            </h2>
+
+            <p>
+                TiPToP makes several simplifying assumptions. The modular design makes it straightforward to address each by improving individual components.
+            </p>
+
+            <h3 id="system-limitations" class="heading-anchor">
+                <a href="#system-limitations" class="anchor-link">#</a>
+                System Limitations
+            </h3>
+
+            <h4>Open-loop execution</h4>
+            <p>
+                We do not monitor execution or replan. This works when the world is static and trajectories are tracked accurately, but fails when objects move unexpectedly or grasps slip. <strong>Closed-loop execution</strong> via perception-replanning loops is perhaps the most impactful improvement: re-attempting failed grasps, recovering from unexpected object movements, and adapting to scene changes would significantly improve robustness. Alternatively, <strong>VLAs or learned policies</strong> could provide reactive low-level behaviors that adapt to disturbances, complementing the TAMP system's physical reasoning.
+            </p>
+
+            <h3 id="perception-limitations" class="heading-anchor">
+                <a href="#perception-limitations" class="anchor-link">#</a>
+                Perception Limitations
+            </h3>
+
+            <h4>Single-viewpoint perception</h4>
+            <p>
+                We capture images from a single fixed pose, so all task-relevant objects must be at least partially visible from that viewpoint. We cannot reason about objects in drawers, behind obstacles, or outside the camera's field of view. <strong>Multi-view perception</strong> via active camera movement before planning, or additional static cameras, would reduce occlusions and improve shape estimates.
+            </p>
+
+            <h4>VLM detection reliability</h4>
+            <p>
+                We rely on a VLM (Gemini Robotics-ER) for object detection and goal grounding. The VLM occasionally fails to detect task-relevant objects or hallucinates incorrect bounding box locations. <strong>Ensemble methods</strong> that combine multiple VLMs or detection models, or <strong>verification loops</strong> that check detections against point cloud evidence, could improve robustness.
+            </p>
+
+            <h4>Convex object approximation</h4>
+            <p>
+                Our mesh completion assumes objects can be approximated by their convex hull and that the visible portion is representative of the full geometry. This fails for highly non-convex objects or objects with significant self-occlusion. <strong>Learned shape completion</strong> methods like <a href="https://ai.meta.com/sam3d/" target="_blank" rel="noopener">SAM 3D</a> or <a href="https://arxiv.org/abs/2410.23643" target="_blank" rel="noopener">SceneComplete</a> could produce more accurate meshes, improving both collision checking and grasp planning.
+            </p>
+
+            <h4>Single support surface</h4>
+            <p>
+                We use RANSAC to identify a single dominant planar surface (the table) as the support for all objects. This fails in scenes with multiple support surfaces at different heights (e.g., shelves, stacked platforms). <strong>Detecting multiple surfaces</strong> via multi-plane fitting or semantic segmentation would enable planning in more complex environments.
+            </p>
+
+            <h4>Grasp generation</h4>
+            <p>
+                <a href="https://m2-t2.github.io/" target="_blank" rel="noopener">M2T2</a> generates scene-level grasps that work well for many objects, but often fails to detect grasps on small objects or unusual geometries. When M2T2 grasps are unavailable, we fall back to a 4-DoF top-down heuristic sampler, which is less robust. <strong>Object-specific grasp networks</strong> or task-oriented grasps (e.g., grasps suited for placement vs. handover) could improve manipulation success rates on challenging objects.
+            </p>
+
+            <h3 id="planning-limitations" class="heading-anchor">
+                <a href="#planning-limitations" class="anchor-link">#</a>
+                Planning Limitations
+            </h3>
+
+            <p>
+                The following are limitations of our current cuTAMP implementation rather than fundamental TAMP limitations.
+            </p>
+
+            <h4>Pick-and-place only</h4>
+            <p>
+                We only support the <code>On</code> predicate and pick-and-place actions. Tasks requiring pushing, pouring, tool use, or articulated object manipulation (opening drawers, doors) are not supported. <strong>Richer action primitives</strong> could be added by specifying their preconditions and effects, as we show in <a href="/#beyond-pick-and-place">Extending Beyond Pick-and-Place</a>. These could be manually engineered or implemented by calling a VLA with specific language instructions.
+            </p>
+
+            <h4>Deterministic planning</h4>
+            <p>
+                cuTAMP assumes deterministic action outcomes and full observability of the current state. This prevents reasoning about uncertain grasp success, object pose uncertainty, or hidden state. <strong>Belief-space planning</strong> that reasons over probability distributions over states would enable more robust behavior under uncertainty and could incorporate information-gathering actions.
+            </p>
+
+            <h4>Kinematics-only</h4>
+            <p>
+                cuTAMP only models kinematics, not force closure, contact dynamics, or other physical interactions. This limits reasoning about manipulation actions that depend on forces or frictional contact. <strong>Physics-aware planning</strong> that incorporates contact dynamics or learned physical models could enable more complex manipulation strategies.
+            </p>
+
+            <h4>Offline planning</h4>
+            <p>
+                TiPToP plans offline and executes open-loop, which limits reactivity during execution. <strong>Faster optimization</strong> (for instance via JAX with just-in-time compilation) and <strong>parallelized motion planning</strong> using <a href="https://arxiv.org/abs/2309.14545" target="_blank" rel="noopener">massive CPU parallelism</a> could reduce planning time enough to enable online replanning.
+            </p>
+
+            <h4>Rigid grasping</h4>
+            <p>
+                We assume grasped objects remain rigidly attached to the gripper throughout manipulation. When objects slip or rotate in the gripper (due to weight, inertia, or unstable grasps), the planned placement poses become invalid. <strong>In-hand pose estimation</strong> could detect and correct for object motion during grasps, or the system could replan when slippage is detected.
+            </p>
+
+            <p class="mt-6">
+                All of these directions have been the subject of substantial prior research, and we believe extensions based on such work could be incorporated into TiPToP. Its modular design means that improvements to any single component can benefit the whole system, and we welcome contributions from the community to help address these limitations.
+            </p>
+
+            <!-- Footer -->
+            <div class="border-t border-custom mt-12 pt-8 mb-0 flex flex-col sm:flex-row justify-between items-center">
+                <p class="text-sm text-gray-500 !mb-0">
+                    &copy; 2026 TiPToP Authors
+                </p>
+                <div class="mt-4 sm:mt-0 text-base flex items-center gap-4">
+                    <a href="/" class="page-link font-medium">Home</a>
+                    <span class="text-gray-400">•</span>
+                    <a href="/results" class="page-link font-medium">Results</a>
+                    <span class="text-gray-400">•</span>
+                    <a href="https://github.com/tiptop-robot/tiptop" target="_blank" class="page-link font-medium">Try it yourself!</a>
+                </div>
+            </div>
+            </div>
+        </div>
+    </article>
+    </div>
+    </div>
+
+    <!-- Table of Contents JavaScript -->
+    <script>
+        // Auto-generate TOC from headings
+        document.addEventListener('DOMContentLoaded', function() {
+            const tocNav = document.getElementById('toc-nav');
+            const tocContainer = document.getElementById('toc');
+            const headings = document.querySelectorAll('.article-content h2, .article-content h3');
+            const tocList = document.createElement('ul');
+
+            headings.forEach(heading => {
+                // Skip headings without IDs
+                if (!heading.id) return;
+
+                const listItem = document.createElement('li');
+                const link = document.createElement('a');
+
+                link.href = `#${heading.id}`;
+                link.textContent = heading.textContent.replace('#', '').trim();
+                link.classList.add('toc-link');
+
+                // Add indentation for h3
+                if (heading.tagName === 'H3') {
+                    link.style.paddingLeft = '1.5rem';
+                    link.style.fontSize = '0.8125rem';
+                }
+
+                listItem.appendChild(link);
+                tocList.appendChild(listItem);
+            });
+
+            tocNav.appendChild(tocList);
+
+            // Scroll spy functionality
+            const observerOptions = {
+                root: null,
+                rootMargin: '-10% 0px -70% 0px',
+                threshold: 0
+            };
+
+            let activeLink = null;
+            const intersectingHeadings = new Set();
+
+            const observerCallback = (entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        intersectingHeadings.add(entry.target);
+                    } else {
+                        intersectingHeadings.delete(entry.target);
+                    }
+                });
+
+                // Find the topmost intersecting heading
+                if (intersectingHeadings.size > 0) {
+                    const sortedHeadings = Array.from(intersectingHeadings).sort((a, b) => {
+                        return a.offsetTop - b.offsetTop;
+                    });
+
+                    const topHeading = sortedHeadings[0];
+                    const id = topHeading.id;
+                    const newActiveLink = document.querySelector(`.toc-link[href="#${id}"]`);
+
+                    if (newActiveLink && newActiveLink !== activeLink) {
+                        if (activeLink) {
+                            activeLink.classList.remove('active');
+                        }
+                        newActiveLink.classList.add('active');
+                        activeLink = newActiveLink;
+                    }
+                }
+            };
+
+            const observer = new IntersectionObserver(observerCallback, observerOptions);
+
+            headings.forEach(heading => {
+                if (heading.id) {
+                    observer.observe(heading);
+                }
+            });
+        });
+
+
+        // Lightbox functionality
+        (function() {
+            const lightbox = document.createElement('div');
+            lightbox.className = 'lightbox';
+            lightbox.innerHTML = '<button class="lightbox-close">&times;</button><div class="lightbox-content"><img src="" alt=""><p class="lightbox-caption"></p></div>';
+            document.body.appendChild(lightbox);
+
+            const lightboxImg = lightbox.querySelector('img');
+            const lightboxCaption = lightbox.querySelector('.lightbox-caption');
+            const closeBtn = lightbox.querySelector('.lightbox-close');
+
+            window.openLightbox = function(img) {
+                lightboxImg.src = img.src;
+                lightboxImg.alt = img.alt;
+
+                const caption = img.dataset.caption || '';
+                lightboxCaption.innerHTML = caption;
+                lightboxCaption.style.display = caption ? 'block' : 'none';
+
+                lightbox.classList.add('active');
+                document.body.style.overflow = 'hidden';
+            };
+
+            function closeLightbox() {
+                lightbox.classList.remove('active');
+                document.body.style.overflow = '';
+            }
+
+            closeBtn.addEventListener('click', closeLightbox);
+            lightbox.addEventListener('click', function(e) {
+                if (e.target === lightbox) closeLightbox();
+            });
+            document.addEventListener('keydown', function(e) {
+                if (e.key === 'Escape' && lightbox.classList.contains('active')) closeLightbox();
+            });
+        })();
+
+    </script>
+
+    <!-- Point cloud viewer (ES module) -->
+    <script type="module">
+        import * as THREE from 'three';
+        import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
+        import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
+
+        // Initialize point cloud viewer from binary file
+        function initPointCloud(containerId, canvasId) {
+            const container = document.getElementById(containerId);
+            const canvas = document.getElementById(canvasId);
+            if (!container || !canvas) return;
+
+            const width = container.clientWidth;
+            const height = container.clientHeight;
+
+            const scene = new THREE.Scene();
+            scene.background = new THREE.Color(0xffffff);
+
+            const camera = new THREE.PerspectiveCamera(60, width / height, 0.01, 100);
+            camera.position.set(0, 0.5, 0.8);
+
+            const renderer = new THREE.WebGLRenderer({ canvas, antialias: true });
+            renderer.setSize(width, height);
+            renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+            renderer.outputColorSpace = THREE.SRGBColorSpace;
+
+            const controls = new OrbitControls(camera, renderer.domElement);
+            controls.enableDamping = true;
+            controls.dampingFactor = 0.05;
+            controls.autoRotate = true;
+            controls.autoRotateSpeed = 0.5;
+
+            fetch('media/implementation/pointcloud.bin')
+                .then(res => res.arrayBuffer())
+                .then(buffer => {
+                    const view = new DataView(buffer);
+                    const numPoints = view.getUint32(0, true);
+
+                    const positions = new Float32Array(buffer, 16, numPoints * 3);
+                    const colorsRaw = new Uint8Array(buffer, 16 + numPoints * 12, numPoints * 3);
+
+                    // Compute center from actual point positions
+                    let sumX = 0, sumY = 0, sumZ = 0;
+                    for (let i = 0; i < numPoints; i++) {
+                        sumX += positions[i * 3];
+                        sumY += positions[i * 3 + 1];
+                        sumZ += positions[i * 3 + 2];
+                    }
+                    const center = {
+                        x: sumX / numPoints,
+                        y: sumY / numPoints,
+                        z: sumZ / numPoints
+                    };
+
+                    const colors = new Float32Array(numPoints * 3);
+                    for (let i = 0; i < colorsRaw.length; i++) {
+                        colors[i] = colorsRaw[i] / 255;
+                    }
+
+                    const geometry = new THREE.BufferGeometry();
+                    geometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+                    geometry.setAttribute('color', new THREE.BufferAttribute(colors, 3));
+
+                    const material = new THREE.PointsMaterial({
+                        size: 0.007,
+                        vertexColors: true,
+                        sizeAttenuation: true
+                    });
+
+                    const points = new THREE.Points(geometry, material);
+                    points.rotation.x = -Math.PI / 2;
+                    scene.add(points);
+
+                    // Set camera/controls to look at the center (after -90° X rotation: y->z, z->-y)
+                    controls.target.set(center.x, center.z, -center.y);
+                    camera.position.set(center.x, center.z + 0.5, -center.y + 0.8);
+                    controls.update();
+                });
+
+            function animate() {
+                requestAnimationFrame(animate);
+                controls.update();
+                renderer.render(scene, camera);
+            }
+            animate();
+
+            new ResizeObserver(() => {
+                const w = container.clientWidth;
+                const h = container.clientHeight;
+                camera.aspect = w / h;
+                camera.updateProjectionMatrix();
+                renderer.setSize(w, h);
+            }).observe(container);
+
+            container.addEventListener('pointerdown', () => controls.autoRotate = false);
+        }
+
+        // Initialize scene viewer from GLB file (point cloud + grippers)
+        function initSceneFromGLB(containerId, canvasId) {
+            const container = document.getElementById(containerId);
+            const canvas = document.getElementById(canvasId);
+            if (!container || !canvas) return;
+
+            const width = container.clientWidth;
+            const height = container.clientHeight;
+
+            const scene = new THREE.Scene();
+            scene.background = new THREE.Color(0xffffff);
+
+            const camera = new THREE.PerspectiveCamera(60, width / height, 0.01, 100);
+            camera.position.set(0, 0.5, 0.8);
+
+            const renderer = new THREE.WebGLRenderer({ canvas, antialias: true });
+            renderer.setSize(width, height);
+            renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+            renderer.outputColorSpace = THREE.SRGBColorSpace;
+
+            // Add lighting for meshes
+            const ambientLight = new THREE.AmbientLight(0xffffff, 0.6);
+            scene.add(ambientLight);
+            const directionalLight = new THREE.DirectionalLight(0xffffff, 0.8);
+            directionalLight.position.set(1, 2, 1);
+            scene.add(directionalLight);
+
+            const controls = new OrbitControls(camera, renderer.domElement);
+            controls.enableDamping = true;
+            controls.dampingFactor = 0.05;
+            controls.autoRotate = true;
+            controls.autoRotateSpeed = 0.5;
+
+            const loader = new GLTFLoader();
+            loader.load('media/implementation/scene.glb', (gltf) => {
+                const model = gltf.scene;
+
+                // Apply -90° X rotation to match point cloud coordinate convention
+                model.rotation.x = -Math.PI / 2;
+
+                // Update materials
+                model.traverse((child) => {
+                    if (child.isPoints && child.material) {
+                        child.material.size = 0.0075;
+                        child.material.vertexColors = true;
+                        child.material.sizeAttenuation = true;
+                        // child.material.needsUpdate = true;
+                    }
+                    if (child.isMesh && child.material) {
+                        const oldMat = child.material;
+                        // Convert to MeshBasicMaterial to show colors without complex lighting
+                        const newMat = new THREE.MeshBasicMaterial({
+                            color: oldMat.color || 0xffffff,
+                            vertexColors: child.geometry.attributes.color ? true : false,
+                        });
+                        child.material = newMat;
+                    }
+                });
+
+                scene.add(model);
+
+                // After model.rotation.x = -Math.PI / 2;
+                model.updateWorldMatrix(true, true);
+
+                const box = new THREE.Box3().setFromObject(model);
+                const center = new THREE.Vector3();
+                const size = new THREE.Vector3();
+
+                box.getCenter(center);
+                box.getSize(size);
+
+                controls.target.copy(center);
+
+                const maxDim = Math.max(size.x, size.y, size.z);
+                const adjustedDistance = maxDim * 0.8;
+                const dir = new THREE.Vector3(1, 0.6, 1).normalize();
+
+                camera.position.copy(center.clone().add(dir.clone().multiplyScalar(adjustedDistance)));
+
+                camera.near = adjustedDistance / 100;
+                camera.far = adjustedDistance * 100;
+                camera.updateProjectionMatrix();
+
+                controls.target.copy(center);
+                controls.update();          // let OrbitControls set its internal spherical state
+
+                // NOW apply your world-y nudge (after OrbitControls)
+                camera.position.y -= 0.2;
+
+                // Sync OrbitControls to the new camera position
+                controls.update();
+                controls.saveState();
+            });
+
+            function animate() {
+                requestAnimationFrame(animate);
+                controls.update();
+                renderer.render(scene, camera);
+            }
+            animate();
+
+            new ResizeObserver(() => {
+                const w = container.clientWidth;
+                const h = container.clientHeight;
+                camera.aspect = w / h;
+                camera.updateProjectionMatrix();
+                renderer.setSize(w, h);
+            }).observe(container);
+
+            container.addEventListener('pointerdown', () => controls.autoRotate = false);
+        }
+
+        // Initialize viewers
+        initPointCloud('pointcloud-container', 'pointcloud-canvas');
+        initSceneFromGLB('pointcloud-container-grasps', 'pointcloud-canvas-grasps');
+    </script>
+
+    <!-- TOC scroll fix -->
+    <script src="assets/toc-scroll.js"></script>
+</body>
+</html>

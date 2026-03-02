@@ -1,0 +1,2497 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Full Results - TiPToP</title>
+    <link rel="icon" type="image/jpeg" href="assets/favicon.jpg">
+
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-4W4CFWR9GR"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+
+      gtag('config', 'G-4W4CFWR9GR');
+    </script>
+
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Lora:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+
+    <!-- KaTeX -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css" integrity="sha384-n8MVd4RsNIU0tAv4ct0nTaAbDJwPJzDEaqSD1odI+WdtXRGWt2kTvGFasHpSy3SV" crossorigin="anonymous">
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js" integrity="sha384-XjKyOOlGwcjNTAIQHIpgOno0Hl1YQqzUOEleOLALmuqehneUG+vnGctmUb0ZY0l8" crossorigin="anonymous"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js" integrity="sha384-+VBxd3r6XgURycqtZ117nYw44OOcIax56Z4dCRWbxyPt0Koah1uHoK0o4+/RRE05" crossorigin="anonymous"></script>
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            renderMathInElement(document.body, {
+                delimiters: [
+                    {left: '$$', right: '$$', display: true},
+                    {left: '\\[', right: '\\]', display: true},
+                    {left: '\\(', right: '\\)', display: false}
+                ],
+                throwOnError: false
+            });
+        });
+    </script>
+
+    <!-- Custom Stylesheet -->
+    <link rel="stylesheet" href="assets/styles.css">
+    <link rel="stylesheet" href="assets/results.css">
+</head>
+<body class="page-results">
+
+    <div class="page-layout">
+        <!-- Table of Contents -->
+        <div class="toc-container" id="toc">
+            <div class="toc-title">Contents</div>
+            <nav class="toc-nav" id="toc-nav">
+                <!-- Will be auto-populated by JavaScript -->
+            </nav>
+        </div>
+
+        <!-- Main Content Wrapper -->
+        <div class="main-content-wrapper">
+        <!-- Article Header -->
+        <article class="max-w-5xl mx-auto px-4 sm:px-6 pb-12 sm:pb-16 pt-6 sm:pt-12">
+        
+        <!-- Title -->
+        <h1 class="text-4xl sm:text-5xl md:text-6xl font-bold mb-6 leading-tight">
+            Full Results
+        </h1>
+
+        <!-- In-article navigation -->
+        <div class="text-sm sm:text-base flex flex-wrap items-center gap-x-2 gap-y-1 mb-8">
+            <span class="text-gray-500">More pages:</span>
+            <a href="/" class="page-link font-medium">Home</a>
+            <span class="text-gray-400">•</span>
+            <a href="/implementation" class="page-link font-medium">Implementation Details</a>
+        </div>
+
+        <!-- Article Content -->
+        <div class="article-content">
+            <h2 id="overview" class="heading-anchor">
+                <a href="#overview" class="anchor-link">#</a>
+                Evaluation Overview
+            </h2>
+
+            <p>
+                We evaluated TiPToP on 28 manipulation tasks in 3 settings: (i) simulation using IsaacSim, (ii) a real-world DROID hardware setup operated internally by TiPToP's developers at MIT, and (iii) a separate DROID setup operated by an external evaluation team at the University of Pennsylvania not involved in TiPToP's development. Below we present detailed video demonstrations for tasks evaluated on the internal DROID setup, along with complete results over all 28 tasks in the summary table.
+            </p>
+
+            <div class="info-box my-6">
+                <p class="font-semibold !mb-2">Experimental Setup</p>
+                <ul class="space-y-1 !mb-2">
+                    <li><strong>Tasks:</strong> 28 tasks total (5 simulation, 8 internal DROID, 15 external DROID)</li>
+                    <li><strong>Trials:</strong> 10 trials per simulation task, 5 trials per real-world task</li>
+                    <li><strong>Total comparisons:</strong> 165 trials (50 simulation, 40 internal, 75 external)</li>
+                    <li><strong>Hardware:</strong> Franka Emika Panda FR3 with Robotiq 2F-85 gripper</li>
+                    <li><strong>Cameras:</strong> 1 x ZED Mini wrist camera, 1 x ZED 2i external camera (not used by TiPToP)</li>
+                </ul>
+            </div>
+
+            <h2 id="summary-results" class="heading-anchor">
+                <a href="#summary-results" class="anchor-link">#</a>
+                Summary Results
+            </h2>
+
+            <p>
+                Below is a comprehensive table of all 28 evaluation tasks across simulation, internal DROID, and external DROID settings. Tasks are organized by category (Simple, Distractor, Semantic, Multi-step). Click on task names with links to jump to detailed video demonstrations. For a detailed breakdown of the language prompt and progress metric for each task, please see the <a href="#scene-details">Scene Details</a> table.
+            </p>
+
+            <p class="!text-sm mt-2 prompt-text">
+                <strong>Key:</strong> SR = Success Rate, TP = Task Progress. † indicates tasks evaluated by system designers on internal DROID setup. (sim) indicates simulation tasks in IsaacSim. Unmarked tasks were evaluated by an external team at the University of Pennsylvania on a separate DROID setup. Bold values indicate better performance on that metric.
+            </p>
+
+            <!-- Comprehensive Results Table (Table I) -->
+            <div class="my-8 overflow-x-auto">
+                <table class="results-table">
+                    <thead>
+                        <tr class="row-alt">
+                            <th class="text-left">Scene</th>
+                            <th class="text-center">TiPToP SR</th>
+                            <th class="text-center">TiPToP TP</th>
+                            <th class="text-center">\(\pi_{0.5}\)-DROID SR</th>
+                            <th class="text-center">\(\pi_{0.5}\)-DROID TP</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <!-- SIMPLE TASKS -->
+                        <tr class="row-group">
+                            <td colspan="5" class="category-td">Simple Tasks</td>
+                        </tr>
+                        <tr>
+                            <td>Cube → bowl (sim)</td>
+                            <td class="text-center">5/10</td>
+                            <td class="text-center">72.5%</td>
+                            <td class="text-center"><strong>8/10</strong></td>
+                            <td class="text-center"><strong>90%</strong></td>
+                        </tr>
+                        <tr class="row-alt">
+                            <td>Can → mug (sim)</td>
+                            <td class="text-center"><strong>9/10</strong></td>
+                            <td class="text-center"><strong>97.5%</strong></td>
+                            <td class="text-center">2/10</td>
+                            <td class="text-center">50%</td>
+                        </tr>
+                        <tr>
+                            <td>Banana → bin (sim)</td>
+                            <td class="text-center">0/10</td>
+                            <td class="text-center">70%</td>
+                            <td class="text-center"><strong>9/10</strong></td>
+                            <td class="text-center"><strong>97.5%</strong></td>
+                        </tr>
+                        <tr class="row-alt">
+                            <td>Marker → tray</td>
+                            <td class="text-center">3/5</td>
+                            <td class="text-center">80%</td>
+                            <td class="text-center"><strong>5/5</strong></td>
+                            <td class="text-center"><strong>100%</strong></td>
+                        </tr>
+                        <tr>
+                            <td><a href="#task-simple-cracker" class="text-accent-cyan hover:underline">Crackers → tray<sup>†</sup></a></td>
+                            <td class="text-center"><strong>5/5</strong></td>
+                            <td class="text-center"><strong>100%</strong></td>
+                            <td class="text-center">3/5</td>
+                            <td class="text-center">60%</td>
+                        </tr>
+
+                        <tr class="row-aggregate">
+                            <td></td>
+                            <td class="text-center"><strong>22/40</strong></td>
+                            <td class="text-center"><strong>84%</strong></td>
+                            <td class="text-center">27/40</td>
+                            <td class="text-center">79.5%</td>
+                        </tr>
+
+                        <!-- DISTRACTOR TASKS -->
+                        <tr class="row-group">
+                            <td colspan="5" class="category-td">Distractor Tasks</td>
+                        </tr>
+                        <tr class="row-alt">
+                            <td>Meat can → sugar box (sim)</td>
+                            <td class="text-center"><strong>5/10</strong></td>
+                            <td class="text-center"><strong>72.5%</strong></td>
+                            <td class="text-center">0/10</td>
+                            <td class="text-center">5%</td>
+                        </tr>
+                        <tr>
+                            <td>Coffee capsules → plate</td>
+                            <td class="text-center"><strong>4/5</strong></td>
+                            <td class="text-center"><strong>90%</strong></td>
+                            <td class="text-center">2/5</td>
+                            <td class="text-center">58%</td>
+                        </tr>
+                        <tr class="row-alt">
+                            <td>Turkish figs → plate</td>
+                            <td class="text-center"><strong>3/5</strong></td>
+                            <td class="text-center"><strong>64%</strong></td>
+                            <td class="text-center">2/5</td>
+                            <td class="text-center">52%</td>
+                        </tr>
+                        <tr>
+                            <td>Cashews → plate</td>
+                            <td class="text-center">0/5</td>
+                            <td class="text-center"><strong>16%</strong></td>
+                            <td class="text-center">0/5</td>
+                            <td class="text-center">12%</td>
+                        </tr>
+                        <tr class="row-alt">
+                            <td>Red cubes → plate</td>
+                            <td class="text-center">1/5</td>
+                            <td class="text-center">50%</td>
+                            <td class="text-center"><strong>5/5</strong></td>
+                            <td class="text-center"><strong>92%</strong></td>
+                        </tr>
+                        <tr>
+                            <td>Fish → box</td>
+                            <td class="text-center"><strong>4/5</strong></td>
+                            <td class="text-center"><strong>80%</strong></td>
+                            <td class="text-center">0/5</td>
+                            <td class="text-center">10%</td>
+                        </tr>
+                        <tr class="row-alt">
+                            <td><a href="#task-cracker-tray-medium" class="text-accent-cyan hover:underline">Crackers → tray (medium)<sup>†</sup></a></td>
+                            <td class="text-center"><strong>5/5</strong></td>
+                            <td class="text-center"><strong>100%</strong></td>
+                            <td class="text-center">3/5</td>
+                            <td class="text-center">80%</td>
+                        </tr>
+                        <tr>
+                            <td><a href="#task-cracker-tray-hard" class="text-accent-cyan hover:underline">PB crackers → tray (hard)<sup>†</sup></a></td>
+                            <td class="text-center"><strong>5/5</strong></td>
+                            <td class="text-center"><strong>100%</strong></td>
+                            <td class="text-center">0/5</td>
+                            <td class="text-center">20%</td>
+                        </tr>
+
+                        <tr class="row-aggregate">
+                            <td></td>
+                            <td class="text-center"><strong>27/45</strong></td>
+                            <td class="text-center"><strong>71.6%</strong></td>
+                            <td class="text-center">12/45</td>
+                            <td class="text-center">41.1%</td>
+                        </tr>
+
+                        <!-- SEMANTIC TASKS -->
+                        <tr class="row-group">
+                            <td colspan="5" class="category-td">Semantic Tasks</td>
+                        </tr>
+                        <tr class="row-alt">
+                            <td>Toy → matching plate</td>
+                            <td class="text-center"><strong>4/5</strong></td>
+                            <td class="text-center"><strong>90%</strong></td>
+                            <td class="text-center">1/5</td>
+                            <td class="text-center">62%</td>
+                        </tr>
+                        <tr>
+                            <td>Creeper → plate</td>
+                            <td class="text-center"><strong>3/5</strong></td>
+                            <td class="text-center"><strong>70%</strong></td>
+                            <td class="text-center">0/5</td>
+                            <td class="text-center">0%</td>
+                        </tr>
+                        <tr class="row-alt">
+                            <td>Largest toy → plate</td>
+                            <td class="text-center"><strong>3/5</strong></td>
+                            <td class="text-center"><strong>70%</strong></td>
+                            <td class="text-center">0/5</td>
+                            <td class="text-center">20%</td>
+                        </tr>
+                        <tr>
+                            <td>Red A → color pile</td>
+                            <td class="text-center"><strong>5/5</strong></td>
+                            <td class="text-center"><strong>100%</strong></td>
+                            <td class="text-center">3/5</td>
+                            <td class="text-center">80%</td>
+                        </tr>
+                        <tr class="row-alt">
+                            <td>Banana → box</td>
+                            <td class="text-center"><strong>2/5</strong></td>
+                            <td class="text-center"><strong>40%</strong></td>
+                            <td class="text-center">0/5</td>
+                            <td class="text-center">30%</td>
+                        </tr>
+                        <tr>
+                            <td>N block → indicated cup</td>
+                            <td class="text-center"><strong>3/5</strong></td>
+                            <td class="text-center"><strong>80%</strong></td>
+                            <td class="text-center">2/5</td>
+                            <td class="text-center">60%</td>
+                        </tr>
+                        <tr class="row-alt">
+                            <td>Sort blocks by color</td>
+                            <td class="text-center"><strong>5/5</strong></td>
+                            <td class="text-center"><strong>100%</strong></td>
+                            <td class="text-center">0/5</td>
+                            <td class="text-center">32%</td>
+                        </tr>
+                        <tr>
+                            <td>Banana → matching plate</td>
+                            <td class="text-center">1/5</td>
+                            <td class="text-center">20%</td>
+                            <td class="text-center"><strong>4/5</strong></td>
+                            <td class="text-center"><strong>90%</strong></td>
+                        </tr>
+
+                        <tr class="row-aggregate">
+                            <td></td>
+                            <td class="text-center"><strong>26/40</strong></td>
+                            <td class="text-center"><strong>71.3%</strong></td>
+                            <td class="text-center">10/40</td>
+                            <td class="text-center">46.8%</td>
+                        </tr>
+
+                        <!-- MULTI-STEP TASKS -->
+                        <tr class="row-group">
+                            <td colspan="5" class="category-td">Multi-step Tasks</td>
+                        </tr>
+                        <tr class="row-alt">
+                            <td>Color cubes → bowl (sim)</td>
+                            <td class="text-center"><strong>9/10</strong></td>
+                            <td class="text-center"><strong>94.6%</strong></td>
+                            <td class="text-center">0/10</td>
+                            <td class="text-center">24.2%</td>
+                        </tr>
+                        <tr>
+                            <td>AirPods → cup</td>
+                            <td class="text-center">1/5</td>
+                            <td class="text-center">55%</td>
+                            <td class="text-center"><strong>3/5</strong></td>
+                            <td class="text-center"><strong>75%</strong></td>
+                        </tr>
+                        <tr class="row-alt">
+                            <td><a href="#task-coffee-packing" class="text-accent-cyan hover:underline">Pack pods → tray<sup>†</sup></a></td>
+                            <td class="text-center"><strong>4/5</strong></td>
+                            <td class="text-center"><strong>80%</strong></td>
+                            <td class="text-center">1/5</td>
+                            <td class="text-center">65.7%</td>
+                        </tr>
+                        <tr>
+                            <td><a href="#task-coffee-packing-coke" class="text-accent-cyan hover:underline">Pack pods → tray (obs.)<sup>†</sup></a></td>
+                            <td class="text-center"><strong>1/5</strong></td>
+                            <td class="text-center"><strong>67%</strong></td>
+                            <td class="text-center">0/5</td>
+                            <td class="text-center">64%</td>
+                        </tr>
+                        <tr class="row-alt">
+                            <td><a href="#task-med-pack" class="text-accent-cyan hover:underline">Aleve bottle → tray (obs.)<sup>†</sup></a></td>
+                            <td class="text-center"><strong>4/5</strong></td>
+                            <td class="text-center"><strong>80%</strong></td>
+                            <td class="text-center">2/5</td>
+                            <td class="text-center">70%</td>
+                        </tr>
+                        <tr>
+                            <td><a href="#task-marbles" class="text-accent-cyan hover:underline">Three marbles → cup<sup>†</sup></a></td>
+                            <td class="text-center"><strong>2/5</strong></td>
+                            <td class="text-center"><strong>80%</strong></td>
+                            <td class="text-center">0/5</td>
+                            <td class="text-center">6.7%</td>
+                        </tr>
+                        <tr class="row-alt">
+                            <td><a href="#task-clear-insanity" class="text-accent-cyan hover:underline">Marbles + cable<sup>†</sup></a></td>
+                            <td class="text-center"><strong>2/5</strong></td>
+                            <td class="text-center"><strong>70%</strong></td>
+                            <td class="text-center">0/5</td>
+                            <td class="text-center">60%</td>
+                        </tr>
+                        <tr class="row-aggregate">
+                            <td></td>
+                            <td class="text-center"><strong>23/40</strong></td>
+                            <td class="text-center"><strong>75.2%</strong></td>
+                            <td class="text-center">6/40</td>
+                            <td class="text-center">52.2%</td>
+                        </tr>
+                        <tr class="row-overall">
+                            <td>Overall</td>
+                            <td class="text-center"><strong>98/165</strong></td>
+                            <td class="text-center"><strong>74.6%</strong></td>
+                            <td class="text-center">55/165</td>
+                            <td class="text-center">52.4%</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <h2 id="execution-time" class="heading-anchor">
+                <a href="#execution-time" class="anchor-link">#</a>
+                Execution Time Comparison
+            </h2>
+
+            <p>
+                 The table below shows average execution times on 7 representative scenes where both methods succeeded. TiPToP's planning time is shown separately to illustrate the breakdown between planning and execution.
+            </p>
+
+            <p>
+                <strong>Key observation:</strong> TiPToP is faster than \(\pi_{0.5}\text{-DROID}\) in 6 of 6 scenes. Even though TiPToP spends significant upfront time on perception and planning, \(\pi_{0.5}\text{-DROID}\) often spends considerable time idling or re-grasping objects.
+            </p>
+
+            <div class="my-8 overflow-x-auto">
+                <table class="results-table">
+                    <thead>
+                        <tr class="row-alt">
+                            <th class="text-left">Scene</th>
+                            <th class="text-center">\(\pi_{0.5}\)-DROID Time</th>
+                            <th class="text-center">TiPToP Total Time</th>
+                            <th class="text-center">TiPToP Planning Time</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <!-- SIMULATION -->
+                        <tr class="row-group">
+                            <td colspan="4" class="category-td">Simulation (IsaacSim)</td>
+                        </tr>
+                        <tr>
+                            <td>Cube → bowl</td>
+                            <td class="text-center">27.4s</td>
+                            <td class="text-center"><strong>17.9s</strong></td>
+                            <td class="text-center">9.7s</td>
+                        </tr>
+                        <tr class="row-alt">
+                            <td>Can → mug</td>
+                            <td class="text-center">41.0s</td>
+                            <td class="text-center"><strong>18.6s</strong></td>
+                            <td class="text-center">9.2s</td>
+                        </tr>
+
+                        <!-- REAL-WORLD -->
+                        <tr class="row-group">
+                            <td colspan="4" class="category-td">Real-World (Internal DROID)</td>
+                        </tr>
+                        <tr class="row-alt">
+                            <td>Crackers → tray (simple)</td>
+                            <td class="text-center">32.2s</td>
+                            <td class="text-center"><strong>14.9s</strong></td>
+                            <td class="text-center">7.0s</td>
+                        </tr>
+                        <tr>
+                            <td>Crackers → tray (medium)</td>
+                            <td class="text-center">45.2s</td>
+                            <td class="text-center"><strong>14.9s</strong></td>
+                            <td class="text-center">7.3s</td>
+                        </tr>
+                        <tr class="row-alt">
+                            <td>Pack pods → tray</td>
+                            <td class="text-center">53.4s</td>
+                            <td class="text-center"><strong>47.0s</strong></td>
+                            <td class="text-center">20.5s</td>
+                        </tr>
+                        <tr>
+                            <td>Aleve bottle → tray (obs.)</td>
+                            <td class="text-center">31.2s</td>
+                            <td class="text-center">31.2s</td>
+                            <td class="text-center">16.4s</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <h2 id="full-results" class="heading-anchor">
+                <a href="#full-results" class="anchor-link">#</a>
+                Video Results
+            </h2>
+
+            <p>
+                Below we show the videos for the 8 tasks evaluated on our internal DROID setup, where we have side-by-side video recordings of both systems. For results over all 28 tasks (including simulation and external evaluation), see the summary results table above.
+            </p>
+
+
+            <!-- Task 1: Crackers → tray -->
+            <div class="task-section">
+                <h3 id="task-simple-cracker" class="task-header heading-anchor">
+                    <a href="#task-simple-cracker" class="anchor-link">#</a>
+                    Crackers → tray
+                </h3>
+
+                <div class="task-instruction">
+                    "place the crackers onto the tray"
+                </div>
+
+                <p class="task-description">
+                    A simple pick-and-place task where the robot must pick up a cracker box and place it on a designated target surface. This serves as a baseline test for basic manipulation capabilities.
+                </p>
+
+                <div class="observations-section my-4 p-4">
+                        <p class="font-semibold">Observations</p>
+                        <p class="!text-sm"><strong>TiPToP:</strong> Achieved 100% success rate (5/5) with consistent execution times averaging 14.9s. All trials completed efficiently with reliable grasp planning and placement.</p>
+                        <p class="!text-sm"><strong>\(\pi_{0.5}\text{-DROID}\):</strong> 60% success rate (3/5). Common failure modes included idling with no progress, and timeout failures at 120s. When successful, execution was slower (avg 32.2s) and less consistent. Some trials showed late progress around the timeout period.</p>
+                    </div>
+
+                    <div class="trials-grid">
+                        <details class="trial-details">
+                            <summary class="trial-summary">
+                                <video class="trial-thumbnail" muted preload="none" data-src="media/results/trials/simple_cracker/side_by_side_ours-t1-success.mp4">
+                                </video>
+                                <div class="trial-info">
+                                    <div class="trial-title">Trial 1</div>
+                                    <div class="trial-results">
+                                        <div class="trial-result-row">
+                                            <strong>Ours:</strong>
+                                            <span class="result-badge result-success">✓ 1.0</span>
+                                            <span class="text-gray-500">Successful completion</span>
+                                        </div>
+                                        <div class="trial-result-row">
+                                            <strong>π₀.₅:</strong>
+                                            <span class="result-badge result-failure">✗ 0.0</span>
+                                            <span class="text-gray-500">Robot just idles</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="trial-chevron">▶</div>
+                            </summary>
+                            <div class="trial-content">
+                                <video controls class="w-full">
+                                    <source src="media/results/trials/simple_cracker/side_by_side_ours-t1-success.mp4" type="video/mp4">
+                                </video>
+                                <div class="trial-description">
+                                    <strong>Ours:</strong> 1.0 progress - Successful completion. <strong>π₀.₅:</strong> 0.0 progress - Robot just idles with no progress.
+                                </div>
+                            </div>
+                        </details>
+
+                        <details class="trial-details">
+                            <summary class="trial-summary">
+                                <video class="trial-thumbnail" muted preload="none" data-src="media/results/trials/simple_cracker/side_by_side_ours-t2-success.mp4">
+                                </video>
+                                <div class="trial-info">
+                                    <div class="trial-title">Trial 2</div>
+                                    <div class="trial-results">
+                                        <div class="trial-result-row">
+                                            <strong>Ours:</strong>
+                                            <span class="result-badge result-success">✓ 1.0</span>
+                                            <span class="text-gray-500">Successful completion</span>
+                                        </div>
+                                        <div class="trial-result-row">
+                                            <strong>π₀.₅:</strong>
+                                            <span class="result-badge result-failure">✗ 0.0</span>
+                                            <span class="text-gray-500">Moves close around 120s</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="trial-chevron">▶</div>
+                            </summary>
+                            <div class="trial-content">
+                                <video controls class="w-full">
+                                    <source src="media/results/trials/simple_cracker/side_by_side_ours-t2-success.mp4" type="video/mp4">
+                                </video>
+                                <div class="trial-description">
+                                    <strong>Ours:</strong> 1.0 progress - Successful completion. <strong>π₀.₅:</strong> 0.0 progress - π₀.₅ moves close to the crackers around 120s and attempts a pick-place, but fails the task.
+                                </div>
+                            </div>
+                        </details>
+
+                        <details class="trial-details">
+                            <summary class="trial-summary">
+                                <video class="trial-thumbnail" muted preload="none" data-src="media/results/trials/simple_cracker/side_by_side_ours-t3-success.mp4">
+                                </video>
+                                <div class="trial-info">
+                                    <div class="trial-title">Trial 3</div>
+                                    <div class="trial-results">
+                                        <div class="trial-result-row">
+                                            <strong>Ours:</strong>
+                                            <span class="result-badge result-success">✓ 1.0</span>
+                                            <span class="text-gray-500">Successful completion</span>
+                                        </div>
+                                        <div class="trial-result-row">
+                                            <strong>π₀.₅:</strong>
+                                            <span class="result-badge result-success">✓ 1.0</span>
+                                            <span class="text-gray-500">After initial idling</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="trial-chevron">▶</div>
+                            </summary>
+                            <div class="trial-content">
+                                <video controls class="w-full">
+                                    <source src="media/results/trials/simple_cracker/side_by_side_ours-t3-success.mp4" type="video/mp4">
+                                </video>
+                                <div class="trial-description">
+                                    <strong>Ours:</strong> 1.0 progress - Successful completion. <strong>π₀.₅:</strong> 1.0 progress - After some initial idling, π₀.₅ successfully completes the task.
+                                </div>
+                            </div>
+                        </details>
+
+                        <details class="trial-details">
+                            <summary class="trial-summary">
+                                <video class="trial-thumbnail" muted preload="none" data-src="media/results/trials/simple_cracker/side_by_side_ours-t4-success.mp4">
+                                </video>
+                                <div class="trial-info">
+                                    <div class="trial-title">Trial 4</div>
+                                    <div class="trial-results">
+                                        <div class="trial-result-row">
+                                            <strong>Ours:</strong>
+                                            <span class="result-badge result-success">✓ 1.0</span>
+                                            <span class="text-gray-500">Successful completion</span>
+                                        </div>
+                                        <div class="trial-result-row">
+                                            <strong>π₀.₅:</strong>
+                                            <span class="result-badge result-success">✓ 1.0</span>
+                                            <span class="text-gray-500">After initial idling</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="trial-chevron">▶</div>
+                            </summary>
+                            <div class="trial-content">
+                                <video controls class="w-full">
+                                    <source src="media/results/trials/simple_cracker/side_by_side_ours-t4-success.mp4" type="video/mp4">
+                                </video>
+                                <div class="trial-description">
+                                    <strong>Ours:</strong> 1.0 progress - Successful completion. <strong>π₀.₅:</strong> 1.0 progress - After some initial idling, π₀.₅ successfully completes the task.
+                                </div>
+                            </div>
+                        </details>
+
+                        <details class="trial-details">
+                            <summary class="trial-summary">
+                                <video class="trial-thumbnail" muted preload="none" data-src="media/results/trials/simple_cracker/side_by_side_ours-t5-success.mp4">
+                                </video>
+                                <div class="trial-info">
+                                    <div class="trial-title">Trial 5</div>
+                                    <div class="trial-results">
+                                        <div class="trial-result-row">
+                                            <strong>Ours:</strong>
+                                            <span class="result-badge result-success">✓ 1.0</span>
+                                            <span class="text-gray-500">Successful completion</span>
+                                        </div>
+                                        <div class="trial-result-row">
+                                            <strong>π₀.₅:</strong>
+                                            <span class="result-badge result-success">✓ 1.0</span>
+                                            <span class="text-gray-500">Carton overturns slightly</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="trial-chevron">▶</div>
+                            </summary>
+                            <div class="trial-content">
+                                <video controls class="w-full">
+                                    <source src="media/results/trials/simple_cracker/side_by_side_ours-t5-success.mp4" type="video/mp4">
+                                </video>
+                                <div class="trial-description">
+                                    <strong>Ours:</strong> 1.0 progress - Successful completion. <strong>π₀.₅:</strong> 1.0 progress - π₀.₅ succeeds, though the carton overturns slightly during placement.
+                                </div>
+                            </div>
+                        </details>
+                    </div>
+            </div>
+
+            <!-- Task 2: Cracker Tray Medium -->
+            <div class="task-section">
+                <h3 id="task-cracker-tray-medium" class="task-header heading-anchor">
+                    <a href="#task-cracker-tray-medium" class="anchor-link">#</a>
+                    Crackers → tray (medium)
+                </h3>
+
+                <div class="task-instruction">
+                    "place the crackers onto the tray"
+                </div>
+
+                <p class="task-description">
+                    Place a cracker box onto a tray in the presence of medium clutter (a medicine box and a strawberry). The robot must identify the correct target object and avoid disturbing distractors.
+                </p>
+
+                <div class="observations-section my-4 p-4">
+                        <p class="font-semibold mb-2">Observations</p>
+                        <p class="!text-sm"><strong>TiPToP:</strong> Perfect success rate (5/5) with average time of 14.9s. Consistently identified and manipulated the correct object despite distractors.</p>
+                        <p class="!text-sm"><strong>\(\pi_{0.5}\text{-DROID}\):</strong> 60% success (3/5) with average time of 45.2s for successful trials. Frequent confusion about task objectives, often manipulating wrong objects (strawberry, medicine box) or placing items incorrectly. One trial showed the tray falling over, and another resulted in the crackers being thrown off the table.</p>
+                    </div>
+
+                    <div class="trials-grid">
+                        <details class="trial-details">
+                            <summary class="trial-summary">
+                                <video class="trial-thumbnail" muted preload="none" data-src="media/results/trials/cracker_tray_medium/side_by_side_ours-t1-success.mp4">
+                                </video>
+                                <div class="trial-info">
+                                    <div class="trial-title">Trial 1</div>
+                                    <div class="trial-results">
+                                        <div class="trial-result-row">
+                                            <strong>Ours:</strong>
+                                            <span class="result-badge result-success">✓ 1.0</span>
+                                            <span class="text-gray-500">Successful completion</span>
+                                        </div>
+                                        <div class="trial-result-row">
+                                            <strong>π₀.₅:</strong>
+                                            <span class="result-badge result-success">✓ 1.0</span>
+                                            <span class="text-gray-500">Medicine box and strawberry first</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="trial-chevron">▶</div>
+                            </summary>
+                            <div class="trial-content">
+                                <video controls class="w-full">
+                                    <source src="media/results/trials/cracker_tray_medium/side_by_side_ours-t1-success.mp4" type="video/mp4">
+                                </video>
+                                <div class="trial-description">
+                                    <strong>Ours:</strong> 1.0 progress - Successful completion. <strong>π₀.₅:</strong> 1.0 progress - Succeeds, though it first puts the medicine box and strawberry into the tray before placing the crackers.
+                                </div>
+                            </div>
+                        </details>
+
+                        <details class="trial-details">
+                            <summary class="trial-summary">
+                                <video class="trial-thumbnail" muted preload="none" data-src="media/results/trials/cracker_tray_medium/side_by_side_ours-t2-success.mp4">
+                                </video>
+                                <div class="trial-info">
+                                    <div class="trial-title">Trial 2</div>
+                                    <div class="trial-results">
+                                        <div class="trial-result-row">
+                                            <strong>Ours:</strong>
+                                            <span class="result-badge result-success">✓ 1.0</span>
+                                            <span class="text-gray-500">Successful completion</span>
+                                        </div>
+                                        <div class="trial-result-row">
+                                            <strong>π₀.₅:</strong>
+                                            <span class="result-badge result-success">✓ 1.0</span>
+                                            <span class="text-gray-500">Successful completion</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="trial-chevron">▶</div>
+                            </summary>
+                            <div class="trial-content">
+                                <video controls class="w-full">
+                                    <source src="media/results/trials/cracker_tray_medium/side_by_side_ours-t2-success.mp4" type="video/mp4">
+                                </video>
+                                <div class="trial-description">
+                                    <strong>Ours:</strong> 1.0 progress - Successful completion. <strong>π₀.₅:</strong> 1.0 progress - Succeeds at first then knocks container over, then fixes the placement and picks up strawberry.
+                                </div>
+                            </div>
+                        </details>
+
+                        <details class="trial-details">
+                            <summary class="trial-summary">
+                                <video class="trial-thumbnail" muted preload="none" data-src="media/results/trials/cracker_tray_medium/side_by_side_ours-t3-success.mp4">
+                                </video>
+                                <div class="trial-info">
+                                    <div class="trial-title">Trial 3</div>
+                                    <div class="trial-results">
+                                        <div class="trial-result-row">
+                                            <strong>Ours:</strong>
+                                            <span class="result-badge result-success">✓ 1.0</span>
+                                            <span class="text-gray-500">Successful completion</span>
+                                        </div>
+                                        <div class="trial-result-row">
+                                            <strong>π₀.₅:</strong>
+                                            <span class="result-badge result-partial">~ 0.5</span>
+                                            <span class="text-gray-500">Throws crackers off table</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="trial-chevron">▶</div>
+                            </summary>
+                            <div class="trial-content">
+                                <video controls class="w-full">
+                                    <source src="media/results/trials/cracker_tray_medium/side_by_side_ours-t3-success.mp4" type="video/mp4">
+                                </video>
+                                <div class="trial-description">
+                                    <strong>Ours:</strong> 1.0 progress - Successful completion. <strong>π₀.₅:</strong> 0.5 progress - Puts the strawberry into the tray, then picks the crackers and throws them off the table, finally puts the medicine into the tray instead.
+                                </div>
+                            </div>
+                        </details>
+
+                        <details class="trial-details">
+                            <summary class="trial-summary">
+                                <video class="trial-thumbnail" muted preload="none" data-src="media/results/trials/cracker_tray_medium/side_by_side_ours-t4-success.mp4">
+                                </video>
+                                <div class="trial-info">
+                                    <div class="trial-title">Trial 4</div>
+                                    <div class="trial-results">
+                                        <div class="trial-result-row">
+                                            <strong>Ours:</strong>
+                                            <span class="result-badge result-success">✓ 1.0</span>
+                                            <span class="text-gray-500">Successful completion</span>
+                                        </div>
+                                        <div class="trial-result-row">
+                                            <strong>π₀.₅:</strong>
+                                            <span class="result-badge result-success">✓ 1.0</span>
+                                            <span class="text-gray-500">Tray falls over afterward</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="trial-chevron">▶</div>
+                            </summary>
+                            <div class="trial-content">
+                                <video controls class="w-full">
+                                    <source src="media/results/trials/cracker_tray_medium/side_by_side_ours-t4-success.mp4" type="video/mp4">
+                                </video>
+                                <div class="trial-description">
+                                    <strong>Ours:</strong> 1.0 progress - Successful completion. <strong>π₀.₅:</strong> 1.0 progress - Successfully puts the crackers into the tray, though the tray falls over afterward.
+                                </div>
+                            </div>
+                        </details>
+
+                        <details class="trial-details">
+                            <summary class="trial-summary">
+                                <video class="trial-thumbnail" muted preload="none" data-src="media/results/trials/cracker_tray_medium/side_by_side_ours-t5-success.mp4">
+                                </video>
+                                <div class="trial-info">
+                                    <div class="trial-title">Trial 5</div>
+                                    <div class="trial-results">
+                                        <div class="trial-result-row">
+                                            <strong>Ours:</strong>
+                                            <span class="result-badge result-success">✓ 1.0</span>
+                                            <span class="text-gray-500">Successful completion</span>
+                                        </div>
+                                        <div class="trial-result-row">
+                                            <strong>π₀.₅:</strong>
+                                            <span class="result-badge result-partial">~ 0.5</span>
+                                            <span class="text-gray-500">Placed on medicine box, not in tray</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="trial-chevron">▶</div>
+                            </summary>
+                            <div class="trial-content">
+                                <video controls class="w-full">
+                                    <source src="media/results/trials/cracker_tray_medium/side_by_side_ours-t5-success.mp4" type="video/mp4">
+                                </video>
+                                <div class="trial-description">
+                                    <strong>Ours:</strong> 1.0 progress - Successful completion. <strong>π₀.₅:</strong> 0.5 progress - Picks the crackers and puts them on the medicine box, but not in the tray as required.
+                                </div>
+                            </div>
+                        </details>
+                    </div>
+            </div>
+
+            <!-- Task 3: Cracker Tray Hard -->
+            <div class="task-section">
+                <h3 id="task-cracker-tray-hard" class="task-header heading-anchor">
+                    <a href="#task-cracker-tray-hard" class="anchor-link">#</a>
+                    PB crackers → tray (hard)
+                </h3>
+
+                <div class="task-instruction">
+                    "place the peanut butter crackers onto the tray"
+                </div>
+
+                <p class="task-description">
+                    A more challenging version with heavy clutter: place the cracker box on the tray while navigating around multiple distractor objects including medicine boxes, popcorn containers, and other items that significantly crowd the workspace.
+                </p>
+
+                <div class="observations-section my-4 p-4">
+                        <p class="font-semibold mb-2">Observations</p>
+                        <p class="!text-sm"><strong>TiPToP:</strong> Maintained 100% success (5/5) even with heavy clutter, averaging 15.2s. Demonstrates robust planning in crowded scenes.</p>
+                        <p class="!text-sm"><strong>\(\pi_{0.5}\text{-DROID}\):</strong> Complete failure (0/5). The VLA struggled significantly with the increased clutter. Common failures included picking the crackers but not placing them in the tray, dropping objects on other items (e.g., popcorn), or showing no progress at all. The presence of many distractors appeared to overwhelm the policy.</p>
+                    </div>
+
+                    <div class="trials-grid">
+                        <details class="trial-details">
+                            <summary class="trial-summary">
+                                <video class="trial-thumbnail" muted preload="none" data-src="media/results/trials/cracker_tray_hard/side_by_side_ours-t1-success.mp4">
+                                </video>
+                                <div class="trial-info">
+                                    <div class="trial-title">Trial 1</div>
+                                    <div class="trial-results">
+                                        <div class="trial-result-row">
+                                            <strong>Ours:</strong>
+                                            <span class="result-badge result-success">✓ 1.0</span>
+                                            <span class="text-gray-500">Successful completion</span>
+                                        </div>
+                                        <div class="trial-result-row">
+                                            <strong>π₀.₅:</strong>
+                                            <span class="result-badge result-partial">~ 0.5</span>
+                                            <span class="text-gray-500">Picks crackers, doesn't place in tray</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="trial-chevron">▶</div>
+                            </summary>
+                            <div class="trial-content">
+                                <video controls class="w-full">
+                                    <source src="media/results/trials/cracker_tray_hard/side_by_side_ours-t1-success.mp4" type="video/mp4">
+                                </video>
+                                <div class="trial-description">
+                                    <strong>Ours:</strong> 1.0 progress - Successful completion. <strong>π₀.₅:</strong> 0.5 progress - Picks the crackers but doesn't put them in the tray.
+                                </div>
+                            </div>
+                        </details>
+
+                        <details class="trial-details">
+                            <summary class="trial-summary">
+                                <video class="trial-thumbnail" muted preload="none" data-src="media/results/trials/cracker_tray_hard/side_by_side_ours-t2-success.mp4">
+                                </video>
+                                <div class="trial-info">
+                                    <div class="trial-title">Trial 2</div>
+                                    <div class="trial-results">
+                                        <div class="trial-result-row">
+                                            <strong>Ours:</strong>
+                                            <span class="result-badge result-success">✓ 1.0</span>
+                                            <span class="text-gray-500">Successful completion</span>
+                                        </div>
+                                        <div class="trial-result-row">
+                                            <strong>π₀.₅:</strong>
+                                            <span class="result-badge result-failure">✗ 0.0</span>
+                                            <span class="text-gray-500">Doesn't even pick crackers</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="trial-chevron">▶</div>
+                            </summary>
+                            <div class="trial-content">
+                                <video controls class="w-full">
+                                    <source src="media/results/trials/cracker_tray_hard/side_by_side_ours-t2-success.mp4" type="video/mp4">
+                                </video>
+                                <div class="trial-description">
+                                    <strong>Ours:</strong> 1.0 progress - Successful completion. <strong>π₀.₅:</strong> 0.0 progress - Doesn't even pick the crackers.
+                                </div>
+                            </div>
+                        </details>
+
+                        <details class="trial-details">
+                            <summary class="trial-summary">
+                                <video class="trial-thumbnail" muted preload="none" data-src="media/results/trials/cracker_tray_hard/side_by_side_ours-t3-success.mp4">
+                                </video>
+                                <div class="trial-info">
+                                    <div class="trial-title">Trial 3</div>
+                                    <div class="trial-results">
+                                        <div class="trial-result-row">
+                                            <strong>Ours:</strong>
+                                            <span class="result-badge result-success">✓ 1.0</span>
+                                            <span class="text-gray-500">Successful completion</span>
+                                        </div>
+                                        <div class="trial-result-row">
+                                            <strong>π₀.₅:</strong>
+                                            <span class="result-badge result-partial">~ 0.5</span>
+                                            <span class="text-gray-500">Drops on popcorn instead</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="trial-chevron">▶</div>
+                            </summary>
+                            <div class="trial-content">
+                                <video controls class="w-full">
+                                    <source src="media/results/trials/cracker_tray_hard/side_by_side_ours-t3-success.mp4" type="video/mp4">
+                                </video>
+                                <div class="trial-description">
+                                    <strong>Ours:</strong> 1.0 progress - Successful completion. <strong>π₀.₅:</strong> 0.5 progress - Picks the crackers but drops them on the popcorn instead of placing in tray.
+                                </div>
+                            </div>
+                        </details>
+
+                        <details class="trial-details">
+                            <summary class="trial-summary">
+                                <video class="trial-thumbnail" muted preload="none" data-src="media/results/trials/cracker_tray_hard/side_by_side_ours-t4-success.mp4">
+                                </video>
+                                <div class="trial-info">
+                                    <div class="trial-title">Trial 4</div>
+                                    <div class="trial-results">
+                                        <div class="trial-result-row">
+                                            <strong>Ours:</strong>
+                                            <span class="result-badge result-success">✓ 1.0</span>
+                                            <span class="text-gray-500">Successful completion</span>
+                                        </div>
+                                        <div class="trial-result-row">
+                                            <strong>π₀.₅:</strong>
+                                            <span class="result-badge result-failure">✗ 0.0</span>
+                                            <span class="text-gray-500">Doesn't do anything</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="trial-chevron">▶</div>
+                            </summary>
+                            <div class="trial-content">
+                                <video controls class="w-full">
+                                    <source src="media/results/trials/cracker_tray_hard/side_by_side_ours-t4-success.mp4" type="video/mp4">
+                                </video>
+                                <div class="trial-description">
+                                    <strong>Ours:</strong> 1.0 progress - Successful completion. <strong>π₀.₅:</strong> 0.0 progress - Doesn't do anything.
+                                </div>
+                            </div>
+                        </details>
+
+                        <details class="trial-details">
+                            <summary class="trial-summary">
+                                <video class="trial-thumbnail" muted preload="none" data-src="media/results/trials/cracker_tray_hard/side_by_side_ours-t5-success.mp4">
+                                </video>
+                                <div class="trial-info">
+                                    <div class="trial-title">Trial 5</div>
+                                    <div class="trial-results">
+                                        <div class="trial-result-row">
+                                            <strong>Ours:</strong>
+                                            <span class="result-badge result-success">✓ 1.0</span>
+                                            <span class="text-gray-500">Successful completion</span>
+                                        </div>
+                                        <div class="trial-result-row">
+                                            <strong>π₀.₅:</strong>
+                                            <span class="result-badge result-failure">✗ 0.0</span>
+                                            <span class="text-gray-500">Doesn't do anything</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="trial-chevron">▶</div>
+                            </summary>
+                            <div class="trial-content">
+                                <video controls class="w-full">
+                                    <source src="media/results/trials/cracker_tray_hard/side_by_side_ours-t5-success.mp4" type="video/mp4">
+                                </video>
+                                <div class="trial-description">
+                                    <strong>Ours:</strong> 1.0 progress - Successful completion. <strong>π₀.₅:</strong> 0.0 progress - Doesn't do anything.
+                                </div>
+                            </div>
+                        </details>
+                    </div>
+            </div>
+
+            <!-- Task 4: Coffee Packing -->
+            <div class="task-section">
+                <h3 id="task-coffee-packing" class="task-header heading-anchor">
+                    <a href="#task-coffee-packing" class="anchor-link">#</a>
+                    Pack pods → tray
+                </h3>
+
+                <div class="task-instruction">
+                    "pack the coffee pods onto the rectangular tray"
+                </div>
+
+                <p class="task-description">
+                    Pack three coffee pods onto a tray in specific slots. This requires precise placement and understanding of spatial arrangements. Each pod must be placed correctly in its designated position on the tray.
+                </p>
+
+                <div class="observations-section my-4 p-4">
+                        <p class="font-semibold mb-2">Observations</p>
+                        <p class="!text-sm"><strong>TiPToP:</strong> Strong performance with 80% success (4/5), averaging 46.8s for successful trials. One failure due to planning timeout. Most trials completed all 3 pods successfully, demonstrating good sequential task execution.</p>
+                        <p class="!text-sm"><strong>\(\pi_{0.5}\text{-DROID}\):</strong> 20% success (1/5). Typical failures included placing only 1-2 out of 3 pods correctly, or placing pods in wrong locations (e.g., into a coffee mug instead of the tray). The task's requirement for precise, repeated placements proved challenging for the VLA.</p>
+                    </div>
+
+                    <div class="trials-grid">
+                        <details class="trial-details">
+                            <summary class="trial-summary">
+                                <video class="trial-thumbnail" muted preload="none" data-src="media/results/trials/coffee_packing/side_by_side_ours-t1-success.mp4">
+                                </video>
+                                <div class="trial-info">
+                                    <div class="trial-title">Trial 1</div>
+                                    <div class="trial-results">
+                                        <div class="trial-result-row">
+                                            <strong>Ours:</strong>
+                                            <span class="result-badge result-success">✓ 1.0</span>
+                                            <span class="text-gray-500">All 3 pods placed</span>
+                                        </div>
+                                        <div class="trial-result-row">
+                                            <strong>π₀.₅:</strong>
+                                            <span class="result-badge result-partial">~ 0.85</span>
+                                            <span class="text-gray-500">2/3 coffee pods placed</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="trial-chevron">▶</div>
+                            </summary>
+                            <div class="trial-content">
+                                <video controls class="w-full">
+                                    <source src="media/results/trials/coffee_packing/side_by_side_ours-t1-success.mp4" type="video/mp4">
+                                </video>
+                                <div class="trial-description">
+                                    <strong>Ours:</strong> 1.0 progress - Successful completion of all 3 pods. <strong>π₀.₅:</strong> 0.85 progress - 2/3 coffee pods placed correctly, pick-and-place one pod into the coffee machine.
+                                </div>
+                            </div>
+                        </details>
+
+                        <details class="trial-details">
+                            <summary class="trial-summary">
+                                <video class="trial-thumbnail" muted preload="none" data-src="media/results/trials/coffee_packing/side_by_side_ours-t2-success.mp4">
+                                </video>
+                                <div class="trial-info">
+                                    <div class="trial-title">Trial 2</div>
+                                    <div class="trial-results">
+                                        <div class="trial-result-row">
+                                            <strong>Ours:</strong>
+                                            <span class="result-badge result-success">✓ 1.0</span>
+                                            <span class="text-gray-500">All 3 pods placed</span>
+                                        </div>
+                                        <div class="trial-result-row">
+                                            <strong>π₀.₅:</strong>
+                                            <span class="result-badge result-partial">~ 0.4</span>
+                                            <span class="text-gray-500">Only 1/3 pod placed, approaches other pods but fails to grasp them.</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="trial-chevron">▶</div>
+                            </summary>
+                            <div class="trial-content">
+                                <video controls class="w-full">
+                                    <source src="media/results/trials/coffee_packing/side_by_side_ours-t2-success.mp4" type="video/mp4">
+                                </video>
+                                <div class="trial-description">
+                                    <strong>Ours:</strong> 1.0 progress - Successful completion of all 3 pods. <strong>π₀.₅:</strong> 0.4 progress - Only 1/3 pod placed correctly.
+                                </div>
+                            </div>
+                        </details>
+
+                        <details class="trial-details">
+                            <summary class="trial-summary">
+                                <video class="trial-thumbnail" muted preload="none" data-src="media/results/trials/coffee_packing/side_by_side_ours-t3-success.mp4">
+                                </video>
+                                <div class="trial-info">
+                                    <div class="trial-title">Trial 3</div>
+                                    <div class="trial-results">
+                                        <div class="trial-result-row">
+                                            <strong>Ours:</strong>
+                                            <span class="result-badge result-success">✓ 1.0</span>
+                                            <span class="text-gray-500">All 3 pods placed</span>
+                                        </div>
+                                        <div class="trial-result-row">
+                                            <strong>π₀.₅:</strong>
+                                            <span class="result-badge result-partial">~ 0.85</span>
+                                            <span class="text-gray-500">2/3 succeeded, 3rd incorrectly placed</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="trial-chevron">▶</div>
+                            </summary>
+                            <div class="trial-content">
+                                <video controls class="w-full">
+                                    <source src="media/results/trials/coffee_packing/side_by_side_ours-t3-success.mp4" type="video/mp4">
+                                </video>
+                                <div class="trial-description">
+                                    <strong>Ours:</strong> 1.0 progress - Successful completion of all 3 pods. <strong>π₀.₅:</strong> 0.85 progress - 2/3 succeeded, picked the 3rd one but placed it incorrectly.
+                                </div>
+                            </div>
+                        </details>
+
+                        <details class="trial-details">
+                            <summary class="trial-summary">
+                                <video class="trial-thumbnail" muted preload="none" data-src="media/results/trials/coffee_packing/side_by_side_ours-t4-fail.mp4">
+                                </video>
+                                <div class="trial-info">
+                                    <div class="trial-title">Trial 4</div>
+                                    <div class="trial-results">
+                                        <div class="trial-result-row">
+                                            <strong>Ours:</strong>
+                                            <span class="result-badge result-failure">✗ 0.0</span>
+                                            <span class="text-gray-500">Planning failure</span>
+                                        </div>
+                                        <div class="trial-result-row">
+                                            <strong>π₀.₅:</strong>
+                                            <span class="result-badge result-partial">~ 0.18</span>
+                                            <span class="text-gray-500">Put pod into steel mug</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="trial-chevron">▶</div>
+                            </summary>
+                            <div class="trial-content">
+                                <video controls class="w-full">
+                                    <source src="media/results/trials/coffee_packing/side_by_side_ours-t4-fail.mp4" type="video/mp4">
+                                </video>
+                                <div class="trial-description">
+                                    <strong>Ours:</strong> 0.0 progress - Planning failure (couldn't find a plan). <strong>π₀.₅:</strong> 0.183 progress - Picked a pod and put it into the steel mug instead of packing it onto the tray.
+                                </div>
+                            </div>
+                        </details>
+
+                        <details class="trial-details">
+                            <summary class="trial-summary">
+                                <video class="trial-thumbnail" muted preload="none" data-src="media/results/trials/coffee_packing/side_by_side_ours-t5-success.mp4">
+                                </video>
+                                <div class="trial-info">
+                                    <div class="trial-title">Trial 5</div>
+                                    <div class="trial-results">
+                                        <div class="trial-result-row">
+                                            <strong>Ours:</strong>
+                                            <span class="result-badge result-success">✓ 1.0</span>
+                                            <span class="text-gray-500">Successful completion</span>
+                                        </div>
+                                        <div class="trial-result-row">
+                                            <strong>π₀.₅:</strong>
+                                            <span class="result-badge result-success">✓ 1.0</span>
+                                            <span class="text-gray-500">Both methods succeed</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="trial-chevron">▶</div>
+                            </summary>
+                            <div class="trial-content">
+                                <video controls class="w-full">
+                                    <source src="media/results/trials/coffee_packing/side_by_side_ours-t5-success.mp4" type="video/mp4">
+                                </video>
+                                <div class="trial-description">
+                                    <strong>Ours:</strong> 1.0 progress - Successful completion. <strong>π₀.₅:</strong> 1.0 progress - Both methods succeed on this trial.
+                                </div>
+                            </div>
+                        </details>
+                    </div>
+            </div>
+
+            <!-- Pack pods → tray (obs.) -->
+            <div class="task-section">
+                <h3 id="task-coffee-packing-coke" class="task-header heading-anchor">
+                    <a href="#task-coffee-packing-coke" class="anchor-link">#</a>
+                    Pack pods → tray (obs.)
+                </h3>
+
+                <div class="task-instruction">
+                    "pack the coffee pods onto the rectangular tray"
+                </div>
+
+                <p class="task-description">
+                    An extended version of coffee packing that requires moving a Coke can obstacle out of the way before packing all three coffee pods onto the tray. This tests multi-step reasoning and obstacle management.
+                </p>
+
+                <div class="observations-section my-4 p-4">
+                        <p class="font-semibold mb-2">Observations</p>
+                        <p class="!text-sm"><strong>TiPToP:</strong> 20% success (1/5), taking 61.4s when successful. Common failure modes included grasp failures on pods, planning timeouts, and incomplete pod placement (2/3 pods placed). The need to reason about obstacle removal before placement proved difficult.</p>
+                        <p class="!text-sm"><strong>\(\pi_{0.5}\text{-DROID}\):</strong> Complete failure (0/5). Struggled with the multi-step nature: often managed 1-2 pods but failed on the third, sometimes placing pods incorrectly (on the can rather than the tray, or in the coffee cup). The requirement to move an obstacle first added significant complexity.</p>
+                    </div>
+
+                    <div class="trials-grid">
+                        <details class="trial-details">
+                            <summary class="trial-summary">
+                                <video class="trial-thumbnail" muted preload="none" data-src="media/results/trials/coffee_packing_with_coke_move/side_by_side_ours-t1.mp4">
+                                </video>
+                                <div class="trial-info">
+                                    <div class="trial-title">Trial 1</div>
+                                    <div class="trial-results">
+                                        <div class="trial-result-row">
+                                            <strong>Ours:</strong>
+                                            <span class="result-badge result-partial">~ 0.8</span>
+                                            <span class="text-gray-500">2/3 pods, third slipped out</span>
+                                        </div>
+                                        <div class="trial-result-row">
+                                            <strong>π₀.₅:</strong>
+                                            <span class="result-badge result-partial">~ 0.45</span>
+                                            <span class="text-gray-500">1/3 pod, tried placing on can</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="trial-chevron">▶</div>
+                            </summary>
+                            <div class="trial-content">
+                                <video controls class="w-full">
+                                    <source src="media/results/trials/coffee_packing_with_coke_move/side_by_side_ours-t1.mp4" type="video/mp4">
+                                </video>
+                                <div class="trial-description">
+                                    <strong>Ours:</strong> 0.66 progress - 2/3 pods packed; grasped the third one but it slipped out. <strong>π₀.₅:</strong> 0.33 progress - 1/3 pod placed; tried to place another pod on the coke can put it fell out.
+                                </div>
+                            </div>
+                        </details>
+
+                        <details class="trial-details">
+                            <summary class="trial-summary">
+                                <video class="trial-thumbnail" muted preload="none" data-src="media/results/trials/coffee_packing_with_coke_move/side_by_side_ours-t2.mp4">
+                                </video>
+                                <div class="trial-info">
+                                    <div class="trial-title">Trial 2</div>
+                                    <div class="trial-results">
+                                        <div class="trial-result-row">
+                                            <strong>Ours:</strong>
+                                            <span class="result-badge result-partial">~ 0.8</span>
+                                            <span class="text-gray-500">2/3 pods, failed pick on first pod</span>
+                                        </div>
+                                        <div class="trial-result-row">
+                                            <strong>π₀.₅:</strong>
+                                            <span class="result-badge result-partial">~ 0.65</span>
+                                            <span class="text-gray-500">2/3 pods, third failed due to can</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="trial-chevron">▶</div>
+                            </summary>
+                            <div class="trial-content">
+                                <video controls class="w-full">
+                                    <source src="media/results/trials/coffee_packing_with_coke_move/side_by_side_ours-t2.mp4" type="video/mp4">
+                                </video>
+                                <div class="trial-description">
+                                    <strong>Ours:</strong> 0.8 progress - 2/3 pods; failed a pick on the first coffee pod but successfully moved the coke can out of the way. <strong>π₀.₅:</strong> 0.65 progress - 2/3 pods; managed to pack 2 in, but failed to place the third due to the can.
+                                </div>
+                            </div>
+                        </details>
+
+                        <details class="trial-details">
+                            <summary class="trial-summary">
+                                <video class="trial-thumbnail" muted preload="none" data-src="media/results/trials/coffee_packing_with_coke_move/side_by_side_ours-t3.mp4">
+                                </video>
+                                <div class="trial-info">
+                                    <div class="trial-title">Trial 3</div>
+                                    <div class="trial-results">
+                                        <div class="trial-result-row">
+                                            <strong>Ours:</strong>
+                                            <span class="result-badge result-success">✓ 1.0</span>
+                                            <span class="text-gray-500">All 3 pods packed</span>
+                                        </div>
+                                        <div class="trial-result-row">
+                                            <strong>π₀.₅:</strong>
+                                            <span class="result-badge result-partial">~ 0.55</span>
+                                            <span class="text-gray-500">1/3 pod, others in coffee cup</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="trial-chevron">▶</div>
+                            </summary>
+                            <div class="trial-content">
+                                <video controls class="w-full">
+                                    <source src="media/results/trials/coffee_packing_with_coke_move/side_by_side_ours-t3.mp4" type="video/mp4">
+                                </video>
+                                <div class="trial-description">
+                                    <strong>Ours:</strong> 1.0 progress - Successful completion of all 3 pods. <strong>π₀.₅:</strong> 0.55 progress - 1/3 pod placed; put the other two into the coffee cup instead.
+                                </div>
+                            </div>
+                        </details>
+
+                        <details class="trial-details">
+                            <summary class="trial-summary">
+                                <video class="trial-thumbnail" muted preload="none" data-src="media/results/trials/coffee_packing_with_coke_move/side_by_side_ours-t4.mp4">
+                                </video>
+                                <div class="trial-info">
+                                    <div class="trial-title">Trial 4</div>
+                                    <div class="trial-results">
+                                        <div class="trial-result-row">
+                                            <strong>Ours:</strong>
+                                            <span class="result-badge result-failure">✗ 0.0</span>
+                                            <span class="text-gray-500">Failed to find a plan</span>
+                                        </div>
+                                        <div class="trial-result-row">
+                                            <strong>π₀.₅:</strong>
+                                            <span class="result-badge result-partial">~ 0.9</span>
+                                            <span class="text-gray-500">2/3 pods, failed final placement</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="trial-chevron">▶</div>
+                            </summary>
+                            <div class="trial-content">
+                                <video controls class="w-full">
+                                    <source src="media/results/trials/coffee_packing_with_coke_move/side_by_side_ours-t4.mp4" type="video/mp4">
+                                </video>
+                                <div class="trial-description">
+                                    <strong>Ours:</strong> 0.0 progress - Failed to find a plan. <strong>π₀.₅:</strong> 0.9 progress - 2/3 pods; got lucky moving the can away, picked the last one up but failed to place it properly.
+                                </div>
+                            </div>
+                        </details>
+
+                        <details class="trial-details">
+                            <summary class="trial-summary">
+                                <video class="trial-thumbnail" muted preload="none" data-src="media/results/trials/coffee_packing_with_coke_move/side_by_side_ours-t5.mp4">
+                                </video>
+                                <div class="trial-info">
+                                    <div class="trial-title">Trial 5</div>
+                                    <div class="trial-results">
+                                        <div class="trial-result-row">
+                                            <strong>Ours:</strong>
+                                            <span class="result-badge result-partial">~ 0.75</span>
+                                            <span class="text-gray-500">2/3 pods, Gemini vision issue</span>
+                                        </div>
+                                        <div class="trial-result-row">
+                                            <strong>π₀.₅:</strong>
+                                            <span class="result-badge result-partial">~ 0.65</span>
+                                            <span class="text-gray-500">2/3 pods, third balanced on can</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="trial-chevron">▶</div>
+                            </summary>
+                            <div class="trial-content">
+                                <video controls class="w-full">
+                                    <source src="media/results/trials/coffee_packing_with_coke_move/side_by_side_ours-t5.mp4" type="video/mp4">
+                                </video>
+                                <div class="trial-description">
+                                    <strong>Ours:</strong> 0.66 progress - 2/3 pods; missed the third pod due to Gemini vision issue. <strong>π₀.₅:</strong> 0.65 progress - 2/3 pods; put the third one balanced but it doesn't touch the tray (balanced on the coke can and other pods).
+                                </div>
+                            </div>
+                        </details>
+                    </div>
+            </div>
+
+            <!-- Aleve bottle → tray (obs.) -->
+            <div class="task-section">
+                <h3 id="task-med-pack" class="task-header heading-anchor">
+                    <a href="#task-med-pack" class="anchor-link">#</a>
+                    Aleve bottle → tray (obs.)
+                </h3>
+
+                <div class="task-instruction">
+                    "put the small white aleve bottle into the cardboard tray"
+                </div>
+
+                <p class="task-description">
+                    Pack a medicine box onto a wooden tray while navigating around obstacles in the workspace. Requires reasoning about which objects need to be moved to create a clear path to the goal.
+                </p>
+
+                <div class="observations-section my-4 p-4">
+                        <p class="font-semibold mb-2">Observations</p>
+                        <p class="!text-sm"><strong>TiPToP:</strong> Good performance with 80% success (4/5), averaging 31.2s. Successfully moved obstacles when necessary. One failure involved picking a suboptimal grasp to move an obstacle, leading to accidentally picking up the wrong object.</p>
+                        <p class="!text-sm"><strong>\(\pi_{0.5}\text{-DROID}\):</strong> Moderate performance at 40% success (2/5). Failure modes included pushing objects together to create more clutter, flipping the wooden platform, and knocking objects off the table. When successful, completion times were similar to ours (~31s), but execution was less reliable.</p>
+                    </div>
+
+                    <div class="trials-grid">
+                        <details class="trial-details">
+                            <summary class="trial-summary">
+                                <video class="trial-thumbnail" muted preload="none" data-src="media/results/trials/med_pack_with_obs/side_by_side_ours-t1-success.mp4">
+                                </video>
+                                <div class="trial-info">
+                                    <div class="trial-title">Trial 1</div>
+                                    <div class="trial-results">
+                                        <div class="trial-result-row">
+                                            <strong>Ours:</strong>
+                                            <span class="result-badge result-success">✓ 1.0</span>
+                                            <span class="text-gray-500">Successful completion</span>
+                                        </div>
+                                        <div class="trial-result-row">
+                                            <strong>π₀.₅:</strong>
+                                            <span class="result-badge result-success">✓ 1.0</span>
+                                            <span class="text-gray-500">Shoves box off at 81.6s</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="trial-chevron">▶</div>
+                            </summary>
+                            <div class="trial-content">
+                                <video controls class="w-full">
+                                    <source src="media/results/trials/med_pack_with_obs/side_by_side_ours-t1-success.mp4" type="video/mp4">
+                                </video>
+                                <div class="trial-description">
+                                    <strong>Ours:</strong> 1.0 progress - Successful completion. <strong>π₀.₅:</strong> 1.0 progress - Succeeds, though at 81.6s, π₀.₅ accidentally shoves the box off the table.
+                                </div>
+                            </div>
+                        </details>
+
+                        <details class="trial-details">
+                            <summary class="trial-summary">
+                                <video class="trial-thumbnail" muted preload="none" data-src="media/results/trials/med_pack_with_obs/side_by_side_ours-t2-success.mp4">
+                                </video>
+                                <div class="trial-info">
+                                    <div class="trial-title">Trial 2</div>
+                                    <div class="trial-results">
+                                        <div class="trial-result-row">
+                                            <strong>Ours:</strong>
+                                            <span class="result-badge result-success">✓ 1.0</span>
+                                            <span class="text-gray-500">Successful completion</span>
+                                        </div>
+                                        <div class="trial-result-row">
+                                            <strong>π₀.₅:</strong>
+                                            <span class="result-badge result-partial">~ 0.5</span>
+                                            <span class="text-gray-500">Wooden platform flips up, grasped bottle</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="trial-chevron">▶</div>
+                            </summary>
+                            <div class="trial-content">
+                                <video controls class="w-full">
+                                    <source src="media/results/trials/med_pack_with_obs/side_by_side_ours-t2-success.mp4" type="video/mp4">
+                                </video>
+                                <div class="trial-description">
+                                    <strong>Ours:</strong> 1.0 progress - Successful completion. <strong>π₀.₅:</strong> 0.5 progress - Pushes the objects such that the wooden platform flips up and can't be used anymore, picks up aleve bottle
+                                </div>
+                            </div>
+                        </details>
+
+                        <details class="trial-details">
+                            <summary class="trial-summary">
+                                <video class="trial-thumbnail" muted preload="none" data-src="media/results/trials/med_pack_with_obs/side_by_side_ours-t3-fail.mp4">
+                                </video>
+                                <div class="trial-info">
+                                    <div class="trial-title">Trial 3</div>
+                                    <div class="trial-results">
+                                        <div class="trial-result-row">
+                                            <strong>Ours:</strong>
+                                            <span class="result-badge result-failure">✗ 0.0</span>
+                                            <span class="text-gray-500">Bad grasp on obstacle</span>
+                                        </div>
+                                        <div class="trial-result-row">
+                                            <strong>π₀.₅:</strong>
+                                            <span class="result-badge result-partial">~ 0.5</span>
+                                            <span class="text-gray-500">Pushed objects around, grasped bottle</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="trial-chevron">▶</div>
+                            </summary>
+                            <div class="trial-content">
+                                <video controls class="w-full">
+                                    <source src="media/results/trials/med_pack_with_obs/side_by_side_ours-t3-fail.mp4" type="video/mp4">
+                                </video>
+                                <div class="trial-description">
+                                    <strong>Ours:</strong> 0.0 progress - Picked a bad grasp to move an obstacle and failed, then accidentally picked up another object. <strong>π₀.₅:</strong> 0.5 progress - Pushed objects around to make space and grasp aleve bottle, but placed in mug.
+                                </div>
+                            </div>
+                        </details>
+
+                        <details class="trial-details">
+                            <summary class="trial-summary">
+                                <video class="trial-thumbnail" muted preload="none" data-src="media/results/trials/med_pack_with_obs/side_by_side_ours-t4-success.mp4">
+                                </video>
+                                <div class="trial-info">
+                                    <div class="trial-title">Trial 4</div>
+                                    <div class="trial-results">
+                                        <div class="trial-result-row">
+                                            <strong>Ours:</strong>
+                                            <span class="result-badge result-success">✓ 1.0</span>
+                                            <span class="text-gray-500">Successful completion</span>
+                                        </div>
+                                        <div class="trial-result-row">
+                                            <strong>π₀.₅:</strong>
+                                            <span class="result-badge result-success">✓ 1.0</span>
+                                            <span class="text-gray-500">Successful completion. Tips tray at 118s, medicine falls</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="trial-chevron">▶</div>
+                            </summary>
+                            <div class="trial-content">
+                                <video controls class="w-full">
+                                    <source src="media/results/trials/med_pack_with_obs/side_by_side_ours-t4-success.mp4" type="video/mp4">
+                                </video>
+                                <div class="trial-description">
+                                    <strong>Ours:</strong> 1.0 progress - Successful completion. <strong>π₀.₅:</strong> 1.0 progress - Successful completion. At around 118s, the robot tips over the wooden tray and the medicine falls out.
+                                </div>
+                            </div>
+                        </details>
+
+                        <details class="trial-details">
+                            <summary class="trial-summary">
+                                <video class="trial-thumbnail" muted preload="none" data-src="media/results/trials/med_pack_with_obs/side_by_side_ours-t5-success.mp4">
+                                </video>
+                                <div class="trial-info">
+                                    <div class="trial-title">Trial 5</div>
+                                    <div class="trial-results">
+                                        <div class="trial-result-row">
+                                            <strong>Ours:</strong>
+                                            <span class="result-badge result-success">✓ 1.0</span>
+                                            <span class="text-gray-500">Moved obstacle, completed task</span>
+                                        </div>
+                                        <div class="trial-result-row">
+                                            <strong>π₀.₅:</strong>
+                                            <span class="result-badge result-partial">~ 0.5</span>
+                                            <span class="text-gray-500">Medicine falls out, struggles to pick</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="trial-chevron">▶</div>
+                            </summary>
+                            <div class="trial-content">
+                                <video controls class="w-full">
+                                    <source src="media/results/trials/med_pack_with_obs/side_by_side_ours-t5-success.mp4" type="video/mp4">
+                                </video>
+                                <div class="trial-description">
+                                    <strong>Ours:</strong> 1.0 progress - Successfully moved an object out of the way and completed task! <strong>π₀.₅:</strong> 0.5 progress - Partially picks up the medicine, but it falls out; struggles to pick it up again with a proper grasp.
+                                </div>
+                            </div>
+                        </details>
+                    </div>
+            </div>
+
+            <!-- Three marbles → cup -->
+            <div class="task-section">
+                <h3 id="task-marbles" class="task-header heading-anchor">
+                    <a href="#task-marbles" class="anchor-link">#</a>
+                    Three marbles → cup
+                </h3>
+
+                <div class="task-instruction">
+                    "put only the marbles in the cup"
+                </div>
+
+                <p class="task-description">
+                    Place three marbles into a cup. This task is particularly challenging due to the small size of marbles, their tendency to roll, and the precision required for cup placement. Requires careful perception and delicate manipulation.
+                </p>
+
+                <div class="observations-section my-4 p-4">
+                        <p class="font-semibold mb-2">Observations</p>
+                        <p class="!text-sm"><strong>TiPToP:</strong> Challenging task with 40% success (2/5), averaging 43.7s for successful trials. Main failure modes included misperception of the cup leading to missed placements, marbles rolling away, and unmodeled cables causing collisions with the cup. The precision required for small rolling objects proved difficult.</p>
+                        <p class="!text-sm"><strong>\(\pi_{0.5}\text{-DROID}\):</strong> Complete failure (0/5). Common issues included marbles rolling away before manipulation, picking wrong objects (e.g., larger balls), and general inability to execute precise placement. One trial managed to place one marble but failed on subsequent ones.</p>
+                    </div>
+
+                    <div class="trials-grid">
+                        <details class="trial-details">
+                            <summary class="trial-summary">
+                                <video class="trial-thumbnail" muted preload="none" data-src="media/results/trials/marbles3/side_by_side_ours-t1-success.mp4">
+                                </video>
+                                <div class="trial-info">
+                                    <div class="trial-title">Trial 1</div>
+                                    <div class="trial-results">
+                                        <div class="trial-result-row">
+                                            <strong>Ours:</strong>
+                                            <span class="result-badge result-success">✓ 1.0</span>
+                                            <span class="text-gray-500">Successful completion</span>
+                                        </div>
+                                        <div class="trial-result-row">
+                                            <strong>π₀.₅:</strong>
+                                            <span class="result-badge result-failure">✗ 0.0</span>
+                                            <span class="text-gray-500">Balls roll away</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="trial-chevron">▶</div>
+                            </summary>
+                            <div class="trial-content">
+                                <video controls class="w-full">
+                                    <source src="media/results/trials/marbles3/side_by_side_ours-t1-success.mp4" type="video/mp4">
+                                </video>
+                                <div class="trial-description">
+                                    <strong>Ours:</strong> 1.0 progress - Successful completion. <strong>π₀.₅:</strong> 0.0 progress - Balls roll away; didn't even pick one.
+                                </div>
+                            </div>
+                        </details>
+
+                        <details class="trial-details">
+                            <summary class="trial-summary">
+                                <video class="trial-thumbnail" muted preload="none" data-src="media/results/trials/marbles3/side_by_side_ours-t2-success.mp4">
+                                </video>
+                                <div class="trial-info">
+                                    <div class="trial-title">Trial 2</div>
+                                    <div class="trial-results">
+                                        <div class="trial-result-row">
+                                            <strong>Ours:</strong>
+                                            <span class="result-badge result-partial">~ 0.83</span>
+                                            <span class="text-gray-500">Final ball rolled away</span>
+                                        </div>
+                                        <div class="trial-result-row">
+                                            <strong>π₀.₅:</strong>
+                                            <span class="result-badge result-failure">✗ 0.0</span>
+                                            <span class="text-gray-500">Picked bigger ball, caused chaos</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="trial-chevron">▶</div>
+                            </summary>
+                            <div class="trial-content">
+                                <video controls class="w-full">
+                                    <source src="media/results/trials/marbles3/side_by_side_ours-t2-success.mp4" type="video/mp4">
+                                </video>
+                                <div class="trial-description">
+                                    <strong>Ours:</strong> 0.83 progress - Missed placing the final ball into the cup (it rolled away), likely due to bad perception of the cup. <strong>π₀.₅:</strong> 0.0 progress - Picked a much bigger ball and dropped it into the cup, causing chaos in the scene.
+                                </div>
+                            </div>
+                        </details>
+
+                        <details class="trial-details">
+                            <summary class="trial-summary">
+                                <video class="trial-thumbnail" muted preload="none" data-src="media/results/trials/marbles3/side_by_side_ours-t3-success.mp4">
+                                </video>
+                                <div class="trial-info">
+                                    <div class="trial-title">Trial 3</div>
+                                    <div class="trial-results">
+                                        <div class="trial-result-row">
+                                            <strong>Ours:</strong>
+                                            <span class="result-badge result-success">✓ 1.0</span>
+                                            <span class="text-gray-500">Successful completion</span>
+                                        </div>
+                                        <div class="trial-result-row">
+                                            <strong>π₀.₅:</strong>
+                                            <span class="result-badge result-partial">~ 0.33</span>
+                                            <span class="text-gray-500">One marble in, fails others</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="trial-chevron">▶</div>
+                            </summary>
+                            <div class="trial-content">
+                                <video controls class="w-full">
+                                    <source src="media/results/trials/marbles3/side_by_side_ours-t3-success.mp4" type="video/mp4">
+                                </video>
+                                <div class="trial-description">
+                                    <strong>Ours:</strong> 1.0 progress - Successful completion. <strong>π₀.₅:</strong> 0.33 progress - Puts one marble into the cup, but fails at the others.
+                                </div>
+                            </div>
+                        </details>
+
+                        <details class="trial-details">
+                            <summary class="trial-summary">
+                                <video class="trial-thumbnail" muted preload="none" data-src="media/results/trials/marbles3/side_by_side_ours-t4-fail-2-out-of-3.mp4">
+                                </video>
+                                <div class="trial-info">
+                                    <div class="trial-title">Trial 4</div>
+                                    <div class="trial-results">
+                                        <div class="trial-result-row">
+                                            <strong>Ours:</strong>
+                                            <span class="result-badge result-partial">~ 0.83</span>
+                                            <span class="text-gray-500">Third marble, cup misperception</span>
+                                        </div>
+                                        <div class="trial-result-row">
+                                            <strong>π₀.₅:</strong>
+                                            <span class="result-badge result-failure">✗ 0.0</span>
+                                            <span class="text-gray-500">Complete failure</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="trial-chevron">▶</div>
+                            </summary>
+                            <div class="trial-content">
+                                <video controls class="w-full">
+                                    <source src="media/results/trials/marbles3/side_by_side_ours-t4-fail-2-out-of-3.mp4" type="video/mp4">
+                                </video>
+                                <div class="trial-description">
+                                    <strong>Ours:</strong> 0.83 progress - Failed placement on the third marble once again due to misperception of cup. <strong>π₀.₅:</strong> 0.0 progress - Complete failure.
+                                </div>
+                            </div>
+                        </details>
+
+                        <details class="trial-details">
+                            <summary class="trial-summary">
+                                <video class="trial-thumbnail" muted preload="none" data-src="media/results/trials/marbles3/side_by_side_ours-t5-complete-fail.mp4">
+                                </video>
+                                <div class="trial-info">
+                                    <div class="trial-title">Trial 5</div>
+                                    <div class="trial-results">
+                                        <div class="trial-result-row">
+                                            <strong>Ours:</strong>
+                                            <span class="result-badge result-partial">~ 0.33</span>
+                                            <span class="text-gray-500">Cable collision with cup</span>
+                                        </div>
+                                        <div class="trial-result-row">
+                                            <strong>π₀.₅:</strong>
+                                            <span class="result-badge result-failure">✗ 0.0</span>
+                                            <span class="text-gray-500">Complete failure</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="trial-chevron">▶</div>
+                            </summary>
+                            <div class="trial-content">
+                                <video controls class="w-full">
+                                    <source src="media/results/trials/marbles3/side_by_side_ours-t5-complete-fail.mp4" type="video/mp4">
+                                </video>
+                                <div class="trial-description">
+                                    <strong>Ours:</strong> 0.33 progress - Successfully placed one marble, but not modeling the cable caused collision with the cup, making it move and causing further collisions. When picking the first marble, bumped the table making the other two move. <strong>π₀.₅:</strong> 0.0 progress - Complete failure.
+                                </div>
+                            </div>
+                        </details>
+                    </div>
+            </div>
+
+            <!-- Marbles + cable -->
+            <div class="task-section">
+                <h3 id="task-clear-insanity" class="task-header heading-anchor">
+                    <a href="#task-clear-insanity" class="anchor-link">#</a>
+                    Marbles + cable
+                </h3>
+
+                <div class="task-instruction">
+                    "put the small plastic bag of marbles into the black mesh bag, and the cable on top of the empty large plastic bag"
+                </div>
+
+                <p class="task-description">
+                    A complex multi-object task: place a small bag of marbles into a mesh bag, then a wire/cable onto the plastic surface. Requires coordinating multiple objects with different properties (flexible cable, plastic bag, deformable mesh bag).
+                </p>
+
+                <div class="observations-section my-4 p-4">
+                        <p class="font-semibold mb-2">Observations</p>
+                        <p class="!text-sm"><strong>TiPToP:</strong> Difficult task with 40% success (2/5), averaging 35.4s when successful. Failure modes included missed grasps on the cable, missed placements into the mesh bag, and one case where Gemini vision model incorrectly identified a beaker as the target cable. The combination of deformable objects and precise sequential manipulation proved challenging.</p>
+                        <p class="!text-sm"><strong>\(\pi_{0.5}\text{-DROID}\):</strong> Complete failure (0/5). While some trials showed partial progress (e.g., placing the wire on plastic around 30-90s), the VLA consistently failed to complete the full sequence. Common failures included picking up the plastic sheet and dumping everything out, throwing marbles off the table, or complete inability to progress.</p>
+                    </div>
+
+                    <div class="trials-grid">
+                        <details class="trial-details">
+                            <summary class="trial-summary">
+                                <video class="trial-thumbnail" muted preload="none" data-src="media/results/trials/clear-insanity/side_by_side_ours-t1-fail.mp4">
+                                </video>
+                                <div class="trial-info">
+                                    <div class="trial-title">Trial 1</div>
+                                    <div class="trial-results">
+                                        <div class="trial-result-row">
+                                            <strong>Ours:</strong>
+                                            <span class="result-badge result-partial">~ 0.75</span>
+                                            <span class="text-gray-500">Wire placed, balls missed pouch</span>
+                                        </div>
+                                        <div class="trial-result-row">
+                                            <strong>π₀.₅:</strong>
+                                            <span class="result-badge result-partial">~ 0.75</span>
+                                            <span class="text-gray-500">Cable on plastic, then ruined</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="trial-chevron">▶</div>
+                            </summary>
+                            <div class="trial-content">
+                                <video controls class="w-full">
+                                    <source src="media/results/trials/clear-insanity/side_by_side_ours-t1-fail.mp4" type="video/mp4">
+                                </video>
+                                <div class="trial-description">
+                                    <strong>Ours:</strong> 0.75 progress - Correctly put the wire on the plastic and picked the balls, but missed placing them in the pouch. <strong>π₀.₅:</strong> 0.75 progress - Put the marbles on the plastic, then put the cable on the plastic around the 90s mark, but then picked up the plastic and ruined everything.
+                                </div>
+                            </div>
+                        </details>
+
+                        <details class="trial-details">
+                            <summary class="trial-summary">
+                                <video class="trial-thumbnail" muted preload="none" data-src="media/results/trials/clear-insanity/side_by_side_ours-t2-success.mp4">
+                                </video>
+                                <div class="trial-info">
+                                    <div class="trial-title">Trial 2</div>
+                                    <div class="trial-results">
+                                        <div class="trial-result-row">
+                                            <strong>Ours:</strong>
+                                            <span class="result-badge result-success">✓ 1.0</span>
+                                            <span class="text-gray-500">Successful completion</span>
+                                        </div>
+                                        <div class="trial-result-row">
+                                            <strong>π₀.₅:</strong>
+                                            <span class="result-badge result-partial">~ 0.5</span>
+                                            <span class="text-gray-500">Grasped marbles and cable but placement failures</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="trial-chevron">▶</div>
+                            </summary>
+                            <div class="trial-content">
+                                <video controls class="w-full">
+                                    <source src="media/results/trials/clear-insanity/side_by_side_ours-t2-success.mp4" type="video/mp4">
+                                </video>
+                                <div class="trial-description">
+                                    <strong>Ours:</strong> 1.0 progress - Successful completion. <strong>π₀.₅:</strong> 0.5 progress - Grasped bag of marbles but put on table, grasped cable but put on mesh pouch, then put plastic bag on cable and mesh pouch.
+                                </div>
+                            </div>
+                        </details>
+
+                        <details class="trial-details">
+                            <summary class="trial-summary">
+                                <video class="trial-thumbnail" muted preload="none" data-src="media/results/trials/clear-insanity/side_by_side_ours-t3-fail.mp4">
+                                </video>
+                                <div class="trial-info">
+                                    <div class="trial-title">Trial 3</div>
+                                    <div class="trial-results">
+                                        <div class="trial-result-row">
+                                            <strong>Ours:</strong>
+                                            <span class="result-badge result-partial">~ 0.25</span>
+                                            <span class="text-gray-500">Missed grasp and placement</span>
+                                        </div>
+                                        <div class="trial-result-row">
+                                            <strong>π₀.₅:</strong>
+                                            <span class="result-badge result-partial">~ 0.5</span>
+                                            <span class="text-gray-500">Wire placed, then dumps everything</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="trial-chevron">▶</div>
+                            </summary>
+                            <div class="trial-content">
+                                <video controls class="w-full">
+                                    <source src="media/results/trials/clear-insanity/side_by_side_ours-t3-fail.mp4" type="video/mp4">
+                                </video>
+                                <div class="trial-description">
+                                    <strong>Ours:</strong> 0.25 progress - Missed a grasp on the cable, then grasped bag of marbles but missed a placement into the mesh bag. <strong>π₀.₅:</strong> 0.5 progress - At around 30.9s, places the wire on the plastic, but then picks the plastic and dumps everything out.
+                                </div>
+                            </div>
+                        </details>
+
+                        <details class="trial-details">
+                            <summary class="trial-summary">
+                                <video class="trial-thumbnail" muted preload="none" data-src="media/results/trials/clear-insanity/side_by_side_ours-t4-fail.mp4">
+                                </video>
+                                <div class="trial-info">
+                                    <div class="trial-title">Trial 4</div>
+                                    <div class="trial-results">
+                                        <div class="trial-result-row">
+                                            <strong>Ours:</strong>
+                                            <span class="result-badge result-partial">~ 0.5</span>
+                                            <span class="text-gray-500">Picked beaker, Gemini vision issue</span>
+                                        </div>
+                                        <div class="trial-result-row">
+                                            <strong>π₀.₅:</strong>
+                                            <span class="result-badge result-partial">~ 0.75</span>
+                                            <span class="text-gray-500">Marbles off table, cable at 63.77s</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="trial-chevron">▶</div>
+                            </summary>
+                            <div class="trial-content">
+                                <video controls class="w-full">
+                                    <source src="media/results/trials/clear-insanity/side_by_side_ours-t4-fail.mp4" type="video/mp4">
+                                </video>
+                                <div class="trial-description">
+                                    <strong>Ours:</strong> 0.5 progress - Picked the beaker instead of the cable due to a Gemini vision issue, placed marbles correctly. <strong>π₀.₅:</strong> 0.75 progress - Failed to put the marbles into the mesh (threw them both off the table). At 63.77s, placed the cable onto the plastic.
+                                </div>
+                            </div>
+                        </details>
+
+                        <details class="trial-details">
+                            <summary class="trial-summary">
+                                <video class="trial-thumbnail" muted preload="none" data-src="media/results/trials/clear-insanity/side_by_side_ours-t5-success.mp4">
+                                </video>
+                                <div class="trial-info">
+                                    <div class="trial-title">Trial 5</div>
+                                    <div class="trial-results">
+                                        <div class="trial-result-row">
+                                            <strong>Ours:</strong>
+                                            <span class="result-badge result-success">✓ 1.0</span>
+                                            <span class="text-gray-500">Successful completion</span>
+                                        </div>
+                                        <div class="trial-result-row">
+                                            <strong>π₀.₅:</strong>
+                                            <span class="result-badge result-partial">~ 0.5</span>
+                                            <span class="text-gray-500">Threw cable off table, placed marbles on plastic bag</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="trial-chevron">▶</div>
+                            </summary>
+                            <div class="trial-content">
+                                <video controls class="w-full">
+                                    <source src="media/results/trials/clear-insanity/side_by_side_ours-t5-success.mp4" type="video/mp4">
+                                </video>
+                                <div class="trial-description">
+                                    <strong>Ours:</strong> 1.0 progress - Successful completion. <strong>π₀.₅:</strong> 0.5 progress - Threw the cable off the table and cleared other objects from table, put the marbles onto the plastic bag.
+                                </div>
+                            </div>
+                        </details>
+                    </div>
+            </div>
+
+            <!-- Evaluation Scene Details Table -->
+            <h2 id="scene-details" class="heading-anchor">
+                <a href="#scene-details" class="anchor-link">#</a>
+                Evaluation Scene Details
+            </h2>
+
+            <p>
+                Each scene shows an image of the task, its identifier (as referenced in the <a href="#summary-results">Summary table</a> above), the language prompt given to both systems, and the task progress metric used for evaluation. Scenes are grouped by category: Simple, Distractor, Semantic, and Multi-step. <strong>†</strong> indicates tasks evaluated by the system designers at MIT. Unmarked scenes are evaluated by external evaluators at the University of Pennsylvania not involved in the development of TiPToP. <strong>(sim)</strong> denotes tasks evaluated in simulation.
+            </p>
+            <p class="!text-sm prompt-text">
+                Task progress metric numbers are reported in %; a + or &minus; sign indicates that the particular denoted amount is added or subtracted from the overall score, and no sign indicates that the number is the absolute score for achieving that particular condition. Progress metrics may vary by evaluator and task. Some metrics penalize manipulating distractors while others do not.
+            </p>
+
+            <div class="my-8 overflow-x-auto">
+                <table class="results-table">
+                    <thead>
+                        <tr class="row-alt">
+                            <th class="text-center w-40">Scene</th>
+                            <th class="text-left">Identifier / Language Prompt</th>
+                            <th class="text-left">Progress Metric</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <!-- SIMPLE TASKS -->
+                        <tr class="row-group">
+                            <td colspan="3" class="category-td italic">Simple</td>
+                        </tr>
+                        <tr>
+                            <td class="scene-td-image">
+                                <img src="media/results/scenes/sim/sim_scene_1.png" alt="Cube to bowl (sim)" class="scene-image">
+                            </td>
+                            <td class="scene-td-info">
+                                <strong>Cube → bowl (sim)</strong><br>
+                                <span class="prompt-text">"put the cube in the bowl"</span>
+                            </td>
+                            <td class="scene-td-metric">
+                                25% approach cube, 50% grasp, 75% approach bowl with cube, 100% place
+                            </td>
+                        </tr>
+                        <tr class="row-alt">
+                            <td class="scene-td-image">
+                                <img src="media/results/scenes/sim/sim_scene_2.png" alt="Can to mug (sim)" class="scene-image">
+                            </td>
+                            <td class="scene-td-info">
+                                <strong>Can → mug (sim)</strong><br>
+                                <span class="prompt-text">"put the can in the mug"</span>
+                            </td>
+                            <td class="scene-td-metric">
+                                25% approach can, 50% grasp, 75% approach mug with can, 100% place
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="scene-td-image">
+                                <img src="media/results/scenes/sim/sim_scene_3.png" alt="Banana to bin (sim)" class="scene-image">
+                            </td>
+                            <td class="scene-td-info">
+                                <strong>Banana → bin (sim)</strong><br>
+                                <span class="prompt-text">"put banana in the bin"</span>
+                            </td>
+                            <td class="scene-td-metric">
+                                25% approach banana, 50% grasp, 75% approach bin with banana, 100% place
+                            </td>
+                        </tr>
+                        <tr class="row-alt">
+                            <td class="scene-td-image">
+                                <img src="media/results/scenes/penn/marker-to-tray.jpg" alt="Marker to tray" class="scene-image">
+                            </td>
+                            <td class="scene-td-info">
+                                <strong>Marker → tray</strong><br>
+                                <span class="prompt-text">"put the marker in the tray"</span>
+                            </td>
+                            <td class="scene-td-metric">
+                                +25% touch marker, +25% grasp, +25% touch tray, +25% place
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="scene-td-image">
+                                <img src="media/results/scenes/mit/cracker-to-tray-easy.jpg" alt="Crackers to tray" class="scene-image">
+                            </td>
+                            <td class="scene-td-info">
+                                <strong>Crackers → tray<sup>†</sup></strong><br>
+                                <span class="prompt-text">"place the crackers onto the tray"</span>
+                            </td>
+                            <td class="scene-td-metric">
+                                50% grasp crackers, 100% place
+                            </td>
+                        </tr>
+
+                        <!-- DISTRACTOR TASKS -->
+                        <tr class="row-group">
+                            <td colspan="3" class="category-td italic">Distractor</td>
+                        </tr>
+                        <tr class="row-alt">
+                            <td class="scene-td-image">
+                                <img src="media/results/scenes/sim/sim_scene_4.png" alt="Meat can to sugar box (sim)" class="scene-image">
+                            </td>
+                            <td class="scene-td-info">
+                                <strong>Meat can → sugar box (sim)</strong><br>
+                                <span class="prompt-text">"put the meat can on the sugar box"</span>
+                            </td>
+                            <td class="scene-td-metric">
+                                25% approach meat can, 50% grasp, 75% approach box with meat can, 100% place
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="scene-td-image">
+                                <img src="media/results/scenes/penn/coffee-to-plate.jpg" alt="Coffee capsules to plate" class="scene-image">
+                            </td>
+                            <td class="scene-td-info">
+                                <strong>Coffee capsules → plate</strong><br>
+                                <span class="prompt-text">"put all of the coffee capsules onto the white plate"</span>
+                            </td>
+                            <td class="scene-td-metric">
+                                +50% per capsule placed, &minus;20% per distractor
+                            </td>
+                        </tr>
+                        <tr class="row-alt">
+                            <td class="scene-td-image">
+                                <img src="media/results/scenes/penn/turkish-figs-to-plate.jpg" alt="Turkish figs to plate" class="scene-image">
+                            </td>
+                            <td class="scene-td-info">
+                                <strong>Turkish figs → plate</strong><br>
+                                <span class="prompt-text">"put the turkish figs onto the white plate"</span>
+                            </td>
+                            <td class="scene-td-metric">
+                                +50% per fig placed, &minus;20% per cashew
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="scene-td-image">
+                                <img src="media/results/scenes/penn/cashews-to-plate.jpg" alt="Cashews to plate" class="scene-image">
+                            </td>
+                            <td class="scene-td-info">
+                                <strong>Cashews → plate</strong><br>
+                                <span class="prompt-text">"put the roasted cashews onto the white plate"</span>
+                            </td>
+                            <td class="scene-td-metric">
+                                +50% per cashew placed, &minus;20% per fig
+                            </td>
+                        </tr>
+                        <tr class="row-alt">
+                            <td class="scene-td-image">
+                                <img src="media/results/scenes/penn/red-cube-to-plate.jpg" alt="Red cubes to plate" class="scene-image">
+                            </td>
+                            <td class="scene-td-info">
+                                <strong>Red cubes → plate</strong><br>
+                                <span class="prompt-text">"put the red cubes onto the white plate"</span>
+                            </td>
+                            <td class="scene-td-metric">
+                                +50% per cube placed, &minus;20% if distractor placed
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="scene-td-image">
+                                <img src="media/results/scenes/penn/fish-to-box.jpg" alt="Fish to box" class="scene-image">
+                            </td>
+                            <td class="scene-td-info">
+                                <strong>Fish → box</strong><br>
+                                <span class="prompt-text">"place the fish into the white box"</span>
+                            </td>
+                            <td class="scene-td-metric">
+                                +50% pick fish, +50% place into white box
+                            </td>
+                        </tr>
+                        <tr class="row-alt">
+                            <td class="scene-td-image">
+                                <img src="media/results/scenes/mit/cracker-to-tray-medium.jpg" alt="Crackers to tray (medium)" class="scene-image">
+                            </td>
+                            <td class="scene-td-info">
+                                <strong>Crackers → tray (med.)<sup>†</sup></strong><br>
+                                <span class="prompt-text">"place the crackers onto the tray"</span>
+                            </td>
+                            <td class="scene-td-metric">
+                                +50% pick crackers, +50% place on the tray (no penalty for distractor)
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="scene-td-image">
+                                <img src="media/results/scenes/mit/pb-cracker-to-tray-hard.jpg" alt="PB crackers to tray (hard)" class="scene-image">
+                            </td>
+                            <td class="scene-td-info">
+                                <strong>PB crackers → tray (hard)<sup>†</sup></strong><br>
+                                <span class="prompt-text">"place the peanut butter crackers onto the tray"</span>
+                            </td>
+                            <td class="scene-td-metric">
+                                +50% pick crackers, +50% place on the tray (no penalty for distractor)
+                            </td>
+                        </tr>
+
+                        <!-- SEMANTIC TASKS -->
+                        <tr class="row-group">
+                            <td colspan="3" class="category-td italic">Semantic</td>
+                        </tr>
+                        <tr class="row-alt">
+                            <td class="scene-td-image">
+                                <img src="media/results/scenes/penn/toy-to-similar-plate.jpg" alt="Toy to matching plate" class="scene-image">
+                            </td>
+                            <td class="scene-td-info">
+                                <strong>Toy → matching plate</strong><br>
+                                <span class="prompt-text">"pick up the toy and place on the plate with similar color"</span>
+                            </td>
+                            <td class="scene-td-metric">
+                                +50% pick toy, +50% place on teal or +30% place on blue
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="scene-td-image">
+                                <img src="media/results/scenes/penn/creeper-to-purple-plate.jpg" alt="Creeper to plate" class="scene-image">
+                            </td>
+                            <td class="scene-td-info">
+                                <strong>Creeper → plate</strong><br>
+                                <span class="prompt-text">"pick up the creeper and place onto the purple plate"</span>
+                            </td>
+                            <td class="scene-td-metric">
+                                +50% pick creeper toy, +50% place onto purple plate
+                            </td>
+                        </tr>
+                        <tr class="row-alt">
+                            <td class="scene-td-image">
+                                <img src="media/results/scenes/penn/largest-toy-to-plate.jpg" alt="Largest toy to plate" class="scene-image">
+                            </td>
+                            <td class="scene-td-info">
+                                <strong>Largest toy → plate</strong><br>
+                                <span class="prompt-text">"pick up the largest toy and place onto the purple plate"</span>
+                            </td>
+                            <td class="scene-td-metric">
+                                +50% pick creeper, +50% place onto purple plate, &minus;20% if attempt to place on distractor
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="scene-td-image">
+                                <img src="media/results/scenes/penn/red-a-to-color-pile.jpg" alt="Red A to color pile" class="scene-image">
+                            </td>
+                            <td class="scene-td-info">
+                                <strong>Red A → color pile</strong><br>
+                                <span class="prompt-text">"pick up the red A and place on same color pile"</span>
+                            </td>
+                            <td class="scene-td-metric">
+                                +50% pick red A block, +50% place onto red pile, &minus;20% knock pile over
+                            </td>
+                        </tr>
+                        <tr class="row-alt">
+                            <td class="scene-td-image">
+                                <img src="media/results/scenes/penn/banana-to-box.jpg" alt="Banana to box" class="scene-image">
+                            </td>
+                            <td class="scene-td-info">
+                                <strong>Banana → box</strong><br>
+                                <span class="prompt-text">"pick up the banana and put it in the box"</span>
+                            </td>
+                            <td class="scene-td-metric">
+                                +50% place banana into any box, +50% place into box with fruit (aims to test common sense of human selection)
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="scene-td-image">
+                                <img src="media/results/scenes/penn/n-block-to-indicated-cup.jpg" alt="N block to indicated cup" class="scene-image">
+                            </td>
+                            <td class="scene-td-info">
+                                <strong>N block → indicated cup</strong><br>
+                                <span class="prompt-text">"put the N block into the cup pointed to by the arrow"</span>
+                            </td>
+                            <td class="scene-td-metric">
+                                +50% grasp N block, +50% place into cup pointed at
+                            </td>
+                        </tr>
+                        <tr class="row-alt">
+                            <td class="scene-td-image">
+                                <img src="media/results/scenes/penn/sort-blocks-by-color.jpg" alt="Sort blocks by color" class="scene-image">
+                            </td>
+                            <td class="scene-td-info">
+                                <strong>Sort blocks by color</strong><br>
+                                <span class="prompt-text">"sort the blocks into opposite color plates"</span>
+                            </td>
+                            <td class="scene-td-metric">
+                                +10% per block touched, +40% per correct place
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="scene-td-image">
+                                <img src="media/results/scenes/penn/banana-to-matching-plate.jpg" alt="Banana to matching plate" class="scene-image">
+                            </td>
+                            <td class="scene-td-info">
+                                <strong>Banana → matching plate</strong><br>
+                                <span class="prompt-text">"place banana into plate has similar color"</span>
+                            </td>
+                            <td class="scene-td-metric">
+                                +50% pick banana, +50% place into orange plate
+                            </td>
+                        </tr>
+
+                        <!-- MULTI-STEP TASKS -->
+                        <tr class="row-group">
+                            <td colspan="3" class="category-td italic">Multi-step</td>
+                        </tr>
+                        <tr class="row-alt">
+                            <td class="scene-td-image">
+                                <img src="media/results/scenes/sim/sim_scene_5.png" alt="Color cubes to bowl (sim)" class="scene-image">
+                            </td>
+                            <td class="scene-td-info">
+                                <strong>Color cubes → bowl (sim)</strong><br>
+                                <span class="prompt-text">"put 3 cubes into the bowl"</span>
+                            </td>
+                            <td class="scene-td-metric">
+                                For up to 3 cubes (normalized to 100%): +5% approach cube, +10% grasp, +10% approach bowl with cube, +15% place
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="scene-td-image">
+                                <img src="media/results/scenes/penn/airpods-to-cup.jpg" alt="AirPods to cup" class="scene-image">
+                            </td>
+                            <td class="scene-td-info">
+                                <strong>AirPods → cup</strong><br>
+                                <span class="prompt-text">"place airpods into the yellow cup"</span>
+                            </td>
+                            <td class="scene-td-metric">
+                                +25% per AirPods picked, +25% per place, &minus;20% distractor
+                            </td>
+                        </tr>
+                        <tr class="row-alt">
+                            <td class="scene-td-image">
+                                <img src="media/results/scenes/mit/coffee-pod-to-tray.jpg" alt="Pack pods to tray" class="scene-image">
+                            </td>
+                            <td class="scene-td-info">
+                                <strong>Pack pods → tray<sup>†</sup></strong><br>
+                                <span class="prompt-text">"pack the coffee pods onto the rectangular tray"</span>
+                            </td>
+                            <td class="scene-td-metric">
+                                For each of the 3 pods: +3.33% approach, +15% grasp, +0% place not in tray, +15% place touching tray
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="scene-td-image">
+                                <img src="media/results/scenes/mit/coffee-pod-to-tray-obstruction.jpg" alt="Pack pods to tray (obstruction)" class="scene-image">
+                            </td>
+                            <td class="scene-td-info">
+                                <strong>Pack pods → tray (obs.)<sup>†</sup></strong><br>
+                                <span class="prompt-text">"pack the coffee pods onto the rectangular tray"</span>
+                            </td>
+                            <td class="scene-td-metric">
+                                +12.5% pick can, +12.5% place s.t. it doesn't obstruct tray (or +25% for clearing can obstruction without pick/place), for each of 3 pods: +5% for approaching pod, +10% for correct pick, +10% for correct place into tray
+                            </td>
+                        </tr>
+                        <tr class="row-alt">
+                            <td class="scene-td-image">
+                                <img src="media/results/scenes/mit/aleve-to-tray.jpg" alt="Aleve bottle to tray (obstruction)" class="scene-image">
+                            </td>
+                            <td class="scene-td-info">
+                                <strong>Aleve bottle → tray (obs.)<sup>†</sup></strong><br>
+                                <span class="prompt-text">"put the small white aleve bottle into the cardboard tray"</span>
+                            </td>
+                            <td class="scene-td-metric">
+                                +10% pick an obstacle object, +10% place obstacle s.t. unobstructs aleve, +30% pick aleve bottle (+50% if picked without clearing obstacles), +50% place bottle in tray
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="scene-td-image">
+                                <img src="media/results/scenes/mit/three-marbles-to-cup.jpg" alt="Three marbles to cup" class="scene-image">
+                            </td>
+                            <td class="scene-td-info">
+                                <strong>Three marbles → cup<sup>†</sup></strong><br>
+                                <span class="prompt-text">"put only the marbles in the cup"</span>
+                            </td>
+                            <td class="scene-td-metric">
+                                +16.67% for each pick of a marble, +16.67% for each place of a marble into the cup
+                            </td>
+                        </tr>
+                        <tr class="row-alt">
+                            <td class="scene-td-image">
+                                <img src="media/results/scenes/mit/marbles-cable-clear.jpg" alt="Marbles + cable" class="scene-image">
+                            </td>
+                            <td class="scene-td-info">
+                                <strong>Marbles + cable<sup>†</sup></strong><br>
+                                <span class="prompt-text">"put the small plastic bag of marbles into the black mesh bag, and the cable on top of the empty large plastic bag"</span>
+                            </td>
+                            <td class="scene-td-metric">
+                                wire: +5% approach, +20% stable pick, +25% stable place atop plastic; marbles pouch: +5% approach, +20% pick, +25% place into mesh bag
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Footer -->
+            <div class="border-t border-custom mt-12 pt-8 mb-0 flex flex-col sm:flex-row justify-between items-center">
+                <p class="!text-sm text-gray-500 !mb-0">
+                    &copy; 2026 TiPToP Authors
+                </p>
+                <div class="mt-4 sm:mt-0 text-base flex items-center gap-4">
+                    <a href="/" class="page-link font-medium">Home</a>
+                    <span class="text-gray-400">•</span>
+                    <a href="/implementation" class="page-link font-medium">Implementation Details</a>
+                    <span class="text-gray-400">•</span>
+                    <a href="https://github.com/tiptop-robot/tiptop" target="_blank" class="page-link font-medium">Try it yourself!</a>
+                </div>
+            </div>
+            </div>
+        </div>
+    </article>
+    </div>
+    </div>
+
+    <!-- Table of Contents JavaScript -->
+    <script>
+        // Task toggle functionality
+        function toggleTask(taskId) {
+            const content = document.getElementById(taskId + '-content');
+            const icon = document.getElementById(taskId + '-icon');
+            
+            if (content.style.display === 'none') {
+                content.style.display = 'block';
+                icon.textContent = '▼';
+            } else {
+                content.style.display = 'none';
+                icon.textContent = '▶';
+            }
+        }
+
+        // Auto-generate TOC from headings
+        document.addEventListener('DOMContentLoaded', function() {
+            const tocNav = document.getElementById('toc-nav');
+            const tocContainer = document.getElementById('toc');
+            const headings = document.querySelectorAll('.article-content h2, .article-content h3');
+            const tocList = document.createElement('ul');
+
+            headings.forEach(heading => {
+                // Skip headings without IDs
+                if (!heading.id) return;
+
+                const listItem = document.createElement('li');
+                const link = document.createElement('a');
+
+                link.href = `#${heading.id}`;
+                link.textContent = heading.textContent.replace('#', '').trim();
+                link.classList.add('toc-link');
+
+                // Add indentation for h3 (task headers)
+                if (heading.tagName === 'H3') {
+                    link.classList.add('toc-link-indent');
+                }
+
+                listItem.appendChild(link);
+                tocList.appendChild(listItem);
+            });
+
+            tocNav.appendChild(tocList);
+
+            // Scroll spy functionality
+            const observerOptions = {
+                root: null,
+                rootMargin: '-10% 0px -70% 0px',
+                threshold: 0
+            };
+
+            let activeLink = null;
+            const intersectingHeadings = new Set();
+
+            const observerCallback = (entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        intersectingHeadings.add(entry.target);
+                    } else {
+                        intersectingHeadings.delete(entry.target);
+                    }
+                });
+
+                // Find the topmost intersecting heading
+                if (intersectingHeadings.size > 0) {
+                    const sortedHeadings = Array.from(intersectingHeadings).sort((a, b) => {
+                        return a.offsetTop - b.offsetTop;
+                    });
+
+                    const topHeading = sortedHeadings[0];
+                    const id = topHeading.id;
+                    const newActiveLink = document.querySelector(`.toc-link[href="#${id}"]`);
+
+                    if (newActiveLink && newActiveLink !== activeLink) {
+                        if (activeLink) {
+                            activeLink.classList.remove('active');
+                        }
+                        newActiveLink.classList.add('active');
+                        activeLink = newActiveLink;
+                    }
+                }
+            };
+
+            const observer = new IntersectionObserver(observerCallback, observerOptions);
+
+            headings.forEach(heading => {
+                if (heading.id && !heading.querySelector('.task-toggle-btn')) {
+                    observer.observe(heading);
+                }
+            });
+        });
+    </script>
+
+
+    <script>
+// Lazy load thumbnail videos using Intersection Observer
+document.addEventListener('DOMContentLoaded', function() {
+    const thumbnailVideos = document.querySelectorAll('.trial-thumbnail[data-src]');
+
+    const videoObserver = new IntersectionObserver((entries, observer) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                const video = entry.target;
+                const source = document.createElement('source');
+                source.src = video.dataset.src;
+                source.type = 'video/mp4';
+                video.appendChild(source);
+                video.load();
+                video.preload = 'metadata';
+                observer.unobserve(video);
+            }
+        });
+    }, {
+        rootMargin: '200px' // Start loading 200px before entering viewport
+    });
+
+    thumbnailVideos.forEach(video => videoObserver.observe(video));
+
+    document.querySelectorAll('.trial-details').forEach(details => {
+        details.addEventListener('toggle', () => {
+            if (!details.open) {
+                details.querySelectorAll('video').forEach(v => v.pause());
+            }
+        });
+    });
+});
+</script>
+
+<!-- Lightbox for expandable media -->
+<script>
+(function() {
+    const lightbox = document.createElement('div');
+    lightbox.className = 'lightbox';
+    lightbox.innerHTML = '<button class="lightbox-close">&times;</button><div class="lightbox-content"><img src="" alt=""><p class="lightbox-caption"></p></div>';
+    document.body.appendChild(lightbox);
+
+    const lightboxImg = lightbox.querySelector('img');
+    const lightboxCaption = lightbox.querySelector('.lightbox-caption');
+    const closeBtn = lightbox.querySelector('.lightbox-close');
+
+    window.openLightbox = function(img) {
+        lightboxImg.src = img.src;
+        lightboxImg.alt = img.alt;
+
+        const caption = img.dataset.caption || '';
+        lightboxCaption.innerHTML = caption;
+        lightboxCaption.style.display = caption ? 'block' : 'none';
+
+        lightbox.classList.add('active');
+        document.body.style.overflow = 'hidden';
+    };
+
+    function closeLightbox() {
+        lightbox.classList.remove('active');
+        document.body.style.overflow = '';
+    }
+
+    closeBtn.addEventListener('click', closeLightbox);
+    lightbox.addEventListener('click', function(e) {
+        if (e.target === lightbox) closeLightbox();
+    });
+    document.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape' && lightbox.classList.contains('active')) closeLightbox();
+    });
+})();
+
+// Make scene details table images expandable
+document.addEventListener('DOMContentLoaded', function() {
+    const sceneHeading = document.getElementById('scene-details');
+    if (!sceneHeading) return;
+
+    // Find the first table after the scene-details heading
+    let el = sceneHeading.nextElementSibling;
+    let sceneTable = null;
+    while (el) {
+        const t = el.querySelector('table');
+        if (t) { sceneTable = t; break; }
+        if (el.tagName === 'TABLE') { sceneTable = el; break; }
+        el = el.nextElementSibling;
+    }
+    if (!sceneTable) return;
+
+    sceneTable.querySelectorAll('td img').forEach(function(img) {
+        const wrapper = document.createElement('div');
+        wrapper.className = 'expandable-media';
+        wrapper.style.display = 'inline-block';
+        img.parentNode.insertBefore(wrapper, img);
+        wrapper.appendChild(img);
+        img.style.cursor = 'pointer';
+        img.dataset.caption = img.alt;
+        img.addEventListener('click', function() { openLightbox(img); });
+    });
+});
+</script>
+
+<!-- TOC scroll fix -->
+<script src="assets/toc-scroll.js"></script>
+</body>
+</html>

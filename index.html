@@ -1,0 +1,966 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TiPToP: A Modular Open-Vocabulary Planning System for Robotic Manipulation</title>
+    <link rel="icon" type="image/jpeg" href="assets/favicon.jpg">
+
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-4W4CFWR9GR"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+
+      gtag('config', 'G-4W4CFWR9GR');
+    </script>
+
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Lora:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+
+    <!-- KaTeX -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css" integrity="sha384-n8MVd4RsNIU0tAv4ct0nTaAbDJwPJzDEaqSD1odI+WdtXRGWt2kTvGFasHpSy3SV" crossorigin="anonymous">
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js" integrity="sha384-XjKyOOlGwcjNTAIQHIpgOno0Hl1YQqzUOEleOLALmuqehneUG+vnGctmUb0ZY0l8" crossorigin="anonymous"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js" integrity="sha384-+VBxd3r6XgURycqtZ117nYw44OOcIax56Z4dCRWbxyPt0Koah1uHoK0o4+/RRE05" crossorigin="anonymous"></script>
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            renderMathInElement(document.body, {
+                delimiters: [
+                    {left: '$$', right: '$$', display: true},
+                    {left: '\\[', right: '\\]', display: true},
+                    {left: '\\(', right: '\\)', display: false}
+                ],
+                throwOnError: false
+            });
+        });
+    </script>
+
+    <!-- bibtex-js -->
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/gh/pcooksey/bibtex-js@1.0.0/src/bibtex_js.min.js"></script>
+
+    <link rel="stylesheet" href="assets/styles.css">
+</head>
+<body class="page-index">
+
+    <div class="page-layout">
+        <!-- Table of Contents -->
+        <div class="toc-container" id="toc">
+            <div class="toc-title">Contents</div>
+            <nav class="toc-nav" id="toc-nav">
+                <ul>
+                    <li><a href="#" class="toc-link">Introduction</a></li>
+                    <li><a href="#system-overview" class="toc-link">TiPToP Overview</a></li>
+                    <li><a href="#results" class="toc-link">Evaluation and Results</a></li>
+                    <li><a href="#failure-analysis" class="toc-link toc-link-indent">Failure Analysis</a></li>
+                    <li><a href="#cross-embodiment" class="toc-link toc-link-indent">Cross-Embodiment</a></li>
+                    <li><a href="#beyond-pick-and-place" class="toc-link toc-link-indent">Beyond Pick-and-Place</a></li>
+                    <li><a href="#extensions" class="toc-link">Extensions and Future Work</a></li>
+                    <li><a href="#conclusion" class="toc-link">Conclusion</a></li>
+                    <li><a href="#references" class="toc-link">References</a></li>
+                </ul>
+            </nav>
+        </div>
+
+        <!-- Main Content Wrapper -->
+        <div class="main-content-wrapper">
+        <!-- Article Header -->
+        <article class="max-w-5xl mx-auto px-5 sm:px-6 pb-12 sm:pb-16 pt-6 sm:pt-12">
+        <!-- Title -->
+        <h1 class="text-3xl sm:text-4xl md:text-5xl font-bold sm:mb-6 mb-4" style="line-height: 1.1">
+            TiPToP: A Modular Open-Vocabulary Planning System for Robotic Manipulation
+        </h1>
+
+        <!-- Article Metadata -->
+        <div class="leading-relaxed mb-6">
+            <!-- Authors -->
+            <div class="mb-2 sm:mb-3 text-base sm:text-lg">
+                <a href="https://shen.nz/" class="author-link font-medium" target="_blank">William Shen</a><sup>1*</sup>,
+                <a href="https://nishanthjkumar.com/" class="author-link font-medium" target="_blank">Nishanth Kumar</a><sup>1*</sup>,
+                <a href="https://sahitc.com/" class="author-link font-medium" target="_blank">Sahit Chintalapudi</a><sup>1</sup>,
+                <a href="https://everloom-129.github.io/" class="author-link font-medium" target="_blank">Jie Wang</a><sup>2</sup>,
+                <a href="https://cwatson1998.github.io/" class="author-link font-medium" target="_blank">Christopher Watson</a><sup>2</sup>,
+                <a href="https://edwardshu.com/" class="author-link font-medium" target="_blank">Edward S. Hu</a><sup>2</sup>,
+                <a href="https://www.mit.edu/~jingcao/" class="author-link font-medium" target="_blank">Jing Cao</a><sup>1</sup>,
+                <a href="https://www.seas.upenn.edu/~dineshj/" class="author-link font-medium" target="_blank">Dinesh Jayaraman</a><sup>2</sup>,
+                <a href="https://people.csail.mit.edu/lpk/" class="author-link font-medium" target="_blank">Leslie Pack Kaelbling</a><sup>1</sup>,
+                <a href="https://people.csail.mit.edu/tlp/" class="author-link font-medium" target="_blank">Tomás Lozano-Pérez</a><sup>1</sup>
+            </div>
+
+            <!-- Affiliation -->
+            <div class="mb-1 sm:mb-2 sm:text-base text-sm text-gray-600">
+                <sup>1</sup> <a href="https://lis.csail.mit.edu/" class="page-link" target="_blank">LIS Group, MIT CSAIL</a>
+                <span class="mx-2"></span>
+                <sup>2</sup> <a href="https://www.upenn.edu/" class="page-link" target="_blank">University of Pennsylvania</a>
+            </div>
+
+            <!-- Equal contribution note -->
+            <div class="mb-4 sm:text-sm text-xs text-gray-500">
+                <sup>*</sup>Indicates equal contribution.
+            </div>
+
+            <!-- Paper and Code buttons -->
+            <div class="flex flex-wrap gap-3 mb-4">
+                <a href="tiptop.pdf" target="_blank" class="inline-flex items-center gap-2 px-4 py-2 text-base font-medium rounded-md border border-gray-300 text-gray-700 hover:bg-gray-50 transition-colors">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
+                    PDF
+                </a>
+                <a href="https://github.com/tiptop-robot/tiptop" target="_blank" class="inline-flex items-center gap-2 px-4 py-2 text-base font-medium rounded-md border border-gray-300 text-gray-700 hover:bg-gray-50 transition-colors">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/></svg>
+                    Code
+                </a>
+            </div>
+
+            <!-- In-article navigation -->
+            <div class="text-sm sm:text-base flex flex-wrap items-center gap-x-2 gap-y-1">
+                <span class="text-gray-500">More pages:</span>
+                <a href="/implementation" class="page-link font-medium">Implementation Details</a>
+                <span class="text-gray-400">•</span>
+                <a href="/results" class="page-link font-medium">Full Results</a>
+            </div>
+        </div>
+
+        <!-- Hero Video/Image -->
+        <div class="mb-8">
+            <video autoplay controls loop muted playsinline class="w-full" style="border-radius: 8px; border: 1px solid var(--color-border);">
+                <source src="media/overview/teaser.mp4" type="video/mp4">
+                Your browser does not support the video tag.
+            </video>
+            <p class="caption mt-2 text-gray-500"><b>Video</b>: TiPToP performing various manipulation tasks across different objects, environments, and embodiments.</p>
+        </div>
+
+        <!-- Article Content -->
+        <div class="article-content">
+            <!-- Introduction -->
+            <p>
+                Recent progress in robotic manipulation has been driven by a wide range of approaches, from large end-to-end policies trained on demonstrations or reinforcement learning, to systems that explicitly compose perception, language, and control components.
+                Each of these paradigms has produced impressive results, but understanding how they relate — and how they can be combined — remains an open and important question.
+            </p>
+
+            <p>
+                In this work, we focus on building capable manipulation systems through <em>modular composition</em>.
+                We introduce <span class="font-semibold">TiPToP</span> (<strong>T</strong>iPToP <strong>i</strong>s a <strong>P</strong>lanner <strong>T</strong>hat just works <strong>o</strong>n <strong>P</strong>ixels), a planning-based robotics system that solves complex real-world manipulation tasks directly from raw pixels and natural-language commands.
+                TiPToP composes a Task-and-Motion Planning (TAMP) core with off-the-shelf perception and language models into coherent long-horizon behavior via inference-time search and optimization.
+            </p>
+
+            <p>
+                At its core, TiPToP is designed to be <strong>easy to setup</strong>, <strong>modular</strong>, and <strong>performant</strong>.
+                Our system can be deployed on supported hardware in under one hour, and its modular design allows individual components (e.g., perception models) to be improved independently. This modularity also enables extension to novel embodiments and the incorporation of new skills.
+                We benchmark TiPToP through extensive evaluation against \(\pi_{0.5}\text{-DROID}\), a state-of-the-art VLA fine-tuned on 350 hours of embodiment-specific demonstrations.
+                The majority of this evaluation was conducted by an external evaluation team not involved in the development of TiPToP.
+                Over 165 trials in 28 evaluation scenes in the real world and simulation combined, TiPToP (which requires zero robot data) often matches or outperforms \(\pi_{0.5}\text{-DROID}\), particularly on tasks requiring semantic grounding, distractor rejection, and multi-step sequencing.
+                We provide a detailed failure analysis and use it to identify concrete directions for improving individual modules.
+            </p>
+
+            <p>
+                In this blog post, we describe the key ingredients of TiPToP and explain how its modular architecture enables compositional generalization across tasks, environments, and embodiments.
+                We discuss current limitations, outline concrete directions for improving individual components, and highlight opportunities for research into tighter integration with large-scale end-to-end learned policies.
+                We hope readers will try TiPToP themselves and build atop it by extending or improving existing modules, or by contributing entirely new ones.
+            </p>
+
+
+            <h2 id="system-overview" class="heading-anchor">
+                <a href="#system-overview" class="anchor-link">#</a>
+                TiPToP Overview
+            </h2>
+
+            <!-- System Overview Video -->
+            <div class="mb-8">
+                <video controls loop muted playsinline class="w-full" style="border-radius: 8px; border: 1px solid var(--color-border);" poster="media/overview/pipeline-poster.jpg">
+                    <source src="media/overview/pipeline.mp4" type="video/mp4">
+                    Your browser does not support the video tag.
+                </video>
+                <p class="caption mt-2"><b>Video</b>: walk-through of the TiPToP architecture showing the flow from initial image and language instruction through perception, planning, and execution.</p>
+            </div>
+
+            <p>
+                TiPToP adopts a modular architecture with separate perception, planning, and execution modules (described below). This modular design enables strong compositional generalization via combining skills in novel ways to operate over unseen objects without any task-specific data or training. Additionally, it affords the ability to improve the overall system by improving specific modules independently. Below, we provide a high-level overview of our different modules. System implementation details, along with a detailed walkthrough, can be found in the <a class="font-semibold" href="/implementation">Implementation Details</a> page.
+            </p>
+
+            <h3 class="text-xl font-semibold">1. Perception</h3>
+            <p class="!mb-4">
+                The perception module constructs an object-centric 3D scene representation from RGB images and a natural-language instruction. Two branches run in parallel:
+            </p>
+
+            <ol class="list-decimal list-inside ml-4 !mb-4">
+                <li>
+                    <strong>3D Vision Branch:</strong> <a href="https://nvlabs.github.io/FoundationStereo/" target="_blank">FoundationStereo</a> <cite data-cite="wen2025stereo"></cite> estimates depth and produces a dense point cloud. <a href="https://m2-t2.github.io/" target="_blank">M2T2</a> <cite data-cite="yuan2023m2t2"></cite> predicts 6-DoF grasp poses from this point cloud.
+                </li>
+                <li>
+                <strong>Semantic Branch:</strong> <a href="https://deepmind.google/models/gemini-robotics/gemini-robotics-er/" target="_blank">Gemini Robotics-ER 1.5</a> <cite data-cite="team2025gemini"></cite> detects objects and grounds the language instruction to symbolic goals. <a href="https://github.com/facebookresearch/sam2" target="_blank">SAM-2</a> <cite data-cite="ravi2024sam"></cite> generates segmentation masks from these detections.
+                </li>
+            </ol>
+            <p>
+                We combine both branches by masking the dense point cloud to extract per-object point clouds, then reconstruct object geometry using convex hull completion. The object meshes are used for collision checking, and we find them to be surprisingly sufficient for a variety of rearrangement tasks given their tendency to overapproximate. 
+                The output <strong>scene representation</strong> contains object meshes, candidate grasps, and symbolic goal propositions.
+            </p>
+
+            <h3 class="text-xl font-semibold">2. Planning</h3>
+            <p>
+                TiPToP uses <a href="https://cutamp.github.io/" target="_blank">cuTAMP</a> <cite data-cite="shen2024cutamp"></cite>, a GPU-parallelized Task and Motion Planning (TAMP) solver, to search over high-level task plans (e.g., sequences of pick and place actions) and to optimize low-level robot motions and gripper actions.
+                cuTAMP is able to optimize thousands of candidate plans in parallel to efficiently find long-horizon solutions that satisfy the grounded goal. It relies on the object-centric scene representation for sampling grasps, collision checking, and checking placement and stability constraints.
+            </p>
+
+            <h3 class="text-xl font-semibold">3. Execution</h3>
+            <p>
+                We execute the resulting trajectory open-loop, using a joint impedance controller. TiPToP sends joint position and velocity targets, together with gripper commands, directly to the robot without feedback or replanning during execution.
+            </p>
+
+            <h2 id="results" class="heading-anchor">
+                <a href="#results" class="anchor-link">#</a>
+                Evaluation and Results
+            </h2>
+
+            <p>
+                We evaluated TiPToP on 28 tasks for a total of 165 trials in simulation and the real world, comparing against <a href="https://www.pi.website/blog/pi05" target="_blank">\(\pi_{0.5}\text{-DROID}\)</a> <cite data-cite="intelligence2025pi05"></cite>. 
+                The majority of the tasks were evaluated at the University of Pennsylvania by an external team that was not involved in developing TiPToP.
+            </p>
+
+            <!-- Side-by-side compilation videos -->
+            <div class="mt-6 mb-4 grid grid-cols-1 md:grid-cols-3 gap-2">
+                <div>
+                    <div class="fullscreen-video-wrap">
+                        <video autoplay loop muted playsinline>
+                            <source src="media/results/scenes/sim-domain.mp4" type="video/mp4">
+                            Your browser does not support the video tag.
+                        </video>
+                    </div>
+                    <p class="caption mt-2">TiPToP in an IsaacLab simulation environment (5x speed)</p>
+                </div>
+                <div>
+                    <div class="fullscreen-video-wrap">
+                        <video autoplay loop muted playsinline>
+                            <source src="media/results/scenes/mit-domain.mp4" type="video/mp4">
+                            Your browser does not support the video tag.
+                        </video>
+                    </div>
+                    <p class="caption mt-2">TiPToP evaluated internally at MIT by system developers (5x speed)</p>
+                </div>
+                <div>
+                    <div class="fullscreen-video-wrap">
+                        <video autoplay loop muted playsinline>
+                            <source src="media/results/scenes/penn-domain.mp4" type="video/mp4">
+                            Your browser does not support the video tag.
+                        </video>
+                    </div>
+                    <p class="caption mt-2">TiPToP evaluated externally at the University of Pennsylvania (10x speed)</p>
+                </div>
+            </div>
+
+            <p>
+                Overall, TiPToP achieved a 59.4% success rate over all 28 evaluation tasks compared to \(\pi_{0.5}\text{-DROID}\)'s 33.3%. 
+                In terms of task progress — which provides a more fine-grained measure of how close to achieving the goal a particular attempt is — TiPToP achieves 74.6% on average on these tasks compared to \(\pi_{0.5}\text{-DROID}\)'s 52.4%.
+                TiPToP is also faster than \(\pi_{0.5}\text{-DROID}\) and achieves success 37.0% faster per task on average in simulation and real-world tasks where both succeed (unweighted mean over 7 scenes). It is interesting to note that about half of the total execution time of TiPToP is spent in perception and planning and the rest in execution.
+                We divide the results according to task type: 1) single-step pick-and-place, 2) semantic reasoning with distractors, and 3) multi-step manipulation. Full per-scene results tables and videos can be found on our <a href="/results" class="font-semibold">full results page</a>.
+            </p>
+            
+            <!-- Bar chart comparing TiPToP vs π₀.₅-DROID -->
+            <div class="my-8">
+                <!-- Legend: shown above grid on mobile only -->
+                <div class="bar-chart-legend md:hidden" style="margin-bottom: 1.25rem;">
+                    <span class="bar-chart-legend-item">
+                        <span class="bar-chart-swatch" style="background: #38bdf8;"></span>
+                        TiPToP
+                    </span>
+                    <span class="bar-chart-legend-item">
+                        <span class="bar-chart-swatch" style="background: #ff8dc8;"></span>
+                        \(\pi_{0.5}\text{-DROID}\)
+                    </span>
+                </div>
+                <!-- Three metric charts -->
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    <!-- Success Rate -->
+                    <div class="bar-chart-column">
+                        <p class="bar-chart-column-title">Success Rate (%) ↑</p>
+                        <div class="bar-chart-plot" data-bar-chart>
+                            <div class="bar-chart-grid">
+                                <div class="bar-chart-gridline" style="bottom: 100%;"><span>100</span></div>
+                                <div class="bar-chart-gridline" style="bottom: 75%;"><span>75</span></div>
+                                <div class="bar-chart-gridline" style="bottom: 50%;"><span>50</span></div>
+                                <div class="bar-chart-gridline" style="bottom: 25%;"><span>25</span></div>
+                                <div class="bar-chart-gridline" style="bottom: 0%;"><span>0</span></div>
+                            </div>
+                            <div class="bar bar--primary" style="--bar-height: 59.4%;" data-tooltip="59.4%"></div>
+                            <div class="bar bar--secondary" style="--bar-height: 33.3%;" data-tooltip="33.3%"></div>
+                        </div>
+                    </div>
+                    <!-- Task Progress -->
+                    <div class="bar-chart-column">
+                        <p class="bar-chart-column-title">Task Progress (%) ↑</p>
+                        <div class="bar-chart-plot" data-bar-chart>
+                            <div class="bar-chart-grid">
+                                <div class="bar-chart-gridline" style="bottom: 100%;"><span>100</span></div>
+                                <div class="bar-chart-gridline" style="bottom: 75%;"><span>75</span></div>
+                                <div class="bar-chart-gridline" style="bottom: 50%;"><span>50</span></div>
+                                <div class="bar-chart-gridline" style="bottom: 25%;"><span>25</span></div>
+                                <div class="bar-chart-gridline" style="bottom: 0%;"><span>0</span></div>
+                            </div>
+                            <div class="bar bar--primary" style="--bar-height: 74.6%;" data-tooltip="74.6%"></div>
+                            <div class="bar bar--secondary" style="--bar-height: 52.4%;" data-tooltip="52.4%"></div>
+                        </div>
+                    </div>
+                    <!-- Avg. Execution Time (scale: 0–50s) -->
+                    <div class="bar-chart-column">
+                        <p class="bar-chart-column-title">Avg. Execution Time (s) ↓</p>
+                        <div class="bar-chart-plot" data-bar-chart>
+                            <div class="bar-chart-grid">
+                                <div class="bar-chart-gridline" style="bottom: 100%;"><span>50</span></div>
+                                <div class="bar-chart-gridline" style="bottom: 80%;"><span>40</span></div>
+                                <div class="bar-chart-gridline" style="bottom: 60%;"><span>30</span></div>
+                                <div class="bar-chart-gridline" style="bottom: 40%;"><span>20</span></div>
+                                <div class="bar-chart-gridline" style="bottom: 20%;"><span>10</span></div>
+                                <div class="bar-chart-gridline" style="bottom: 0%;"><span>0</span></div>
+                            </div>
+                            <div class="bar bar--primary" style="--bar-height: 48.2%;" data-tooltip="24.1s"></div>
+                            <div class="bar bar--secondary" style="--bar-height: 76.8%;" data-tooltip="38.4s"></div>
+                        </div>
+                    </div>
+                </div>
+                <!-- Legend: shown below grid on desktop only -->
+                <div class="bar-chart-legend hidden md:flex" style="margin-top: 1.25rem; margin-bottom: 0;">
+                    <span class="bar-chart-legend-item">
+                        <span class="bar-chart-swatch" style="background: #38bdf8;"></span>
+                        TiPToP
+                    </span>
+                    <span class="bar-chart-legend-item">
+                        <span class="bar-chart-swatch" style="background: #ff8dc8;"></span>
+                        \(\pi_{0.5}\text{-DROID}\)
+                    </span>
+                </div>
+            </div>
+
+            <h3 class="text-xl font-semibold mt-8 mb-3">Simple Pick-and-Place</h3>
+
+            <p>
+                On simple single-step pick-and-place tasks, TiPToP and \(\pi_{0.5}\text{-DROID}\) perform comparably in terms of overall success rate, though TiPToP is generally faster. These tasks involve unambiguous objects in uncluttered scenes, making them straightforward for both systems. However, we found that even in these simple scenarios, \(\pi_{0.5}\text{-DROID}\) often idles without making additional progress.
+            </p>
+
+            <!-- Video: Simple task -->
+            <div class="my-8">
+                <video controls loop muted playsinline class="w-full" style="border-radius: 8px; border: 1px solid var(--color-border);" poster="media/results/edited/cracker-simple-poster.jpg">
+                    <source src="media/results/edited/cracker-simple.mp4" type="video/mp4">
+                    Your browser does not support the video tag.
+                </video>
+                <p class="caption mt-2">Task: "place the crackers onto the tray" (TiPToP: 5/5, 14.9s avg. \(\pi_{0.5}\text{-DROID}\): 3/5, 32.2s avg.)</p>
+            </div>
+
+            <h3 class="text-xl font-semibold mt-8 mb-3">Semantic Reasoning and Distractors</h3>
+
+            <p>
+                As task complexity increases a consistent performance gap emerges. On tasks with distractors and tasks that require semantic reasoning to accurately identify relevant objects, TiPToP outperforms \(\pi_{0.5}\text{-DROID}\) on the majority of scenes. These tasks often involve complex referring expressions (e.g., "the peanut butter crackers", "the Minecraft creeper toy", "the cup pointed to by the arrow"), multiple visually similar objects, or color-based sorting. 
+                TiPToP uses a large VLM to translate visual observations and language instructions into symbolic goals. We suspect that this explicit grounding step enables TiPToP to correctly identify objects amid distractors and to interpret complex referring expressions that \(\pi_{0.5}\text{-DROID}\) has no mechanism to explicitly reason about.
+            </p>
+
+            <p>
+                For example, when asked to "place the peanut butter crackers onto the tray" in a scene with multiple cracker packets, TiPToP successfully identifies the correct packet using Gemini's grounding capabilities, while \(\pi_{0.5}\text{-DROID}\) consistently fails on all trials. 
+                In tasks requiring reasoning about distractors or semantics, TiPToP achieves 62.4% success rate compared to \(\pi_{0.5}\text{-DROID}\)'s 25.9%.
+                <!-- Tiptop 54/85, pi 22/85. Distractor + semantic tasks-->
+            </p>
+
+            <!-- Video: Distractor task -->
+            <div class="my-8">
+                <video controls loop muted playsinline class="w-full" style="border-radius: 8px; border: 1px solid var(--color-border);" poster="media/results/edited/cracker-hard-poster.jpg">
+                    <source src="media/results/edited/cracker-hard.mp4" type="video/mp4">
+                    Your browser does not support the video tag.
+                </video>
+                <p class="caption mt-2">Task: "place the peanut butter crackers onto the tray" (TiPToP: 5/5, \(\pi_{0.5}\text{-DROID}\): 0/5)</p>
+            </div>
+
+            <h3 class="text-xl font-semibold mt-8 mb-3">Multi-Step Manipulation</h3>
+
+            <p>
+                On the multi-step evaluation tasks, TiPToP also outperforms \(\pi_{0.5}\text{-DROID}\). These tasks include constrained packing (where objects must be arranged in specific configurations) and tasks that require moving obstacle objects out of the way before placing target objects. TiPToP uses cuTAMP, a Task and Motion Planner, to decompose multi-step goals into a sequence of feasible pick-and-place actions with collision-free motion plans. This allows TiPToP to reason about the ordering of actions and their constraints (e.g., stable placement, kinematic feasibility, no collisions). By contrast, \(\pi_{0.5}\text{-DROID}\) must implicitly discover this multi-step structure from the language command alone.
+            </p>
+
+            <p>
+                For example, when packing coffee pods onto a tray obstructed by a can, TiPToP plans to first move the can out of the way, then place the pods. Without this explicit decomposition mechanism, \(\pi_{0.5}\text{-DROID}\) struggles to execute such sequential reasoning, often attempting to pick objects without first clearing obstacles. TiPToP achieves a 57.5% success rate over all multi-step tasks compared to 15% for \(\pi_{0.5}\text{-DROID}\).
+                <!-- Tiptop 22/40 Pi 6/40-->
+            </p>
+
+            <!-- Video: Multi-step packing -->
+            <div class="my-8">
+                <video controls loop muted playsinline class="w-full" style="border-radius: 8px; border: 1px solid var(--color-border);" poster="media/results/edited/aleve-poster.jpg">
+                    <source src="media/results/edited/aleve.mp4" type="video/mp4">
+                    Your browser does not support the video tag.
+                </video>
+                <p class="caption mt-2">Task: "put the small white aleve bottle into the cardboard tray" (TiPToP: 4/5, \(\pi_{0.5}\text{-DROID}\): 2/5)</p>
+            </div>
+
+            <!-- Video: Multi-step with obstacle -->
+            <div class="my-8">
+                <video controls loop muted playsinline class="w-full" style="border-radius: 8px; border: 1px solid var(--color-border);" poster="media/results/edited/coffee-pack-obs-poster.jpg">
+                    <source src="media/results/edited/coffee-pack-obs.mp4" type="video/mp4">
+                    Your browser does not support the video tag.
+                </video>
+                <p class="caption mt-2">Task: "pack the coffee pods onto the rectangular tray" (with obstructing can, TiPToP: 1/5, \(\pi_{0.5}\text{-DROID}\): 0/5)</p>
+            </div>
+
+            <h3 id="failure-analysis" class="heading-anchor">
+                <a href="#failure-analysis" class="anchor-link">#</a>
+                Failure Analysis
+            </h3>
+
+            <p>
+                A key advantage of TiPToP's modularity is the ability to trace failures to specific components. To better understand TiPToP's failure modes, we ran a separate set of 173 trials spanning single-object pick-and-place through long-horizon sequences of up to 5 objects, with varying levels of semantic reasoning and distractor clutter. This breakdown directly informs which modules to prioritize for improvement.
+            </p>
+
+            <div class="my-6 expandable-media">
+                <img
+                    src="media/failures/sankey-failures.png"
+                    alt="Sankey diagram of TiPToP trial outcomes and failure categories."
+                    loading="lazy"
+                    class="w-full cursor-pointer transition rounded-lg border border-gray-200"
+                    style="background: white;"
+                    onclick="openLightbox(this)"
+                    data-caption="Sankey diagram of TiPToP trial outcomes and failure categories"
+                />
+                <p class="text-sm text-gray-600 text-center mt-2">Sankey diagram of TiPToP trial outcomes and failure categories</p>
+            </div>
+
+            <p class="!mb-3">
+                <strong>Grasping failures (30/55).</strong> In 19 cases, M2T2 produces high-scoring grasps that fail in execution due to instability or slippage, and in 11 the heuristic fallback sampler similarly produces unstable grasps for objects outside M2T2's predictions.
+            </p>
+
+            <p class="!mb-3">
+                <strong>Scene completion errors (13/55).</strong> Partial observability can lead to underapproximated meshes, causing collisions during motion execution that knock or displace objects, leaving the assumed scene state incorrect for later execution steps. Convex hull completion can also overapproximate concave objects (e.g., a banana into a large oval), ruling out otherwise valid grasps during collision checking.
+            </p>
+
+            <p class="!mb-3">
+                <strong>VLM errors (6/55).</strong> Gemini fails to detect objects (5 failures) or produces incorrect goal translations (1 failure).
+            </p>
+
+            <p>
+                <strong>cuTAMP failures (5/55).</strong> In 3 cases, the underlying motion planner (cuRobo <cite data-cite="sundaralingam2023curobo"></cite>) failed to find a viable motion plan within our planning-time budgets. In 2 cases, cuTAMP's rigid grasping assumption was violated.
+            </p>
+
+            <div class="my-6 grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                    <div class="fullscreen-video-wrap">
+                        <video autoplay loop muted playsinline>
+                            <source src="media/failures/grasping-failures.mp4" type="video/mp4">
+                            Your browser does not support the video tag.
+                        </video>
+                    </div>
+                    <p class="text-center my-2">Compilation of grasping failures (1x speed)</p>
+                </div>
+                <div class="expandable-media">
+                    <img
+                        src="media/failures/gemini-fail.png"
+                        alt="Gemini fails to identify the small orange cube"
+                        loading="lazy"
+                        class="w-full cursor-pointer transition rounded-lg border border-gray-200"
+                        style="background: white;"
+                        onclick="openLightbox(this)"
+                        data-caption="Gemini fails to identify the small orange cube"
+                    />
+                    <p class="text-sm text-gray-600 text-center mt-2">Gemini fails to identify the small orange cube</p>
+                </div>
+            </div>
+
+            <h3 id="cross-embodiment" class="heading-anchor">
+                <a href="#cross-embodiment" class="anchor-link">#</a>
+                Cross-Embodiment Generalization
+            </h3>
+
+             <p class="!mb-2">
+                One key benefit of TiPToP is that the overall architecture is embodiment agnostic. To illustrate this, we deployed TiPToP on a UR5e arm with a RealSense D435 wrist camera. Adapting TiPToP to this new embodiment required:
+            </p>
+            <ul>
+                <li>The robot URDF</li>
+                <li>Collision spheres for the robot geometry, which can be automatically generated using tools like <a href="https://github.com/chungmin99/ballpark">Ballpark</a> or <a href="https://github.com/CoMMALab/foam">Foam</a></li>
+                <li>A cuRobo configuration file, which includes these collision spheres along with other information including the names of the base link, end-effector link, joints for the configuration space, and self-collision links. See the <a href="https://curobo.org/tutorials/1_robot_configuration.html">cuRobo tutorial</a> for more details.</li>
+                <li>Localized code changes in cuTAMP to load these new configuration files.</li>
+                <li>Localized code changes in TiPToP to interface with the new camera and robot controller.</li>
+            </ul>
+            <p>
+                TiPToP's codebase is designed with abstractions that make adding new camera types or robot controllers straightforward. We were able to make all these updates to support the UR5e with a RealSense camera in around 2-3 hours.
+            </p>
+
+            <div class="my-8">
+                <video controls loop muted playsinline class="w-full" style="border-radius: 8px; border: 1px solid var(--color-border);" poster="media/demos/ur5-demo-poster.jpg">
+                    <source src="media/demos/ur5-demo.mp4" type="video/mp4">
+                    Your browser does not support the video tag.
+                </video>
+                <p class="caption mt-2">TiPToP deployed on a UR5e arm with a wrist-mounted RealSense D435 camera.</p>
+            </div>
+
+            <p>
+                TiPToP has also been deployed on a <a href="https://www.trossenrobotics.com/widowx-ai" target="_blank">Trossen WidowX AI</a> arm with a RealSense D405 wrist camera. As with the UR5e, the required changes were localized to robot-specific configuration and interface code, leaving the perception and planning infrastructure untouched.
+            </p>
+
+            <div class="mt-4 mb-8">
+                <video controls loop muted playsinline class="w-full" style="border-radius: 8px; border: 1px solid var(--color-border);" poster="media/demos/trossen-demos-poster.jpg">
+                    <source src="media/demos/trossen-demos.mp4" type="video/mp4">
+                    Your browser does not support the video tag.
+                </video>
+                <p class="caption mt-2">TiPToP deployed on a Trossen WidowX AI arm (4x speed).</p>
+            </div>
+
+            <h3 id="beyond-pick-and-place" class="heading-anchor">
+                <a href="#beyond-pick-and-place" class="anchor-link">#</a>
+                Extending Beyond Pick-and-Place
+            </h3>
+
+            <p>
+            TiPToP's modularity also makes it straightforward to extend beyond pick-and-place. To demonstrate this, we added a <strong>whiteboard wiping</strong> primitive that enables the robot to wipe writing off a surface given an eraser. This required three localized changes, none of which modified the perception or execution infrastructure:
+            </p>
+
+            <ul>
+                <li><strong>Semantic branch:</strong> We added two new predicates (see our <a href="/implementation">Implementation Details</a> page for more on predicates and how we use them), <code>IsEraser</code> and <code>IsCleaned</code>, and extended the VLM goal-grounding prompt to translate instructions involving cleaning into conjunctions over these predicates.</li>
+                <li><strong>Planning:</strong> We defined a new <code>Wipe</code> TAMP operator in cuTAMP with preconditions that the robot is holding an eraser and the target is a surface, and an effect that marks the surface as cleaned. The task planner automatically sequences pick then wipe to satisfy an <code>IsCleaned</code> goal.</li>
+                <li><strong>Execution:</strong> The wiping controller calls the VLM a second time to localize the region of interest (e.g., written text) on the surface via a bounding box query, reprojects the corners into world coordinates using the existing point cloud, then executes a sequence of back-and-forth strokes covering the detected region.</li>
+            </ul>
+
+            <p>
+                The entire extension was implemented in under a day without modifying any existing perception, planning, or execution code outside of the additions described above. Importantly, adding this new skill does not affect or diminish TiPToP's capabilities involving other skills: the system is able to flexibly compose this new skill with previous ones. For example, given the task instruction "erase the whiteboard and put everything into the bowl", TiPToP picks up the whiteboard marker, puts it in the bowl, then uses the eraser to wipe the whiteboard before placing it in the bowl too.
+            </p>
+
+            <div class="my-8">
+                <video autoplay controls loop muted playsinline class="w-full" style="border-radius: 8px; border: 1px solid var(--color-border);">
+                    <source src="media/demos/wipe.mp4" type="video/mp4">
+                    Your browser does not support the video tag.
+                </video>
+                <p class="caption mt-2">Task instruction: "erase the whiteboard and put everything into the bowl". TiPToP combines pick-and-place with the whiteboard wiping skill (10x speed).</p>
+            </div>
+
+            <h2 id="extensions" class="heading-anchor">
+                <a href="#extensions" class="anchor-link">#</a>
+                Extensions and Future Work
+            </h2>
+
+            <p>
+                There are several limitations with the current version of TiPToP. Below, we highlight a few major directions for improvement, and leave a more thorough discussion of future directions, as well as current system assumptions, to the <a href="/implementation#limitations" class="page-link font-medium">Implementation Details</a> page.
+            </p>
+
+            <p>
+                <strong>Open-loop execution.</strong> This is the single most impactful limitation: our failure analysis shows that grasping failures account for over half of all failures, many of which could be recovered from by re-attempting the grasp. The most direct improvement is to re-run perception and planning (i.e., 'execution monitoring') after each pick-and-place step, enabling recovery from failed grasps or unexpected object movement <cite data-cite="curtis2022long"></cite><cite data-cite="levihn2013foresight"></cite><cite data-cite="pettersson2005execution"></cite><cite data-cite="bouguerra2008monitoring"></cite>.
+            </p>
+
+            <p>
+                <strong>Single-viewpoint perception.</strong> All task-relevant objects must be at least partially visible from a single wrist-camera pose. This also limits mesh quality: with only one viewpoint, convex hull completion can over- or under-approximate object geometry. Multi-view perception (via active camera movement or additional static cameras) would reduce occlusions and improve shape estimates. Learned shape completion methods such as SAM-3D <cite data-cite="sam3dteam2025sam3d"></cite> could replace convex hull approximation with more accurate meshes.
+            </p>
+
+            <p>
+                <strong>Integrating learned policies.</strong> Our experiments show that TiPToP and \(\pi_{0.5}\text{-DROID}\) exhibit complementary failure modes: TiPToP excels at geometric reasoning, long-horizon sequencing, and semantic grounding, but fails when grasps slip or meshes are poorly approximated; \(\pi_{0.5}\text{-DROID}\) benefits from closed-loop reactivity but struggles with multi-step structure, tight constraints, and distractor-rich scenes. This suggests that learned policies such as VLAs could serve as reactive skill primitives within TiPToP, both improving robustness for existing skills and enabling new ones that are difficult to hand-engineer (e.g., folding, cable manipulation) <cite data-cite="silverlearning"></cite><cite data-cite="shi2024yell"></cite><cite data-cite="shi2025hirobot"></cite>.
+            </p>
+
+            <p>
+                <strong>Belief-space planning.</strong> Extending cuTAMP to operate in belief space would enable reasoning about uncertainty in object poses, grasp outcomes, and partially observable state. This could also enable information-gathering actions (e.g., moving the camera to observe an occluded region before planning) and more robust action selection under perceptual uncertainty <cite data-cite="kaelbling2013belief"></cite><cite data-cite="curtis2024partially"></cite><cite data-cite="chintalapudi2024bilevel"></cite>.
+            </p>
+
+            <h2 id="conclusion" class="heading-anchor">
+                <a href="#conclusion" class="anchor-link">#</a>
+                Conclusion
+            </h2>
+
+            <p>
+                We presented TiPToP, a manipulation system designed to be easy to set up, modular, and performant. TiPToP requires zero robot training data yet matches or outperforms \(\pi_{0.5}\text{-DROID}\) over 165 trials in 28 evaluation tasks. TiPToP excels particularly on tasks requiring semantic grounding, distractor rejection, and multi-step sequencing, while also completing tasks faster on average.
+            </p>
+
+            <p>
+                TiPToP's modular architecture provides concrete practical advantages. Component-level failure analysis over 173 trials enabled us to trace each failure to specific modules and identify clear directions for improvement. Each component can be independently upgraded: as better depth estimators, grasp predictors, VLMs, or motion planners become available, they can be swapped in without redesigning the entire system. This modularity also enables novel skill integration, as demonstrated by our wiping extension, and generalizes to simulation domains and new embodiments with minimal engineering effort, as shown by our integration with UR5e and WidowX AI arms, each equipped with a RealSense camera.
+            </p>
+
+            <p>
+                A central finding of this work is that modular composition of pretrained foundation models with structured planning can produce a highly capable manipulation system without requiring robot-specific training data. The complementary failure profiles of TiPToP and \(\pi_{0.5}\text{-DROID}\) suggest that integrating learned policies as reactive skill primitives within our framework could combine the structured reasoning and semantic grounding of planning with the robustness of closed-loop visuomotor control. We hope that our open-source system, detailed performance analysis, and demonstrations of extensibility will support future research towards broadly competent and generalizable manipulation systems.
+            </p>
+
+            <h2 id="acknowledgements" class="heading-anchor">
+                <a href="#acknowledgements" class="anchor-link">#</a>
+                Acknowledgements
+            </h2>
+
+            <p>
+                We gratefully acknowledge support from NSF grant 2214177; from AFOSR grant FA9550-22-1-0249; from ONR MURI grants N00014-22-1-2740 and N00014-24-1-2603; from the MIT Quest for Intelligence; and from the Robotics and AI Institute.
+            </p>
+
+            <p>
+                We thank <a href="https://www.ryanlindeborg.com/about/">Ryan Lindeborg</a> for deploying TiPToP on his Trossen WidowX AI and for providing installation and debugging feedback.
+                We thank <a href="https://www.jessezhang.net/" target="_blank">Jesse Zhang</a> for testing TiPToP at the University of Washington.
+                We thank <a href="https://wenlong.page/" target="_blank">Wenlong Huang</a> for help setting up <a href="https://nvlabs.github.io/FoundationStereo/" target="_blank">FoundationStereo</a> to improve point cloud accuracy, as well as several helpful discussions. We also thank <a href="https://tomsilver.github.io/" target="_blank">Tom Silver</a>, <a href="https://www.chrisagia.com/" target="_blank">Chris Agia</a>, <a href="https://joeyhejna.com/" target="_blank">Joey Hejna</a>, <a href="https://kpertsch.github.io/" target="_blank">Karl Pertsch</a>, <a href="https://dannydriess.github.io/" target="_blank">Danny Driess</a>, and <a href="https://fabioramos.github.io/Home.html" target="_blank">Fabio Ramos</a> for helpful discussions and feedback on earlier drafts of this work.
+            </p>
+
+            <h2 id="contributions" class="heading-anchor">
+                <a href="#contributions" class="anchor-link">#</a>
+                Author Contributions
+            </h2>
+
+            <p>
+                <strong>William Shen</strong> and <strong>Nishanth Kumar</strong> contributed equally to this work. William adapted and improved the core <a href="https://cutamp.github.io/" target="_blank">cuTAMP</a> system to be suitable (simpler to use, faster) for our purposes. Nishanth implemented the perception interface to Gemini and SAM. Both William and Nishanth worked on integrating additional models (FoundationStereo, M2T2) into the system, packaging all components to be easily used, benchmarking system capabilities, and compiling this post.
+            </p>
+
+            <p>
+                <strong>Sahit Chintalapudi</strong> implemented and packaged the control stack for the Franka Panda and FR3 robots. He also helped run quantitative experiments to investigate TiPToP's failure modes.
+            </p>
+
+            <p>
+                <strong>Jie Wang</strong> led the evaluations conducted at the University of Pennsylvania, and assisted with analysis and experimental design. <strong>Christopher Watson</strong> set up TiPToP and assisted with evaluations, experimental design and analysis. <strong>Edward S. Hu</strong> assisted with TiPToP setup and contributed to experimental design and analysis. <strong>Dinesh Jayaraman</strong> advised the evaluations and provided lab resources.
+            </p>
+
+            <p>
+                <strong>Jing Cao</strong> set up the simulator and ran simulation experiments comparing \(\pi_{0.5}\text{-DROID}\) to TiPToP, and analyzed the results.
+            </p>
+
+            <p>
+                <strong>Leslie Pack Kaelbling</strong> and <strong>Tomás Lozano-Pérez</strong> provided several helpful system implementation and task suggestions, and strongly encouraged that the code should be easy to install. They also provided several more suggestions for improvement, the bulk of which have been left for future work.
+            </p>
+
+            <h2 id="citation" class="heading-anchor">
+                <a href="#citation" class="anchor-link">#</a>
+                Citation
+            </h2>
+
+            <p>
+                Please cite this work using the BibTeX citation:
+            </p>
+
+            <div class="code-block-wrapper" style="position: relative;">
+                <pre style="background-color: var(--color-bg-secondary); padding: 1rem; border-radius: 8px; overflow-x: auto; font-family: 'JetBrains Mono', monospace; font-size: 0.85rem;"><code id="bibtex-code">@misc{shen2026tiptop,
+  author = {William Shen and Nishanth Kumar and Sahit Chintalapudi and Jie Wang and Christopher Watson and Edward S. Hu and Jing Cao and Dinesh Jayaraman and Leslie Pack Kaelbling and Tom{\'a}s Lozano-P{\'e}rez},
+  title = {{TiPToP}: A Modular Open-Vocabulary Planning System for Robotic Manipulation},
+  year = {2026},
+  month = jan,
+  url = {https://tiptop-robot.github.io},
+  note = {Project website}
+}</code></pre>
+                <button class="copy-button" onclick="copyBibtex()" type="button" aria-label="Copy code to clipboard" title="Copy code" style="position: absolute; top: 0.5rem; right: 0.5rem; background: var(--color-bg-primary); border: 1px solid var(--color-border); border-radius: 4px; padding: 0.5rem; cursor: pointer; transition: all 0.2s ease;">
+                    <svg aria-hidden="true" focusable="false" role="img" viewBox="0 0 16 16" width="1rem" height="1rem" fill="currentColor">
+                        <path d="M0 6.75C0 5.784.784 5 1.75 5h1.5a.75.75 0 0 1 0 1.5h-1.5a.25.25 0 0 0-.25.25v7.5c0 .138.112.25.25.25h7.5a.25.25 0 0 0 .25-.25v-1.5a.75.75 0 0 1 1.5 0v1.5A1.75 1.75 0 0 1 9.25 16h-7.5A1.75 1.75 0 0 1 0 14.25Z"></path>
+                        <path d="M5 1.75C5 .784 5.784 0 6.75 0h7.5C15.216 0 16 .784 16 1.75v7.5A1.75 1.75 0 0 1 14.25 11h-7.5A1.75 1.75 0 0 1 5 9.25Zm1.75-.25a.25.25 0 0 0-.25.25v7.5c0 .138.112.25.25.25h7.5a.25.25 0 0 0 .25-.25v-7.5a.25.25 0 0 0-.25-.25Z"></path>
+                    </svg>
+                </button>
+            </div>
+
+            <script>
+            function copyBibtex() {
+                const code = document.getElementById('bibtex-code').textContent;
+                navigator.clipboard.writeText(code).then(() => {
+                    const button = document.querySelector('.copy-button');
+                    const originalHTML = button.innerHTML;
+                    button.innerHTML = '<span style="font-size: 0.875rem;">✓ Copied!</span>';
+                    button.style.color = '#18c958';
+                    button.style.cursor = 'default';
+                    button.style.pointerEvents = 'none';
+                    setTimeout(() => {
+                        button.innerHTML = originalHTML;
+                        button.style.color = '';
+                        button.style.cursor = '';
+                        button.style.pointerEvents = '';
+                    }, 2000);
+                });
+            }
+            </script>
+
+            <script>
+            (function () {
+                var observer = new IntersectionObserver(function (entries) {
+                    entries.forEach(function (entry) {
+                        if (entry.isIntersecting) {
+                            var bars = entry.target.querySelectorAll('.bar');
+                            bars.forEach(function (bar, i) {
+                                setTimeout(function () { bar.classList.add('animated'); }, i * 150);
+                            });
+                            observer.unobserve(entry.target);
+                        }
+                    });
+                }, { threshold: 0.3 });
+
+                document.querySelectorAll('[data-bar-chart]').forEach(function (chart) {
+                    observer.observe(chart);
+                });
+            }());
+            </script>
+
+            <h2 id="references" class="heading-anchor">
+                <a href="#references" class="anchor-link">#</a>
+                References
+            </h2>
+
+            <ol class="bibliography-list" id="bibtex_display"></ol>
+
+            <!-- Footer -->
+            <div class="border-t border-custom mt-12 pt-8 mb-0 flex flex-col sm:flex-row justify-between items-center">
+                <p class="text-sm text-gray-500 !mb-0">
+                    &copy; 2026 TiPToP Authors
+                </p>
+                <div class="mt-4 sm:mt-0 text-base flex items-center gap-4">
+                    <a href="/implementation" class="page-link font-medium">Implementation Details</a>
+                    <span class="text-gray-400">•</span>
+                    <a href="/results" class="page-link font-medium">Results</a>
+                    <span class="text-gray-400">•</span>
+                    <a href="https://github.com/tiptop-robot/tiptop" target="_blank" class="page-link font-medium">Try it yourself!</a>   
+                </div>
+            </div>
+        </div>
+    </article>
+    </div>
+    </div>
+
+    <!-- BibTeX Data -->
+<textarea id="bibtex_input" style="display:none;">
+@article{wen2025stereo,
+  title={FoundationStereo: Zero-Shot Stereo Matching},
+  author={Bowen Wen and Matthew Trepte and Joseph Aribido and Jan Kautz and Orazio Gallo and Stan Birchfield},
+  journal={CVPR},
+  year={2025}
+}
+
+@inproceedings{yuan2023m2t2,
+  title     = {M2T2: Multi-Task Masked Transformer for Object-centric Pick and Place},
+  author    = {Yuan, Wentao and Murali, Adithyavairavan and Mousavian, Arsalan and Fox, Dieter},
+  booktitle = {7th Annual Conference on Robot Learning},
+  year      = {2023}
+}
+
+@article{team2025gemini,
+  title={Gemini robotics: Bringing ai into the physical world},
+  author={Team, Gemini Robotics and Abeyruwan, Saminda and Ainslie, Joshua and Alayrac, Jean-Baptiste and Arenas, Montserrat Gonzalez and Armstrong, Travis and Balakrishna, Ashwin and Baruch, Robert and Bauza, Maria and Blokzijl, Michiel and others},
+  journal={arXiv preprint arXiv:2503.20020},
+  year={2025}
+}
+
+@article{ravi2024sam,
+  title={Sam 2: Segment anything in images and videos},
+  author={Ravi, Nikhila and Gabeur, Valentin and Hu, Yuan-Ting and Hu, Ronghang and Ryali, Chaitanya and Ma, Tengyu and Khedr, Haitham and R{\"a}dle, Roman and Rolland, Chloe and Gustafson, Laura and others},
+  journal={arXiv preprint arXiv:2408.00714},
+  year={2024}
+}
+
+@inproceedings{shen2024cutamp,
+    title={Differentiable GPU-Parallelized Task and Motion Planning},
+    author={Shen, William and Garrett, Caelan and Kumar, Nishanth and Goyal, Ankit and Hermans, Tucker and Kaelbling, Leslie Pack and Lozano-P{\'e}rez, Tom{\'a}s and Ramos, Fabio},
+    booktitle = {Robotics: Science and Systems (RSS)},
+    year={2025}
+}
+
+@article{intelligence2025pi05,
+  title={$\pi_{0.5}$: a Vision-Language-Action Model with Open-World Generalization},
+  author={Intelligence, Physical and Black, Kevin and Brown, Noah and Darpinian, James and Dhabalia, Karan and Driess, Danny and Esmail, Adnan and Equi, Michael and Finn, Chelsea and Fusai, Niccolo and others},
+  journal={arXiv preprint arXiv:2504.16054},
+  year={2025}
+}
+
+@inproceedings{sundaralingam2023curobo,
+  title={Curobo: Parallelized collision-free robot motion generation},
+  author={Sundaralingam, Balakumar and Hari, Siva Kumar Sastry and Fishman, Adam and Garrett, Caelan and Van Wyk, Karl and Blukis, Valts and Millane, Alexander and Oleynikova, Helen and Handa, Ankur and Ramos, Fabio and others},
+  booktitle={2023 IEEE International Conference on Robotics and Automation (ICRA)},
+  pages={8112--8119},
+  year={2023},
+  organization={IEEE}
+}
+
+@inproceedings{curtis2022long,
+  title={Long-horizon manipulation of unknown objects via task and motion planning with estimated affordances},
+  author={Curtis, Aidan and Fang, Xiaolin and Kaelbling, Leslie Pack and Lozano-P{\'e}rez, Tom{\'a}s and Garrett, Caelan Reed},
+  booktitle={IEEE International Conference on Robotics and Automation (ICRA)},
+  year={2022}
+}
+
+@inproceedings{levihn2013foresight,
+  title={Foresight and reconsideration in hierarchical planning and execution},
+  author={Levihn, Martin and Kaelbling, Leslie Pack and Lozano-P{\'e}rez, Tom{\'a}s and Stilman, Mike},
+  booktitle={IEEE/RSJ International Conference on Intelligent Robots and Systems (IROS)},
+  year={2013}
+}
+
+@article{pettersson2005execution,
+  title={Execution monitoring in robotics: A survey},
+  author={Pettersson, Ola},
+  journal={Robotics and Autonomous Systems},
+  year={2005}
+}
+
+@article{bouguerra2008monitoring,
+  title={Monitoring the execution of robot plans using semantic knowledge},
+  author={Bouguerra, Abdelbaki and Karlsson, Lars and Saffiotti, Alessandro},
+  journal={Robotics and Autonomous Systems},
+  year={2008}
+}
+
+@article{sam3dteam2025sam3d,
+  title={SAM 3D: 3Dfy Anything in Images},
+  author={SAM 3D Team and Chen, Xingyu and Chu, Fu-Jen and Gleize, Pierre and Liang, Kevin J and Sax, Alexander and Tang, Hao and Wang, Weiyao and Guo, Michelle and Hardin, Thibaut and Li, Xiang and Lin, Aohan and Liu, Jiawei and Ma, Ziqi and Sagar, Anushka and Song, Bowen and Wang, Xiaodong and Yang, Jianing and Zhang, Bowen and Doll{\'a}r, Piotr and Gkioxari, Georgia and Feiszli, Matt and Malik, Jitendra},
+  journal={arXiv preprint arXiv:2511.16624},
+  year={2025}
+}
+
+@inproceedings{silverlearning,
+  title={Learning Neuro-Symbolic Skills for Bilevel Planning},
+  author={Silver, Tom and Athalye, Ashay and Tenenbaum, Joshua B and Lozano-P{\'e}rez, Tom{\'a}s and Kaelbling, Leslie Pack},
+  booktitle={6th Annual Conference on Robot Learning},
+  year={2022}
+}
+
+@article{shi2024yell,
+  title={Yell At Your Robot: Improving On-the-Fly from Language Corrections},
+  author={Shi, Lucy Xiaoyang and Hu, Zheyuan and Zhao, Tony Z and Sharma, Archit and Pertsch, Karl and Luo, Jianlan and Levine, Sergey and Finn, Chelsea},
+  journal={arXiv preprint arXiv:2403.12910},
+  year={2024}
+}
+
+@article{shi2025hirobot,
+  title={Teaching Robots to Listen and Think Harder},
+  author={Shi, Lucy and Ichter, Brian and Equi, Michael and Ke, Liyiming and Pertsch, Karl and Vuong, Quan and Tanner, James and Walling, Anna and Wang, Haohuan and Fusai, Niccolo and Li-Bell, Adrian and Driess, Danny and Groom, Lachy and Levine, Sergey and Finn, Chelsea},
+  journal={arXiv preprint arXiv:2502.19417},
+  year={2025}
+}
+
+@article{kaelbling2013belief,
+  title={Integrated task and motion planning in belief space},
+  author={Kaelbling, Leslie Pack and Lozano-P{\'e}rez, Tom{\'a}s},
+  journal={International Journal of Robotics Research},
+  year={2013}
+}
+
+@inproceedings{curtis2024partially,
+  title={Partially observable task and motion planning with uncertainty and risk awareness},
+  author={Curtis, Aidan and Matheos, George and Gothoskar, Nishad and Mansinghka, Vikash and Tenenbaum, Joshua and Lozano-P{\'e}rez, Tom{\'a}s and Kaelbling, Leslie Pack},
+  booktitle={Robotics: Science and Systems (RSS)},
+  year={2024}
+}
+
+@article{chintalapudi2024bilevel,
+  title={Bi-level belief space search for compliant part mating under uncertainty},
+  author={Chintalapudi, Sahit and Kaelbling, Leslie Pack and Lozano-P{\'e}rez, Tom{\'a}s},
+  journal={arXiv preprint arXiv:2409.15774},
+  year={2024}
+}
+    </textarea>
+
+    <!-- BibTeX Template -->
+    <div class="bibtex_template" style="display:none;">
+        <li class="bibliography-item">
+            <span class="author"></span>
+            <span class="if year"> (<span class="year"></span>)</span>.
+            <span class="title"></span>.
+            <span class="if journal"><em><span class="journal"></span></em>.</span>
+            <span class="if booktitle">In <em><span class="booktitle"></span></em>.</span>
+        </li>
+    </div>
+
+    <!-- Citation Processing Script -->
+    <script>
+    // bibtex-js runs automatically, we just need to process inline citations
+    window.addEventListener('load', function() {
+        // Give bibtex-js a moment to render
+        setTimeout(function() {
+            // Build citation number map and ordered key list from bibtex textarea order
+            const bibtexInput = document.getElementById('bibtex_input').value;
+            const citationMap = {};
+            const keyOrder = [];
+            let citationCounter = 1;
+            const keyRegex = /@\w+\{([^,]+),/g;
+            let match;
+            while ((match = keyRegex.exec(bibtexInput)) !== null) {
+                const key = match[1].trim();
+                citationMap[key] = citationCounter++;
+                keyOrder.push(key);
+            }
+
+            // Assign IDs to rendered bibliography items by order
+            const bibItems = document.querySelectorAll('#bibtex_display .bibliography-item');
+            bibItems.forEach((item, i) => {
+                if (keyOrder[i]) item.id = 'ref-' + keyOrder[i];
+            });
+
+            // Find all cite elements and create citation links
+            const citeElements = document.querySelectorAll('cite[data-cite]');
+            citeElements.forEach(elem => {
+                const key = elem.getAttribute('data-cite');
+                const num = citationMap[key] || '?';
+                elem.innerHTML = `<a href="#ref-${key}" class="citation-link">[${num}]</a>`;
+            });
+
+            // Merge consecutive citations: [9][10][11] -> [9, 10, 11]
+            document.querySelectorAll('cite[data-cite]').forEach(cite => {
+                if (cite.previousElementSibling?.matches('cite[data-cite]')) return;
+                const group = [cite];
+                let next = cite.nextElementSibling;
+                while (next?.matches('cite[data-cite]')) { group.push(next); next = next.nextElementSibling; }
+                if (group.length < 2) return;
+                const links = group.map(c => c.querySelector('a'));
+                const merged = document.createElement('span');
+                merged.appendChild(document.createTextNode('['));
+                links.forEach((link, i) => {
+                    const a = link.cloneNode(false);
+                    a.textContent = link.textContent.replace(/[\[\]]/g, '');
+                    merged.appendChild(a);
+                    if (i < links.length - 1) merged.appendChild(document.createTextNode(', '));
+                });
+                merged.appendChild(document.createTextNode(']'));
+                group[0].parentNode.insertBefore(merged, group[0]);
+                group.forEach(c => c.remove());
+            });
+        }, 100);
+    });
+    </script>
+
+    <!-- TOC scroll fix -->
+    <script src="assets/toc-scroll.js"></script>
+
+    <!-- Lightbox functionality -->
+    <script>
+    (function() {
+        const lightbox = document.createElement('div');
+        lightbox.className = 'lightbox';
+        lightbox.innerHTML = '<button class="lightbox-close">&times;</button><div class="lightbox-content"><img src="" alt=""><p class="lightbox-caption"></p></div>';
+        document.body.appendChild(lightbox);
+
+        const lightboxImg = lightbox.querySelector('img');
+        const lightboxCaption = lightbox.querySelector('.lightbox-caption');
+        const closeBtn = lightbox.querySelector('.lightbox-close');
+
+        window.openLightbox = function(img) {
+            lightboxImg.src = img.src;
+            lightboxImg.alt = img.alt;
+
+            const caption = img.dataset.caption || '';
+            lightboxCaption.innerHTML = caption;
+            lightboxCaption.style.display = caption ? 'block' : 'none';
+
+            lightbox.classList.add('active');
+            document.body.style.overflow = 'hidden';
+        };
+
+        function closeLightbox() {
+            lightbox.classList.remove('active');
+            document.body.style.overflow = '';
+        }
+
+        closeBtn.addEventListener('click', closeLightbox);
+        lightbox.addEventListener('click', function(e) {
+            if (e.target === lightbox) closeLightbox();
+        });
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape' && lightbox.classList.contains('active')) closeLightbox();
+        });
+    })();
+
+    // Fullscreen video: hover devices get click-to-fullscreen, touch devices get native controls
+    (function() {
+        var wraps = document.querySelectorAll('.fullscreen-video-wrap');
+        if (window.matchMedia('(hover: hover)').matches) {
+            wraps.forEach(function(wrap) {
+                wrap.addEventListener('click', function() {
+                    var video = wrap.querySelector('video');
+                    if (video.requestFullscreen) {
+                        video.requestFullscreen();
+                    } else if (video.webkitRequestFullscreen) {
+                        video.webkitRequestFullscreen();
+                    }
+                });
+            });
+        } else {
+            wraps.forEach(function(wrap) {
+                wrap.querySelector('video').setAttribute('controls', '');
+            });
+        }
+    })();
+    </script>
+</body>
+</html>
