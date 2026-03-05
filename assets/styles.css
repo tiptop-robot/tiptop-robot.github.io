@@ -712,21 +712,13 @@ cite {
     bottom: calc(100% + 6px);
     left: 50%;
     transform: translateX(-50%);
-    background-color: var(--color-text-primary);
-    color: #ffffff;
-    padding: 3px 8px;
-    border-radius: 4px;
-    font-size: 0.75rem;
+    color: var(--color-text-primary);
+    font-size: 0.8rem;
+    font-weight: 600;
     font-family: 'JetBrains Mono', monospace;
     white-space: nowrap;
-    opacity: 0;
     pointer-events: none;
-    transition: opacity 0.15s ease;
     z-index: 10;
-}
-
-.bar:hover::before {
-    opacity: 1;
 }
 
 .bar-chart-column-title {
