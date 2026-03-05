@@ -1,7 +1,7 @@
 # TiPToP Twitter Thread Draft
 
 ## Tweet 1 (Hook)
-State-of-the-art robot policies often need hundreds of hours of data. What if you needed none?
+State-of-the-art robot policies often need hundreds of hours of training data. What if you needed none?
 
 Introducing TiPToP: a modular manipulation system that solves open-world tasks from pixels and language — all without training on a single robot demonstration.
 
@@ -148,7 +148,7 @@ We view TiPToP as a test-time scaling and reasoning method that's ultimately com
 ---
 
 ## Tweet 10 (Closing)
-TiPToP was a team effort and wouldn't have been possible without @WillShenSaysHi, @sahitbot_irl, @JieWang_ZJUI, Christopher Watson, @_jingcao, @edward_s_hu, @dineshjayaraman, Leslie Pack Kaelbling, and Tomás Lozano-Pérez.
+TiPToP was a team effort and wouldn't have been possible without @WillShenSaysHi, @sahitbot_irl, @JieWang_ZJUI, Christopher Watson, @_jingcao, @edward_s_hu, @dineshjayaraman, Leslie Pack Kaelbling, and Tomás Lozano-Pérez from @MIT_LISLab.
 
 Special thanks to the folks at Penn for their help with evaluation!
 
