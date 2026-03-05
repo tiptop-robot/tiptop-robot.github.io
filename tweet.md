@@ -5,7 +5,7 @@ State-of-the-art robot policies often need hundreds of hours of data. What if yo
 
 Introducing TiPToP: a modular manipulation system that solves open-world tasks from pixels and language — all without training on a single robot demonstration.
 
-We compose pretrained foundation models with GPU-parallelized Task and Motion Planning (TAMP). TiPToP can be deployed on supported hardware in under an hour.
+TiPToP composes pretrained vision foundation models with GPU-parallelized Task and Motion Planning, and can be deployed on supported hardware in under an hour.
 
 📄 Paper: https://tiptop-robot.github.io/tiptop.pdf
 💻 Code (coming soon): https://github.com/tiptop-robot/tiptop
@@ -23,7 +23,7 @@ How does it work?
 
 **Perception:** FoundationStereo (depth estimation) + M2T2 (6-DoF grasp prediction) + Gemini (semantic grounding) + SAM-2 (object segmentation) → 3D scene representation
 
-**Planning:** cuTAMP optimizes thousands of candidate plans in parallel on the GPU (grasp poses, placement poses, robot trajectories), and picks the best one
+**Planning:** cuTAMP synthesizes robot actions by exploring thousands of candidate grasps, placements, and motions in parallel on GPU, then selecting the best feasible plan
 
 No task-specific training required!
 
@@ -58,7 +58,7 @@ This test-time reasoning lets TiPToP scale to novel scenarios with more objects 
 
 On multi-step manipulation (sequential picks, obstacle clearing, constrained packing):
 
-TiPToP: 57.5% success rate vs π₀.₅-DROID: 15%
+TiPToP achieves 57.5% success vs 15% for π₀.₅-DROID
 
 The planner performs physical reasoning by sequencing actions and checking robot kinematic and spatial constraints.
 
@@ -76,7 +76,7 @@ We ran 165 trials across 28 tasks. To ensure broad task coverage and thorough ex
 **Results**:
 - Success rate: TiPToP 59.4% vs π₀.₅-DROID 33.3%
 - Task progress: TiPToP 74.6% vs π₀.₅-DROID 52.4%
-- Speed: TiPToP 37% faster when both succeed 
+- Speed: TiPToP 37% faster when both succeed
 
 (5/10)
 
@@ -85,12 +85,12 @@ We ran 165 trials across 28 tasks. To ensure broad task coverage and thorough ex
 ---
 
 ## Tweet 6 (Failure analysis + modularity)
-A key benefit of modularity: we can trace exactly where failures happen. Of 55 failures in 173 trials:
+A key benefit of modularity: we can trace exactly where failures happen. Across 54 failed trials:
 
-- 30 from grasping
-- 13 from partial observability and mesh reconstruction
-- 6 from VLM errors
-- 5 from planning
+- 30 grasping
+- 13 partial observability / mesh reconstruction
+- 6 VLM
+- 5 planning
 
 TiPToP improves as components improve: drop in a better grasp model, get a better system.
 
@@ -145,16 +145,12 @@ We view TiPToP as a test-time scaling and reasoning method that's ultimately com
 
 (9/10)
 
-*(No media)*
-
 ---
 
 ## Tweet 10 (Closing)
-TiPToP was a team effort and wouldn't have been possible without
+TiPToP was a team effort and wouldn't have been possible without @WillShenSaysHi, @sahitbot_irl, @JieWang_ZJUI, Christopher Watson, @_jingcao, @edward_s_hu, @dineshjayaraman, Leslie Pack Kaelbling, and Tomás Lozano-Pérez.
 
-(**TODO: tag everyone, with specific shoutouts to UPenn people**).
-
-@WillShenSaysHi, @sahitbot_irl, @JieWang_ZJUI, Christopher Watson, @_jingcao, @edward_s_hu, @dineshjayaraman, Leslie Pack Kaelbling, and Tomás Lozano-Pérez. Specifically thank the folks at Penn for their help evaluating
+Special thanks to the folks at Penn for their help with evaluation!
 
 🌐 Project: https://tiptop-robot.github.io
 📄 Paper: https://tiptop-robot.github.io/tiptop.pdf
