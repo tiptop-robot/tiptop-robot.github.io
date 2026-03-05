@@ -1,9 +1,11 @@
 # TiPToP Twitter Thread Draft
 
 ## Tweet 1 (Hook)
-Introducing TiPToP: a modular manipulation system that solves open-world tasks from pixels and language — with zero robot-specific training data.
+State-of-the-art robot policies often need hundreds of hours of data. What if you needed none?
 
-We compose pretrained foundation models with GPU-parallelized planning. Deploy on supported hardware in under an hour.
+Introducing TiPToP: a modular manipulation system that solves open-world tasks from pixels and language — all without training on a single robot demonstration.
+
+We compose pretrained foundation models with GPU-parallelized planning. Our system can be deployed on supported hardware in under an hour.
 
 📄 Paper: https://tiptop-robot.github.io/tiptop.pdf
 💻 Code: https://github.com/tiptop-robot/tiptop
@@ -23,7 +25,7 @@ Perception: FoundationStereo (depth) + Gemini (semantic grounding) + SAM-2 (segm
 
 Planning: cuTAMP searches thousands of candidate plans in parallel on GPU, checks feasibility, picks the best one
 
-No task-specific training required. (2/10)
+No task-specific training required! (2/10)
 
 <video controls width="100%">
   <source src="media/overview/pipeline.mp4" type="video/mp4">
@@ -34,12 +36,12 @@ No task-specific training required. (2/10)
 ## Tweet 3 (Motivating example)
 Why does this matter?
 
-Task: "Place the peanut butter crackers onto the tray" — in a scene full of different cracker packets.
+Simple task: "Place the peanut butter crackers onto the tray" — in a scene full of different cracker packets.
 
 TiPToP succeeds 5 out of 5 trials.
 π₀.₅-DROID (SOTA VLA, 350+ hrs of robot data) fails all 5 trials.
 
-TiPToP reasons at test time about what's in the scene. A pretrained policy has to have seen something similar in training. (3/10)
+TiPToP does this by *reasoning* at test time about what's in the scene. A pretrained policy on the other hand often has to have seen something similar in training. (3/10)
 
 <video controls width="100%">
   <source src="media/results/edited/cracker-hard.mp4" type="video/mp4">
@@ -63,13 +65,14 @@ The planner sequences actions and checks constraints before committing. (4/10)
 ---
 
 ## Tweet 5 (Overall results)
-We ran 165 trials across 28 tasks — most evaluated externally at UPenn by a team not involved in development.
+We ran 165 trials across 28 tasks. To ensure broad task coverage and thorough experimentation, most evaluation was performed externally at UPenn by a team not involved in development.
 
+**Results**:
 Success rate: TiPToP 59.4% vs π₀.₅-DROID 33.3%
 Task progress: TiPToP 74.6% vs π₀.₅-DROID 52.4%
 Speed: TiPToP 37% faster when both succeed (5/10)
 
-*(No media, or consider bar chart from website)*
+*(No media, or consider bar chart from website) [njk: I think we should include the bar charts!!!]*
 
 ---
 
@@ -81,7 +84,7 @@ A key benefit of modularity: we can trace exactly where failures happen.
 6 from VLM errors
 5 from planning
 
-TiPToP improves as components improve — drop in a better grasp model, get a better system. (6/10)
+TiPToP improves as components improve: drop in a better grasp model, get a better system. (6/10)
 
 <img src="media/failures/sankey-failures.png" width="100%">
 
@@ -114,28 +117,29 @@ Skills compose: "erase the whiteboard and put everything into the bowl" just wor
 ---
 
 ## Tweet 9 (Limitations + future)
-TiPToP has limitations:
+TiPToP is far from perfect:
 
 Open-loop execution → no recovery from failed grasps
 Single-viewpoint perception → limited visibility
 Lacks closed-loop reactivity of VLAs
 
-We see test-time scaling methods like TiPToP as complementary to large robot foundation models. Combining them is an exciting direction. (9/10)
+We generally view TiPToP as a test-time scaling and reasoning method that's ultimately complementary to large robot foundation models like VLAs. We are excited about future research to more tightly combine these paradigms! (9/10)
 
 *(No media)*
 
 ---
 
 ## Tweet 10 (Closing)
-TiPToP shows that modular composition of foundation models + structured planning can produce capable manipulation — without robot-specific training data.
+TiPToP was a team effort and wouldn't have been possible without (**TODO: tag everyone, with specific shoutouts to UPenn people**).
 
 🌐 Project: https://tiptop-robot.github.io
 📄 Paper: https://tiptop-robot.github.io/tiptop.pdf
 💻 Code: https://github.com/tiptop-robot/tiptop
 
-Thanks to our collaborators at UPenn for the external evaluation! (10/10)
+While we're excited by TiPToP's current capabilities, we also feel there's so much more to be done (check out the website for a list of things to be worked on). We hope you'll try it out and consider contributing to the system yourself! (10/10)
 
 ---
+
 
 ## Notes for posting:
 - Twitter is plain text only (no markdown)
