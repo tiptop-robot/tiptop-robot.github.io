@@ -16,6 +16,8 @@ TiPToP composes pretrained vision foundation models with GPU-parallelized Task a
   <source src="media/overview/teaser.mp4" type="video/mp4">
 </video>
 
+*TODO: speed up video? Discuss with njk*
+
 ---
 
 ## Tweet 2 (How it works)
@@ -23,7 +25,7 @@ How does it work?
 
 **Perception:** FoundationStereo (depth estimation) + M2T2 (6-DoF grasp prediction) + Gemini (semantic grounding) + SAM-2 (object segmentation) → 3D scene representation
 
-**Planning:** cuTAMP synthesizes robot actions by exploring thousands of candidate grasps, placements, and motions in parallel on GPU, then selecting the best feasible plan
+**Planning:** cuTAMP synthesizes robot actions by exploring thousands of candidate grasps, placements, and motions in parallel on the GPU, and selects the best feasible plan
 
 No task-specific training required!
 
@@ -32,6 +34,8 @@ No task-specific training required!
 <video controls width="100%">
   <source src="media/overview/pipeline.mp4" type="video/mp4">
 </video>
+
+*TODO: speed up video? Discuss with njk*
 
 ---
 
@@ -51,6 +55,8 @@ TiPToP does this by *reasoning* at test time about what's in the scene. A pretra
   <source src="media/results/edited/cracker-hard.mp4" type="video/mp4">
 </video>
 
+*TODO: speed up video?*
+
 ---
 
 ## Tweet 4 (Long-horizon + multi-step)
@@ -67,6 +73,8 @@ The planner performs physical reasoning by sequencing actions and checking robot
 <video controls width="100%">
   <source src="media/results/edited/coffee-pack-obs.mp4" type="video/mp4">
 </video>
+
+*TODO: speed up video?*
 
 ---
 
@@ -87,7 +95,7 @@ We ran 165 trials across 28 tasks. To ensure broad task coverage and thorough ex
 ## Tweet 6 (Failure analysis + modularity)
 A key benefit of modularity: we can trace exactly where failures happen. Across 54 failed trials:
 
-- 30 grasping
+- 31 grasping
 - 13 partial observability / mesh reconstruction
 - 6 VLM
 - 5 planning
@@ -141,7 +149,7 @@ TiPToP is far from perfect:
 - Single-viewpoint perception → limited visibility
 - Lacks closed-loop reactivity of VLAs
 
-We view TiPToP as a test-time scaling and reasoning method that's ultimately complementary to large robot foundation models like VLAs. We are excited about future research to more tightly combine these paradigms!
+We view TiPToP as a test-time scaling and reasoning method that's ultimately complementary to large robot foundation models like VLAs. We're excited about future research to more tightly combine these paradigms!
 
 (9/10)
 
