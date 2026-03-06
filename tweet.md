@@ -7,9 +7,6 @@ Introducing TiPToP: a modular manipulation system that solves open-world tasks f
 
 TiPToP composes pretrained vision foundation models with GPU-parallelized Task and Motion Planning, and can be deployed on supported hardware in under an hour.
 
-📄 Paper: https://tiptop-robot.github.io/tiptop.pdf
-💻 Code (coming soon): https://github.com/tiptop-robot/tiptop
-
 (1/10)
 
 <video controls width="100%">
@@ -156,14 +153,14 @@ We view TiPToP as a test-time scaling and reasoning method that's ultimately com
 ---
 
 ## Tweet 10 (Closing)
-TiPToP was a team effort and wouldn't have been possible without @WillShenSaysHi, @sahitbot_irl, @JieWang_ZJUI, Christopher Watson, @_jingcao, @edward_s_hu, @dineshjayaraman, Leslie Pack Kaelbling, and Tomás Lozano-Pérez.
-
-Special thanks to the folks at Penn for their help with evaluation!
+We hope you'll try TiPToP out and consider contributing! While we're excited by TiPToP's current capabilities, we also feel there's so much more to be done (check out the website for a list of things to be worked on).
 
 🌐 Project: https://tiptop-robot.github.io
 📄 Paper: https://tiptop-robot.github.io/tiptop.pdf
 💻 Code (coming soon): https://github.com/tiptop-robot/tiptop
 
-While we're excited by TiPToP's current capabilities, we also feel there's so much more to be done (check out the website for a list of things to be worked on). We hope you'll try it out and consider contributing to the system yourself!
+TiPToP was a team effort and wouldn't have been possible without @WillShenSaysHi, @sahitbot_irl, @JieWang_ZJUI, Christopher Watson, @_jingcao, @edward_s_hu, @dineshjayaraman, Leslie Pack Kaelbling, and Tomás Lozano-Pérez.
+
+Special thanks to the folks at Penn for their help with evaluation!
 
 (10/10)
