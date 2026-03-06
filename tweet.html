@@ -1,0 +1,402 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TiPToP Thread Preview</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background: #000;
+            color: #e7e9ea;
+            line-height: 1.4;
+        }
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            border-left: 1px solid #2f3336;
+            border-right: 1px solid #2f3336;
+            min-height: 100vh;
+        }
+        .header {
+            padding: 16px;
+            border-bottom: 1px solid #2f3336;
+            font-size: 20px;
+            font-weight: bold;
+            position: sticky;
+            top: 0;
+            background: rgba(0,0,0,0.8);
+            backdrop-filter: blur(10px);
+        }
+        .tweet {
+            display: flex;
+            padding: 12px 16px;
+            border-bottom: 1px solid #2f3336;
+        }
+        .tweet-left {
+            margin-right: 12px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        .avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #1d9bf0, #1a8cd8);
+            flex-shrink: 0;
+        }
+        .connector {
+            width: 2px;
+            flex-grow: 1;
+            background: #333639;
+            margin-top: 4px;
+        }
+        .tweet-right {
+            flex: 1;
+            min-width: 0;
+        }
+        .tweet-header {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            margin-bottom: 4px;
+        }
+        .name {
+            font-weight: bold;
+        }
+        .handle, .dot, .time {
+            color: #71767b;
+        }
+        .tweet-content {
+            word-wrap: break-word;
+            line-height: 1.5;
+        }
+        .link {
+            color: #1d9bf0;
+            text-decoration: none;
+        }
+        .link:hover {
+            text-decoration: underline;
+        }
+        .mention {
+            color: #1d9bf0;
+            text-decoration: none;
+        }
+        .show-more {
+            background: none;
+            border: none;
+            color: #1d9bf0;
+            cursor: pointer;
+            font-size: 15px;
+            padding: 0;
+            margin-top: 4px;
+            display: block;
+        }
+        .show-more:hover {
+            text-decoration: underline;
+        }
+        .media {
+            margin-top: 8px;
+            border-radius: 16px;
+            max-width: 100%;
+            border: 1px solid #2f3336;
+        }
+        .tweet-actions {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 12px;
+            max-width: 400px;
+            color: #71767b;
+        }
+        .action {
+            cursor: pointer;
+            font-size: 14px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">Thread Preview</div>
+        
+        <div class="tweet">
+            <div class="tweet-left">
+                <div class="avatar"></div>
+                <div class="connector"></div>
+            </div>
+            <div class="tweet-right">
+                <div class="tweet-header">
+                    <span class="name">TiPToP</span>
+                    <span class="handle">@tiptop_robot</span>
+                    <span class="dot">·</span>
+                    <span class="time">1m</span>
+                </div>
+                <div class="tweet-content">
+                    State-of-the-art robot policies often need hundreds of hours of data. What if you needed none?<br><br>Introducing TiPToP: a modular manipulation system that solves open-world tasks from pixels and language — all without training on a single robot demonstration.<br><br>TiPToP composes pretrained<span class="hidden-content" id="tweet-0-hidden" style="display:none"> vision foundation models with GPU-parallelized Task and Motion Planning, and can be deployed on supported hardware in under an hour.</span>
+                <button class="show-more" onclick="document.getElementById('tweet-0-hidden').style.display='inline'; this.style.display='none';">Show more</button>
+                </div>
+                <video controls class="media"><source src="media/overview/teaser.mp4" type="video/mp4"></video>
+                <div class="tweet-actions">
+                    <span class="action">💬</span>
+                    <span class="action">🔁</span>
+                    <span class="action">❤️</span>
+                    <span class="action">📊</span>
+                    <span class="action">🔖</span>
+                    <span class="action">↗️</span>
+                </div>
+            </div>
+        </div>
+        
+        <div class="tweet">
+            <div class="tweet-left">
+                <div class="avatar"></div>
+                <div class="connector"></div>
+            </div>
+            <div class="tweet-right">
+                <div class="tweet-header">
+                    <span class="name">TiPToP</span>
+                    <span class="handle">@tiptop_robot</span>
+                    <span class="dot">·</span>
+                    <span class="time">1m</span>
+                </div>
+                <div class="tweet-content">
+                    How does it work?<br><br><strong>Perception:</strong> FoundationStereo (depth estimation) + M2T2 (6-DoF grasp prediction) + Gemini (semantic grounding) + SAM-2 (object segmentation) → 3D scene representation<br><br><strong>Planning:</strong> cuTAMP synthesizes robot actions by exploring thousands of candidate grasps,<span class="hidden-content" id="tweet-1-hidden" style="display:none"> placements, and motions in parallel on the GPU, and selects the best feasible plan<br><br>No task-specific training required!</span>
+                <button class="show-more" onclick="document.getElementById('tweet-1-hidden').style.display='inline'; this.style.display='none';">Show more</button>
+                </div>
+                <video controls class="media"><source src="media/overview/pipeline.mp4" type="video/mp4"></video>
+                <div class="tweet-actions">
+                    <span class="action">💬</span>
+                    <span class="action">🔁</span>
+                    <span class="action">❤️</span>
+                    <span class="action">📊</span>
+                    <span class="action">🔖</span>
+                    <span class="action">↗️</span>
+                </div>
+            </div>
+        </div>
+        
+        <div class="tweet">
+            <div class="tweet-left">
+                <div class="avatar"></div>
+                <div class="connector"></div>
+            </div>
+            <div class="tweet-right">
+                <div class="tweet-header">
+                    <span class="name">TiPToP</span>
+                    <span class="handle">@tiptop_robot</span>
+                    <span class="dot">·</span>
+                    <span class="time">1m</span>
+                </div>
+                <div class="tweet-content">
+                    Why does this matter?<br><br>Simple task: "Place the peanut butter crackers onto the tray" — in a scene full of different cracker packets.<br><br>TiPToP succeeds 5 out of 5 trials.<br>π₀.₅-DROID (SOTA VLA, 350+ hrs of embodiment-specific data) fails all 5 trials.<br><br>TiPToP does this by <em>reasoning</em> at<span class="hidden-content" id="tweet-2-hidden" style="display:none"> test time about what's in the scene. A pretrained policy on the other hand often has to have seen something similar in training.</span>
+                <button class="show-more" onclick="document.getElementById('tweet-2-hidden').style.display='inline'; this.style.display='none';">Show more</button>
+                </div>
+                <video controls class="media"><source src="media/results/edited/cracker-hard.mp4" type="video/mp4"></video>
+                <div class="tweet-actions">
+                    <span class="action">💬</span>
+                    <span class="action">🔁</span>
+                    <span class="action">❤️</span>
+                    <span class="action">📊</span>
+                    <span class="action">🔖</span>
+                    <span class="action">↗️</span>
+                </div>
+            </div>
+        </div>
+        
+        <div class="tweet">
+            <div class="tweet-left">
+                <div class="avatar"></div>
+                <div class="connector"></div>
+            </div>
+            <div class="tweet-right">
+                <div class="tweet-header">
+                    <span class="name">TiPToP</span>
+                    <span class="handle">@tiptop_robot</span>
+                    <span class="dot">·</span>
+                    <span class="time">1m</span>
+                </div>
+                <div class="tweet-content">
+                    This test-time reasoning lets TiPToP scale to novel scenarios with more objects and longer horizons.<br><br>On multi-step manipulation (sequential picks, obstacle clearing, constrained packing):<br><br>TiPToP achieves 57.5% success vs 15% for π₀.₅-DROID<br><br>The planner performs physical reasoning by<span class="hidden-content" id="tweet-3-hidden" style="display:none"> sequencing actions and checking robot kinematic and spatial constraints.</span>
+                <button class="show-more" onclick="document.getElementById('tweet-3-hidden').style.display='inline'; this.style.display='none';">Show more</button>
+                </div>
+                <video controls class="media"><source src="media/results/edited/coffee-pack-obs.mp4" type="video/mp4"></video>
+                <div class="tweet-actions">
+                    <span class="action">💬</span>
+                    <span class="action">🔁</span>
+                    <span class="action">❤️</span>
+                    <span class="action">📊</span>
+                    <span class="action">🔖</span>
+                    <span class="action">↗️</span>
+                </div>
+            </div>
+        </div>
+        
+        <div class="tweet">
+            <div class="tweet-left">
+                <div class="avatar"></div>
+                <div class="connector"></div>
+            </div>
+            <div class="tweet-right">
+                <div class="tweet-header">
+                    <span class="name">TiPToP</span>
+                    <span class="handle">@tiptop_robot</span>
+                    <span class="dot">·</span>
+                    <span class="time">1m</span>
+                </div>
+                <div class="tweet-content">
+                    We ran 165 trials across 28 tasks. To ensure broad task coverage and thorough experimentation, most evaluation was performed externally at UPenn by a team not involved in development.<br><br><strong>Results</strong>:<br>- Success rate: TiPToP 59.4% vs π₀.₅-DROID 33.3%<br>- Task progress: TiPToP 74.6% vs<span class="hidden-content" id="tweet-4-hidden" style="display:none"> π₀.₅-DROID 52.4%<br>- Speed: TiPToP 37% faster when both succeed</span>
+                <button class="show-more" onclick="document.getElementById('tweet-4-hidden').style.display='inline'; this.style.display='none';">Show more</button>
+                </div>
+                <img src="bar-chart.png" class="media">
+                <div class="tweet-actions">
+                    <span class="action">💬</span>
+                    <span class="action">🔁</span>
+                    <span class="action">❤️</span>
+                    <span class="action">📊</span>
+                    <span class="action">🔖</span>
+                    <span class="action">↗️</span>
+                </div>
+            </div>
+        </div>
+        
+        <div class="tweet">
+            <div class="tweet-left">
+                <div class="avatar"></div>
+                <div class="connector"></div>
+            </div>
+            <div class="tweet-right">
+                <div class="tweet-header">
+                    <span class="name">TiPToP</span>
+                    <span class="handle">@tiptop_robot</span>
+                    <span class="dot">·</span>
+                    <span class="time">1m</span>
+                </div>
+                <div class="tweet-content">
+                    A key benefit of modularity: we can trace exactly where failures happen. Across 54 failed trials:<br><br>- 31 grasping<br>- 13 partial observability / mesh reconstruction<br>- 6 VLM<br>- 5 planning<br><br>TiPToP improves as components improve: drop in a better grasp model, get a better system.
+                </div>
+                <img src="media/failures/sankey-failures.png" class="media">
+                <div class="tweet-actions">
+                    <span class="action">💬</span>
+                    <span class="action">🔁</span>
+                    <span class="action">❤️</span>
+                    <span class="action">📊</span>
+                    <span class="action">🔖</span>
+                    <span class="action">↗️</span>
+                </div>
+            </div>
+        </div>
+        
+        <div class="tweet">
+            <div class="tweet-left">
+                <div class="avatar"></div>
+                <div class="connector"></div>
+            </div>
+            <div class="tweet-right">
+                <div class="tweet-header">
+                    <span class="name">TiPToP</span>
+                    <span class="handle">@tiptop_robot</span>
+                    <span class="dot">·</span>
+                    <span class="time">1m</span>
+                </div>
+                <div class="tweet-content">
+                    TiPToP isn't tied to one robot.<br><br>We deployed it on a Franka, UR5e, and Trossen WidowX AI — each time just swapping in a new URDF and robot configs.<br><br>No retraining. No new demonstrations. Same perception and planning code.
+                </div>
+                <video controls class="media"><source src="media/demos/ur5-demo.mp4" type="video/mp4"></video>
+                <div class="tweet-actions">
+                    <span class="action">💬</span>
+                    <span class="action">🔁</span>
+                    <span class="action">❤️</span>
+                    <span class="action">📊</span>
+                    <span class="action">🔖</span>
+                    <span class="action">↗️</span>
+                </div>
+            </div>
+        </div>
+        
+        <div class="tweet">
+            <div class="tweet-left">
+                <div class="avatar"></div>
+                <div class="connector"></div>
+            </div>
+            <div class="tweet-right">
+                <div class="tweet-header">
+                    <span class="name">TiPToP</span>
+                    <span class="handle">@tiptop_robot</span>
+                    <span class="dot">·</span>
+                    <span class="time">1m</span>
+                </div>
+                <div class="tweet-content">
+                    TiPToP also extends beyond pick-and-place.<br><br>We added a whiteboard wiping skill in under a day without modifying existing perception or execution code.<br><br>Skills compose: "erase the whiteboard and put everything into the bowl" just works.
+                </div>
+                <video controls class="media"><source src="media/demos/wipe.mp4" type="video/mp4"></video>
+                <div class="tweet-actions">
+                    <span class="action">💬</span>
+                    <span class="action">🔁</span>
+                    <span class="action">❤️</span>
+                    <span class="action">📊</span>
+                    <span class="action">🔖</span>
+                    <span class="action">↗️</span>
+                </div>
+            </div>
+        </div>
+        
+        <div class="tweet">
+            <div class="tweet-left">
+                <div class="avatar"></div>
+                <div class="connector"></div>
+            </div>
+            <div class="tweet-right">
+                <div class="tweet-header">
+                    <span class="name">TiPToP</span>
+                    <span class="handle">@tiptop_robot</span>
+                    <span class="dot">·</span>
+                    <span class="time">1m</span>
+                </div>
+                <div class="tweet-content">
+                    TiPToP is far from perfect:<br><br>- Open-loop execution → no recovery from failed grasps<br>- Single-viewpoint perception → limited visibility<br>- Lacks closed-loop reactivity of VLAs<br><br>We view TiPToP as a test-time scaling and reasoning method that's ultimately complementary to large robot<span class="hidden-content" id="tweet-8-hidden" style="display:none"> foundation models like VLAs. We're excited about future research to more tightly combine these paradigms!</span>
+                <button class="show-more" onclick="document.getElementById('tweet-8-hidden').style.display='inline'; this.style.display='none';">Show more</button>
+                </div>
+                
+                <div class="tweet-actions">
+                    <span class="action">💬</span>
+                    <span class="action">🔁</span>
+                    <span class="action">❤️</span>
+                    <span class="action">📊</span>
+                    <span class="action">🔖</span>
+                    <span class="action">↗️</span>
+                </div>
+            </div>
+        </div>
+        
+        <div class="tweet">
+            <div class="tweet-left">
+                <div class="avatar"></div>
+                
+            </div>
+            <div class="tweet-right">
+                <div class="tweet-header">
+                    <span class="name">TiPToP</span>
+                    <span class="handle">@tiptop_robot</span>
+                    <span class="dot">·</span>
+                    <span class="time">1m</span>
+                </div>
+                <div class="tweet-content">
+                    We hope you'll try TiPToP out and consider contributing! While we're excited by TiPToP's current capabilities, we also feel there's so much more to be done (check out the website for a list of things to be worked on).<br><br>🌐 Project: <a href="https://tiptop-robot.github.io" class="link">https://tiptop-robot.github.io</a><br>📄 Paper: <a href="https://tiptop-robot.github.io/tiptop.pdf" class="link">https://tiptop-robot.github.io/tiptop.pdf</a><span class="hidden-content" id="tweet-9-hidden" style="display:none"><br>💻 Code (coming soon): <a href="https://github.com/tiptop-robot/tiptop" class="link">https://github.com/tiptop-robot/tiptop</a><br><br>TiPToP was a team effort and wouldn't have been possible without <a href="https://x.com/WillShenSaysHi" class="mention">@WillShenSaysHi</a>, <a href="https://x.com/sahitbot_irl" class="mention">@sahitbot_irl</a>, <a href="https://x.com/JieWang_ZJUI" class="mention">@JieWang_ZJUI</a>, Christopher Watson, <a href="https://x.com/_jingcao" class="mention">@_jingcao</a>, <a href="https://x.com/edward_s_hu" class="mention">@edward_s_hu</a>, <a href="https://x.com/dineshjayaraman" class="mention">@dineshjayaraman</a>, Leslie Pack Kaelbling, and Tomás Lozano-Pérez.<br><br>Special thanks to the folks at Penn for their help with evaluation!</span>
+                <button class="show-more" onclick="document.getElementById('tweet-9-hidden').style.display='inline'; this.style.display='none';">Show more</button>
+                </div>
+                
+                <div class="tweet-actions">
+                    <span class="action">💬</span>
+                    <span class="action">🔁</span>
+                    <span class="action">❤️</span>
+                    <span class="action">📊</span>
+                    <span class="action">🔖</span>
+                    <span class="action">↗️</span>
+                </div>
+            </div>
+        </div>
+        
+    </div>
+</body>
+</html>
