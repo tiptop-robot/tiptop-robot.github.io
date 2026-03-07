@@ -1,20 +1,19 @@
 # TiPToP Twitter Thread Draft
 
 ## Tweet 1 (Hook)
-State-of-the-art robot policies often need hundreds of hours of training data. What if you needed none?
+State-of-the-art robot policies often need hundreds of hours of data. What if you needed none?
 
 Introducing TiPToP: a modular manipulation system that solves open-world tasks from pixels and language — all without training on a single robot demonstration.
 
 TiPToP composes pretrained vision foundation models with GPU-parallelized Task and Motion Planning, and can be deployed on supported hardware in under an hour.
-
-📄 Paper: https://tiptop-robot.github.io/tiptop.pdf
-💻 Code (coming soon): https://github.com/tiptop-robot/tiptop
 
 (1/10)
 
 <video controls width="100%">
   <source src="media/overview/teaser.mp4" type="video/mp4">
 </video>
+
+*TODO: speed up video? Discuss with njk*
 
 ---
 
@@ -23,7 +22,7 @@ How does it work?
 
 **Perception:** FoundationStereo (depth estimation) + M2T2 (6-DoF grasp prediction) + Gemini (semantic grounding) + SAM-2 (object segmentation) → 3D scene representation
 
-**Planning:** cuTAMP synthesizes robot actions by exploring thousands of candidate grasps, placements, and motions in parallel on GPU, then selecting the best feasible plan
+**Planning:** cuTAMP synthesizes robot actions by exploring thousands of candidate grasps, placements, and motions in parallel on the GPU, and selects the best feasible plan
 
 No task-specific training required!
 
@@ -32,6 +31,8 @@ No task-specific training required!
 <video controls width="100%">
   <source src="media/overview/pipeline.mp4" type="video/mp4">
 </video>
+
+*TODO: speed up video? Discuss with njk*
 
 ---
 
@@ -51,6 +52,8 @@ TiPToP does this by *reasoning* at test time about what's in the scene. A pretra
   <source src="media/results/edited/cracker-hard.mp4" type="video/mp4">
 </video>
 
+*TODO: speed up video?*
+
 ---
 
 ## Tweet 4 (Long-horizon + multi-step)
@@ -67,6 +70,8 @@ The planner performs physical reasoning by sequencing actions and checking robot
 <video controls width="100%">
   <source src="media/results/edited/coffee-pack-obs.mp4" type="video/mp4">
 </video>
+
+*TODO: speed up video?*
 
 ---
 
@@ -87,7 +92,7 @@ We ran 165 trials across 28 tasks. To ensure broad task coverage and thorough ex
 ## Tweet 6 (Failure analysis + modularity)
 A key benefit of modularity: we can trace exactly where failures happen. Across 54 failed trials:
 
-- 30 grasping
+- 31 grasping
 - 13 partial observability / mesh reconstruction
 - 6 VLM
 - 5 planning
@@ -141,21 +146,21 @@ TiPToP is far from perfect:
 - Single-viewpoint perception → limited visibility
 - Lacks closed-loop reactivity of VLAs
 
-We view TiPToP as a test-time scaling and reasoning method that's ultimately complementary to large robot foundation models like VLAs. We are excited about future research to more tightly combine these paradigms!
+We view TiPToP as a test-time scaling and reasoning method that's ultimately complementary to large robot foundation models like VLAs. We're excited about future research to more tightly combine these paradigms!
 
 (9/10)
 
 ---
 
 ## Tweet 10 (Closing)
-TiPToP was a team effort and wouldn't have been possible without @WillShenSaysHi, @sahitbot_irl, @JieWang_ZJUI, Christopher Watson, @_jingcao, @edward_s_hu, @dineshjayaraman, Leslie Pack Kaelbling, and Tomás Lozano-Pérez from @MIT_LISLab.
-
-Special thanks to the folks at Penn for their help with evaluation!
+We hope you'll try TiPToP out and consider contributing! While we're excited by TiPToP's current capabilities, we also feel there's so much more to be done (check out the website for a list of things to be worked on).
 
 🌐 Project: https://tiptop-robot.github.io
 📄 Paper: https://tiptop-robot.github.io/tiptop.pdf
 💻 Code (coming soon): https://github.com/tiptop-robot/tiptop
 
-While we're excited by TiPToP's current capabilities, we also feel there's so much more to be done (check out the website for a list of things to be worked on). We hope you'll try it out and consider contributing to the system yourself!
+TiPToP was a big team effort and wouldn't have been possible without @WillShenSaysHi, @sahitbot_irl, @JieWang_ZJUI, Christopher Watson, @_jingcao, @edward_s_hu, @dineshjayaraman, Leslie Pack Kaelbling, and Tomás Lozano-Pérez.
+
+Special thanks to the folks at Penn for their help with evaluation!
 
 (10/10)
