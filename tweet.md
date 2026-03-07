@@ -1,11 +1,9 @@
 # TiPToP Twitter Thread Draft
 
 ## Tweet 1 (Hook)
-State-of-the-art robot policies often need hundreds of hours of data. What if you needed none?
+State-of-the-art robot policies often need hundreds of hours of data. What if we needed none?
 
-Introducing TiPToP: a modular manipulation system that solves open-world tasks from pixels and language — all without training on a single robot demonstration.
-
-TiPToP composes pretrained vision foundation models with GPU-parallelized Task and Motion Planning, and can be deployed on supported hardware in under an hour.
+Introducing TiPToP: a manipulation system that solves open-world tasks from pixels and language — no robot demos — using vision foundation models and GPU-parallelized TAMP.
 
 (1/10)
 

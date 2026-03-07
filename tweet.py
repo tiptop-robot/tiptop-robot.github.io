@@ -66,10 +66,10 @@ def format_tweet_content(content: str) -> tuple:
         html = html.replace('\n\n', '<br><br>').replace('\n', '<br>')
         return html
 
-    # Calculate character count (URLs = 23 chars, ignore newlines for count)
+    # Calculate character count (URLs = 23 chars, newlines don't count)
     def char_count(text):
         t = re.sub(r'https?://[^\s]+', 'x' * 23, text)
-        t = t.replace('\n', '')  # Don't count newlines
+        t = re.sub(r'[\r\n]', '', t)
         return len(t)
 
     if char_count(content) <= TRUNCATE_AT:
@@ -80,7 +80,7 @@ def format_tweet_content(content: str) -> tuple:
     truncate_idx = 0
     i = 0
     while i < len(content) and count < TRUNCATE_AT:
-        if content[i] == '\n':
+        if content[i] in '\r\n':
             i += 1
             continue
         url_match = re.match(r'https?://[^\s]+', content[i:])
