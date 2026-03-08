@@ -7,7 +7,7 @@ Introducing TiPToP: a manipulation system that solves open-world tasks from pixe
 
 (1/10)
 
-<video controls width="100%">
+<video controls width="100%" aria-label="TiPToP performing various manipulation tasks across different objects, environments, and robot embodiments.">
   <source src="media/overview/teaser.mp4" type="video/mp4">
 </video>
 
@@ -16,7 +16,7 @@ Introducing TiPToP: a manipulation system that solves open-world tasks from pixe
 ## Tweet 2 (How it works)
 How does it work?
 
-**Perception:** FoundationStereo (depth estimation) + M2T2 (6-DoF grasp prediction) + Gemini (semantic grounding) + SAM-2 (object segmentation) → 3D scene representation
+**Perception:** FoundationStereo (depth estimation) + M2T2 (6-DoF grasp prediction) +  Gemini VLM (semantic grounding) + SAM-2 (object segmentation) → 3D scene representation
 
 **Planning:** cuTAMP synthesizes robot actions by exploring thousands of candidate grasps, placements, and motions in parallel on the GPU, and selects the best feasible plan
 
@@ -24,7 +24,7 @@ No task-specific training required!
 
 (2/10)
 
-<video controls width="100%">
+<video controls width="100%" aria-label="Walk-through of TiPToP's pipeline: perception modules (depth, grasps, semantic grounding) feed into GPU-parallelized TAMP planning, which outputs robot actions.">
   <source src="media/overview/pipeline.mp4" type="video/mp4">
 </video>
 
@@ -42,7 +42,7 @@ TiPToP does this by *reasoning* at test time about what's in the scene. A pretra
 
 (3/10)
 
-<video controls width="100%">
+<video controls width="100%" aria-label="TiPToP correctly identifies the peanut butter crackers among distractors and places them on the tray (5/5 success). π₀.₅-DROID fails all 5 trials on this task.">
   <source src="media/results/edited/cracker-hard.mp4" type="video/mp4">
 </video>
 
@@ -61,7 +61,7 @@ The planner performs physical reasoning by sequencing actions and checking robot
 
 (4/10)
 
-<video controls width="100%">
+<video controls width="100%" aria-label="TiPToP packs coffee pods onto a tray while clearing an obstructing can — a multi-step task requiring the robot to sequence obstacle removal and packing.">
   <source src="media/results/edited/coffee-pack-obs.mp4" type="video/mp4">
 </video>
 
@@ -79,7 +79,7 @@ We ran 165 trials across 28 tasks. To ensure broad task coverage and thorough ex
 
 (5/10)
 
-<img src="bar-chart.png" width="100%">
+<img src="bar-chart.png" width="100%" alt="Bar chart: TiPToP vs π₀.₅-DROID — success rate 59.4% vs 33.3%, task progress 74.6% vs 52.4%, avg. execution time 24.1s vs 38.4s.">
 
 ---
 
@@ -88,14 +88,14 @@ A key benefit of modularity: we can trace exactly where failures happen. Across 
 
 - 31 grasping
 - 13 partial observability / mesh reconstruction
-- 6 VLM
+- 6 VLM semantic grounding
 - 5 planning
 
 TiPToP improves as components improve: drop in a better grasp model, get a better system.
 
 (6/10)
 
-<img src="media/failures/sankey-failures.png" width="100%">
+<img src="media/failures/sankey-failures.png" width="100%" alt="Sankey diagram: 173 trials → 118 successes, 55 failures. Failures: 31 grasp, 13 scene completion (partial observability), 6 VLM semantic grounding, 5 planning.">
 
 ---
 
@@ -108,7 +108,7 @@ No retraining. No new demonstrations. Same perception and planning code.
 
 (7/10)
 
-<video controls width="100%">
+<video controls width="100%" aria-label="TiPToP deployed on UR5e and Trossen WidowX arm completing multi-step manipulation tasks.">
   <source src="tweet_videos/cross-embodiment.mp4" type="video/mp4">
 </video>
 
@@ -123,7 +123,7 @@ Skills compose: "erase the whiteboard and put everything into the bowl" just wor
 
 (8/10)
 
-<video controls width="100%">
+<video controls width="100%" aria-label="TiPToP erases writing from a whiteboard and places objects into a bowl, composing the whiteboard wiping skill with pick-and-place.">
   <source src="tweet_videos/wipe-tweet.mp4" type="video/mp4">
 </video>
 

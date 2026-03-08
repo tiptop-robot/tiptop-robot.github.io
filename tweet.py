@@ -32,12 +32,15 @@ def parse_tweets(md_content: str) -> list:
 
         # Extract media
         media = []
-        video_match = re.search(r'<source src="([^"]+)"', section)
-        img_match = re.search(r'<img src="([^"]+)"', section)
-        if video_match:
-            media.append(('video', video_match.group(1)))
+        video_src_match = re.search(r'<source src="([^"]+)"', section)
+        video_aria_match = re.search(r'<video[^>]+aria-label="([^"]+)"', section)
+        img_match = re.search(r'<img src="([^"]+)"(?:[^>]*alt="([^"]*)")?', section)
+        if video_src_match:
+            alt = video_aria_match.group(1) if video_aria_match else ''
+            media.append(('video', video_src_match.group(1), alt))
         if img_match:
-            media.append(('image', img_match.group(1)))
+            alt = img_match.group(2) or ''
+            media.append(('image', img_match.group(1), alt))
 
         content = '\n'.join(lines).strip()
         # Remove trailing (N/10)
@@ -112,11 +115,16 @@ def generate_html(tweets: list) -> str:
         visible, hidden = format_tweet_content(tweet['content'])
 
         media_html = ''
-        for media_type, src in tweet['media']:
+        for media_type, src, alt in tweet['media']:
             if media_type == 'video':
-                media_html += f'<video controls class="media"><source src="{src}" type="video/mp4"></video>'
+                aria = f' aria-label="{alt}"' if alt else ''
+                media_html += f'<video controls class="media"{aria}><source src="{src}" type="video/mp4"></video>'
+                if alt:
+                    media_html += f'<p class="media-alt">{alt}</p>'
             else:
-                media_html += f'<img src="{src}" class="media">'
+                media_html += f'<img src="{src}" alt="{alt}" class="media">'
+                if alt:
+                    media_html += f'<p class="media-alt">{alt}</p>'
 
         show_more = ''
         if hidden:
@@ -259,6 +267,12 @@ def generate_html(tweets: list) -> str:
             border-radius: 16px;
             max-width: 100%;
             border: 1px solid #2f3336;
+        }}
+        .media-alt {{
+            font-size: 13px;
+            color: #71767b;
+            margin-top: 6px;
+            font-style: italic;
         }}
         .tweet-actions {{
             display: flex;

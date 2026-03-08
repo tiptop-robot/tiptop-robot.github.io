@@ -103,6 +103,12 @@
             max-width: 100%;
             border: 1px solid #2f3336;
         }
+        .media-alt {
+            font-size: 13px;
+            color: #71767b;
+            margin-top: 6px;
+            font-style: italic;
+        }
         .tweet-actions {
             display: flex;
             justify-content: space-between;
@@ -135,7 +141,7 @@
                 <div class="tweet-content">
                     State-of-the-art robot policies often need hundreds of hours of data. What if we needed none?<br><br>Introducing TiPToP: a manipulation system that solves open-world tasks from pixels and language — no robot demos — using vision foundation models and GPU-parallelized TAMP.
                 </div>
-                <video controls class="media"><source src="media/overview/teaser.mp4" type="video/mp4"></video>
+                <video controls class="media" aria-label="TiPToP performing various manipulation tasks across different objects, environments, and robot embodiments."><source src="media/overview/teaser.mp4" type="video/mp4"></video><p class="media-alt">TiPToP performing various manipulation tasks across different objects, environments, and robot embodiments.</p>
                 <div class="tweet-actions">
                     <span class="action">💬</span>
                     <span class="action">🔁</span>
@@ -160,10 +166,10 @@
                     <span class="time">1m</span>
                 </div>
                 <div class="tweet-content">
-                    How does it work?<br><br><strong>Perception:</strong> FoundationStereo (depth estimation) + M2T2 (6-DoF grasp prediction) + Gemini (semantic grounding) + SAM-2 (object segmentation) → 3D scene representation<br><br><strong>Planning:</strong> cuTAMP synthesizes robot actions by exploring thousands of candidate grasps,<span class="hidden-content" id="tweet-1-hidden" style="display:none"> placements, and motions in parallel on the GPU, and selects the best feasible plan<br><br>No task-specific training required!</span>
+                    How does it work?<br><br><strong>Perception:</strong> FoundationStereo (depth estimation) + M2T2 (6-DoF grasp prediction) +  Gemini VLM (semantic grounding) + SAM-2 (object segmentation) → 3D scene representation<br><br><strong>Planning:</strong> cuTAMP synthesizes robot actions by exploring thousands of candidate<span class="hidden-content" id="tweet-1-hidden" style="display:none"> grasps, placements, and motions in parallel on the GPU, and selects the best feasible plan<br><br>No task-specific training required!</span>
                 <button class="show-more" onclick="document.getElementById('tweet-1-hidden').style.display='inline'; this.style.display='none';">Show more</button>
                 </div>
-                <video controls class="media"><source src="media/overview/pipeline.mp4" type="video/mp4"></video>
+                <video controls class="media" aria-label="Walk-through of TiPToP's pipeline: perception modules (depth, grasps, semantic grounding) feed into GPU-parallelized TAMP planning, which outputs robot actions."><source src="media/overview/pipeline.mp4" type="video/mp4"></video><p class="media-alt">Walk-through of TiPToP's pipeline: perception modules (depth, grasps, semantic grounding) feed into GPU-parallelized TAMP planning, which outputs robot actions.</p>
                 <div class="tweet-actions">
                     <span class="action">💬</span>
                     <span class="action">🔁</span>
@@ -191,7 +197,7 @@
                     Why does this matter?<br><br>Simple task: "Place the peanut butter crackers onto the tray" — in a scene full of different cracker packets.<br><br>TiPToP succeeds 5 out of 5 trials.<br>π₀.₅-DROID (SOTA VLA, 350+ hrs of embodiment-specific data) fails all 5 trials.<br><br>TiPToP does this by <em>reasoning</em> at<span class="hidden-content" id="tweet-2-hidden" style="display:none"> test time about what's in the scene. A pretrained policy on the other hand often has to have seen something similar in training.</span>
                 <button class="show-more" onclick="document.getElementById('tweet-2-hidden').style.display='inline'; this.style.display='none';">Show more</button>
                 </div>
-                <video controls class="media"><source src="media/results/edited/cracker-hard.mp4" type="video/mp4"></video>
+                <video controls class="media" aria-label="TiPToP correctly identifies the peanut butter crackers among distractors and places them on the tray (5/5 success). π₀.₅-DROID fails all 5 trials on this task."><source src="media/results/edited/cracker-hard.mp4" type="video/mp4"></video><p class="media-alt">TiPToP correctly identifies the peanut butter crackers among distractors and places them on the tray (5/5 success). π₀.₅-DROID fails all 5 trials on this task.</p>
                 <div class="tweet-actions">
                     <span class="action">💬</span>
                     <span class="action">🔁</span>
@@ -219,7 +225,7 @@
                     This test-time reasoning lets TiPToP scale to novel scenarios with more objects and longer horizons.<br><br>On multi-step manipulation (sequential picks, obstacle clearing, constrained packing):<br><br>TiPToP achieves 57.5% success vs 15% for π₀.₅-DROID<br><br>The planner performs physical reasoning by<span class="hidden-content" id="tweet-3-hidden" style="display:none"> sequencing actions and checking robot kinematic and spatial constraints.</span>
                 <button class="show-more" onclick="document.getElementById('tweet-3-hidden').style.display='inline'; this.style.display='none';">Show more</button>
                 </div>
-                <video controls class="media"><source src="media/results/edited/coffee-pack-obs.mp4" type="video/mp4"></video>
+                <video controls class="media" aria-label="TiPToP packs coffee pods onto a tray while clearing an obstructing can — a multi-step task requiring the robot to sequence obstacle removal and packing."><source src="media/results/edited/coffee-pack-obs.mp4" type="video/mp4"></video><p class="media-alt">TiPToP packs coffee pods onto a tray while clearing an obstructing can — a multi-step task requiring the robot to sequence obstacle removal and packing.</p>
                 <div class="tweet-actions">
                     <span class="action">💬</span>
                     <span class="action">🔁</span>
@@ -247,7 +253,7 @@
                     We ran 165 trials across 28 tasks. To ensure broad task coverage and thorough experimentation, most evaluation was performed externally at UPenn by a team not involved in development.<br><br><strong>Results</strong>:<br>- Success rate: TiPToP 59.4% vs π₀.₅-DROID 33.3%<br>- Task progress: TiPToP 74.6% vs<span class="hidden-content" id="tweet-4-hidden" style="display:none"> π₀.₅-DROID 52.4%<br>- Speed: TiPToP 37% faster when both succeed</span>
                 <button class="show-more" onclick="document.getElementById('tweet-4-hidden').style.display='inline'; this.style.display='none';">Show more</button>
                 </div>
-                <img src="bar-chart.png" class="media">
+                <img src="bar-chart.png" alt="Bar chart: TiPToP vs π₀.₅-DROID — success rate 59.4% vs 33.3%, task progress 74.6% vs 52.4%, avg. execution time 24.1s vs 38.4s." class="media"><p class="media-alt">Bar chart: TiPToP vs π₀.₅-DROID — success rate 59.4% vs 33.3%, task progress 74.6% vs 52.4%, avg. execution time 24.1s vs 38.4s.</p>
                 <div class="tweet-actions">
                     <span class="action">💬</span>
                     <span class="action">🔁</span>
@@ -272,9 +278,10 @@
                     <span class="time">1m</span>
                 </div>
                 <div class="tweet-content">
-                    A key benefit of modularity: we can trace exactly where failures happen. Across 54 failed trials:<br><br>- 31 grasping<br>- 13 partial observability / mesh reconstruction<br>- 6 VLM<br>- 5 planning<br><br>TiPToP improves as components improve: drop in a better grasp model, get a better system.
+                    A key benefit of modularity: we can trace exactly where failures happen. Across 54 failed trials:<br><br>- 31 grasping<br>- 13 partial observability / mesh reconstruction<br>- 6 VLM semantic grounding<br>- 5 planning<br><br>TiPToP improves as components improve: drop in a better grasp model, get a better<span class="hidden-content" id="tweet-5-hidden" style="display:none"> system.</span>
+                <button class="show-more" onclick="document.getElementById('tweet-5-hidden').style.display='inline'; this.style.display='none';">Show more</button>
                 </div>
-                <img src="media/failures/sankey-failures.png" class="media">
+                <img src="media/failures/sankey-failures.png" alt="Sankey diagram: 173 trials → 118 successes, 55 failures. Failures: 31 grasp, 13 scene completion (partial observability), 6 VLM semantic grounding, 5 planning." class="media"><p class="media-alt">Sankey diagram: 173 trials → 118 successes, 55 failures. Failures: 31 grasp, 13 scene completion (partial observability), 6 VLM semantic grounding, 5 planning.</p>
                 <div class="tweet-actions">
                     <span class="action">💬</span>
                     <span class="action">🔁</span>
@@ -301,7 +308,7 @@
                 <div class="tweet-content">
                     TiPToP isn't tied to one robot.<br><br>We deployed it on a Franka, UR5e, and Trossen WidowX AI — each time just swapping in a new URDF and robot configs.<br><br>No retraining. No new demonstrations. Same perception and planning code.
                 </div>
-                <video controls class="media"><source src="tweet_videos/cross-embodiment.mp4" type="video/mp4"></video>
+                <video controls class="media" aria-label="TiPToP deployed on UR5e and Trossen WidowX arm completing multi-step manipulation tasks."><source src="tweet_videos/cross-embodiment.mp4" type="video/mp4"></video><p class="media-alt">TiPToP deployed on UR5e and Trossen WidowX arm completing multi-step manipulation tasks.</p>
                 <div class="tweet-actions">
                     <span class="action">💬</span>
                     <span class="action">🔁</span>
@@ -328,7 +335,7 @@
                 <div class="tweet-content">
                     TiPToP also extends beyond pick-and-place.<br><br>We added a whiteboard wiping skill in under a day without modifying existing perception or execution code.<br><br>Skills compose: "erase the whiteboard and put everything into the bowl" just works.
                 </div>
-                <video controls class="media"><source src="tweet_videos/wipe-tweet.mp4" type="video/mp4"></video>
+                <video controls class="media" aria-label="TiPToP erases writing from a whiteboard and places objects into a bowl, composing the whiteboard wiping skill with pick-and-place."><source src="tweet_videos/wipe-tweet.mp4" type="video/mp4"></video><p class="media-alt">TiPToP erases writing from a whiteboard and places objects into a bowl, composing the whiteboard wiping skill with pick-and-place.</p>
                 <div class="tweet-actions">
                     <span class="action">💬</span>
                     <span class="action">🔁</span>
