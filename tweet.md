@@ -11,8 +11,6 @@ Introducing TiPToP: a manipulation system that solves open-world tasks from pixe
   <source src="media/overview/teaser.mp4" type="video/mp4">
 </video>
 
-*TODO: speed up video? Discuss with njk*
-
 ---
 
 ## Tweet 2 (How it works)
@@ -29,8 +27,6 @@ No task-specific training required!
 <video controls width="100%">
   <source src="media/overview/pipeline.mp4" type="video/mp4">
 </video>
-
-*TODO: speed up video? Discuss with njk*
 
 ---
 
@@ -113,10 +109,8 @@ No retraining. No new demonstrations. Same perception and planning code.
 (7/10)
 
 <video controls width="100%">
-  <source src="media/demos/ur5-demo.mp4" type="video/mp4">
+  <source src="tweet_videos/cross-embodiment.mp4" type="video/mp4">
 </video>
-
-*TODO: combine with Trossen video too?*
 
 ---
 
@@ -130,10 +124,8 @@ Skills compose: "erase the whiteboard and put everything into the bowl" just wor
 (8/10)
 
 <video controls width="100%">
-  <source src="media/demos/wipe.mp4" type="video/mp4">
+  <source src="tweet_videos/wipe-tweet.mp4" type="video/mp4">
 </video>
-
-*TODO: add language prompt to the video*
 
 ---
 
