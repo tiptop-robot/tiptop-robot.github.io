@@ -149,7 +149,7 @@ We hope you'll try TiPToP out and consider contributing! While we're excited by 
 📄 Paper: https://tiptop-robot.github.io/tiptop.pdf
 💻 Code (coming soon): https://github.com/tiptop-robot/tiptop
 
-TiPToP was a big team effort and wouldn't have been possible without @WillShenSaysHi, @sahitbot_irl, @JieWang_ZJUI, Christopher Watson, @_jingcao, @edward_s_hu, @dineshjayaraman, Leslie Pack Kaelbling, and Tomás Lozano-Pérez.
+TiPToP was a big team effort and wouldn't have been possible without @WillShenSaysHi, @sahitbot_irl, @JieWang_ZJUI, Christopher Watson, @edward_s_hu, @_jingcao, @dineshjayaraman, Leslie Pack Kaelbling, and Tomás Lozano-Pérez.
 
 Special thanks to the folks at Penn for their help with evaluation!
 
