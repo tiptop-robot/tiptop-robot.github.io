@@ -3,7 +3,7 @@
 ## Tweet 1 (Hook)
 State-of-the-art robot policies often need hundreds of hours of data. What if we needed none?
 
-Introducing TiPToP: a manipulation system that solves open-world tasks from pixels and language — no robot demos — using vision foundation models and GPU-parallelized TAMP.
+Introducing TiPToP: a manipulation system that zero-shots open-world tasks from pixels and language using vision foundation models and GPU-parallelized Task and Motion Planning (TAMP).
 
 (1/10)
 
