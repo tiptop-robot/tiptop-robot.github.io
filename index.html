@@ -57,6 +57,7 @@
                     <li><a href="#" class="toc-link">Introduction</a></li>
                     <li><a href="#system-overview" class="toc-link">TiPToP Overview</a></li>
                     <li><a href="#results" class="toc-link">Evaluation and Results</a></li>
+                    <li><a href="#molmospaces" class="toc-link toc-link-indent">MolmoSpaces Benchmark</a></li>
                     <li><a href="#failure-analysis" class="toc-link toc-link-indent">Failure Analysis</a></li>
                     <li><a href="#cross-embodiment" class="toc-link toc-link-indent">Cross-Embodiment</a></li>
                     <li><a href="#beyond-pick-and-place" class="toc-link toc-link-indent">Beyond Pick-and-Place</a></li>
@@ -159,6 +160,7 @@
                 We benchmark TiPToP through extensive evaluation against \(\pi_{0.5}\text{-DROID}\), a state-of-the-art VLA fine-tuned on 350 hours of embodiment-specific demonstrations.
                 The majority of this evaluation was conducted by an external evaluation team not involved in the development of TiPToP.
                 Over 165 trials in 28 evaluation scenes in the real world and simulation combined, TiPToP (which requires zero robot data) often matches or outperforms \(\pi_{0.5}\text{-DROID}\), particularly on tasks requiring semantic grounding, distractor rejection, and multi-step sequencing.
+                We further evaluate on the independent <a href="https://molmospaces.allen.ai/leaderboard" target="_blank"><strong>MolmoSpaces</strong></a> benchmark across all 9 pick and pick-and-place tasks (9,000 episodes), where TiPToP outperforms every VLA and world action model trained without in-distribution data.
                 We provide a detailed failure analysis and use it to identify concrete directions for improving individual modules.
             </p>
 
@@ -404,6 +406,35 @@
                 </video>
                 <p class="caption mt-2">Task: "pack the coffee pods onto the rectangular tray" (with obstructing can, TiPToP: 1/5, \(\pi_{0.5}\text{-DROID}\): 0/5)</p>
             </div>
+
+            <h3 id="molmospaces" class="heading-anchor">
+                <a href="#molmospaces" class="anchor-link">#</a>
+                MolmoSpaces Benchmark
+            </h3>
+
+            <p>
+                MolmoSpaces is a large-scale benchmark of diverse household tasks with a <a href="https://molmospaces.allen.ai/leaderboard" target="_blank">public leaderboard</a>. We ran all 9 pick and pick-and-place tasks on the DROID setup (1,000 episodes per task, 9,000 in total), omitting the open and close tasks, which TiPToP does not currently support. The leaderboard separates <em>in-distribution (ID)</em> methods, trained on MolmoSpaces or MolmoBot simulator data, from <em>non-ID</em> methods. TiPToP is the only non-ID entrant that uses zero robot or simulator demonstrations, and the only inference-time search method on the leaderboard. We did not tune TiPToP for this benchmark, and it required no changes to the core system; integration details are in the <a href="https://arxiv.org/abs/2603.09971" target="_blank">paper</a>.
+            </p>
+
+            <div class="my-6 expandable-media">
+                <img
+                    src="media/results/molmospaces-leaderboard.png"
+                    alt="MolmoSpaces leaderboard for non-ID methods, with TiPToP ranked first at 46.1% oracle success rate, ahead of WALL-OSS-0.5 (41.3%) and Cosmos3-Nano-Policy (37.8%)."
+                    loading="lazy"
+                    class="w-full cursor-pointer transition rounded-lg border border-gray-200"
+                    onclick="openLightbox(this)"
+                    data-caption="MolmoSpaces leaderboard for non-ID methods on the 9 pick and pick-and-place tasks"
+                />
+                <p class="text-sm text-gray-600 text-center mt-2">MolmoSpaces leaderboard for non-ID methods on the 9 pick and pick-and-place tasks.</p>
+            </div>
+
+            <p>
+                As of July 9, 2026, TiPToP is the strongest non-ID method over these 9 tasks, at <strong>46.1%</strong> success rate compared to 41.3% for the next-best (WALL-OSS-0.5) and 13.6% for \(\pi_{0.5}\text{-DROID}\), and ranks first among non-ID methods on 5 of the 9 tasks. These five are the tasks with complex referring instructions and constraints that end-to-end VLAs and World Action Models struggle with. On <strong>Pick &amp; Place-NextTo</strong>, TiPToP tops the entire leaderboard at 38.0%, ahead of the best ID-trained model at 28.7%. This is the only task where a non-ID method beats every ID-trained model.
+            </p>
+
+            <p>
+                A failure breakdown across all 9,000 episodes, along with answers to common questions about how these results relate to end-to-end learning, is in our <a href="https://x.com/nishanthkumar23/status/2052766074597265837" target="_blank" class="page-link font-medium">MolmoSpaces write-up on X</a>. Note that the post is from May 2026 and its leaderboard comparisons predate several newer entrants.
+            </p>
 
             <h3 id="failure-analysis" class="heading-anchor">
                 <a href="#failure-analysis" class="anchor-link">#</a>
