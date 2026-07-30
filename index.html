@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>TiPToP: A Modular Open-Vocabulary Planning System for Robotic Manipulation</title>
+    <title>TiPToP: A Modular Open-Vocabulary Robot Manipulation System That Plans</title>
     <link rel="icon" type="image/jpeg" href="assets/favicon.jpg">
 
     <!-- Google tag (gtag.js) -->
@@ -57,6 +57,7 @@
                     <li><a href="#" class="toc-link">Introduction</a></li>
                     <li><a href="#system-overview" class="toc-link">TiPToP Overview</a></li>
                     <li><a href="#results" class="toc-link">Evaluation and Results</a></li>
+                    <li><a href="#molmospaces" class="toc-link toc-link-indent">MolmoSpaces Benchmark</a></li>
                     <li><a href="#failure-analysis" class="toc-link toc-link-indent">Failure Analysis</a></li>
                     <li><a href="#cross-embodiment" class="toc-link toc-link-indent">Cross-Embodiment</a></li>
                     <li><a href="#beyond-pick-and-place" class="toc-link toc-link-indent">Beyond Pick-and-Place</a></li>
@@ -73,7 +74,7 @@
         <article class="max-w-5xl mx-auto px-5 sm:px-6 pb-12 sm:pb-16 pt-6 sm:pt-12">
         <!-- Title -->
         <h1 class="text-3xl sm:text-4xl md:text-5xl font-bold sm:mb-6 mb-4" style="line-height: 1.1">
-            TiPToP: A Modular Open-Vocabulary Planning System for Robotic Manipulation
+            TiPToP: A Modular Open-Vocabulary Robot Manipulation System That Plans
         </h1>
 
         <!-- Article Metadata -->
@@ -83,6 +84,7 @@
                 <a href="https://shen.nz/" class="author-link font-medium" target="_blank">William Shen</a><sup>1*</sup>,
                 <a href="https://nishanthjkumar.com/" class="author-link font-medium" target="_blank">Nishanth Kumar</a><sup>1*</sup>,
                 <a href="https://sahitc.com/" class="author-link font-medium" target="_blank">Sahit Chintalapudi</a><sup>1</sup>,
+                <a href="https://ryanlindeborg.com/" class="author-link font-medium" target="_blank">Ryan Lindeborg</a><sup>1</sup>,
                 <a href="https://everloom-129.github.io/" class="author-link font-medium" target="_blank">Jie Wang</a><sup>2</sup>,
                 <a href="https://cwatson1998.github.io/" class="author-link font-medium" target="_blank">Christopher Watson</a><sup>2</sup>,
                 <a href="https://edwardshu.com/" class="author-link font-medium" target="_blank">Edward S. Hu</a><sup>2</sup>,
@@ -158,6 +160,7 @@
                 We benchmark TiPToP through extensive evaluation against \(\pi_{0.5}\text{-DROID}\), a state-of-the-art VLA fine-tuned on 350 hours of embodiment-specific demonstrations.
                 The majority of this evaluation was conducted by an external evaluation team not involved in the development of TiPToP.
                 Over 165 trials in 28 evaluation scenes in the real world and simulation combined, TiPToP (which requires zero robot data) often matches or outperforms \(\pi_{0.5}\text{-DROID}\), particularly on tasks requiring semantic grounding, distractor rejection, and multi-step sequencing.
+                We further evaluate on the independent <a href="https://molmospaces.allen.ai/leaderboard" target="_blank"><strong>MolmoSpaces</strong></a> benchmark across all 9 pick and pick-and-place tasks (9,000 episodes), where TiPToP outperforms every VLA and world action model trained without in-distribution data.
                 We provide a detailed failure analysis and use it to identify concrete directions for improving individual modules.
             </p>
 
@@ -404,6 +407,35 @@
                 <p class="caption mt-2">Task: "pack the coffee pods onto the rectangular tray" (with obstructing can, TiPToP: 1/5, \(\pi_{0.5}\text{-DROID}\): 0/5)</p>
             </div>
 
+            <h3 id="molmospaces" class="heading-anchor">
+                <a href="#molmospaces" class="anchor-link">#</a>
+                MolmoSpaces Benchmark
+            </h3>
+
+            <p>
+                MolmoSpaces is a large-scale benchmark of diverse household tasks with a <a href="https://molmospaces.allen.ai/leaderboard" target="_blank">public leaderboard</a>. We ran all 9 pick and pick-and-place tasks on the DROID setup (1,000 episodes per task, 9,000 in total), omitting the open and close tasks, which TiPToP does not currently support. The leaderboard separates <em>in-distribution (ID)</em> methods, trained on MolmoSpaces or MolmoBot simulator data, from <em>non-ID</em> methods. TiPToP is the only non-ID entrant that uses zero robot or simulator demonstrations, and the only inference-time search method on the leaderboard. We did not tune TiPToP for this benchmark, and it required no changes to the core system; integration details are in the <a href="https://arxiv.org/abs/2603.09971" target="_blank">paper</a>.
+            </p>
+
+            <div class="my-6 expandable-media">
+                <img
+                    src="media/results/molmospaces-leaderboard.png"
+                    alt="MolmoSpaces leaderboard for non-ID methods, with TiPToP ranked first at 46.1% oracle success rate, ahead of WALL-OSS-0.5 (41.3%) and Cosmos3-Nano-Policy (37.8%)."
+                    loading="lazy"
+                    class="w-full cursor-pointer transition rounded-lg border border-gray-200"
+                    onclick="openLightbox(this)"
+                    data-caption="MolmoSpaces leaderboard for non-ID methods on the 9 pick and pick-and-place tasks"
+                />
+                <p class="text-sm text-gray-600 text-center mt-2">MolmoSpaces leaderboard for non-ID methods on the 9 pick and pick-and-place tasks.</p>
+            </div>
+
+            <p>
+                As of July 9, 2026, TiPToP is the strongest non-ID method over these 9 tasks, at <strong>46.1%</strong> success rate compared to 41.3% for the next-best (WALL-OSS-0.5) and 13.6% for \(\pi_{0.5}\text{-DROID}\), and ranks first among non-ID methods on 5 of the 9 tasks. These five are the tasks with complex referring instructions and constraints that end-to-end VLAs and World Action Models struggle with. On <strong>Pick &amp; Place-NextTo</strong>, TiPToP tops the entire leaderboard at 38.0%, ahead of the best ID-trained model at 28.7%. This is the only task where a non-ID method beats every ID-trained model.
+            </p>
+
+            <p>
+                A failure breakdown across all 9,000 episodes, along with answers to common questions about how these results relate to end-to-end learning, is in our <a href="https://x.com/nishanthkumar23/status/2052766074597265837" target="_blank" class="page-link font-medium">MolmoSpaces write-up on X</a>. Note that the post is from May 2026 and its leaderboard comparisons predate several newer entrants.
+            </p>
+
             <h3 id="failure-analysis" class="heading-anchor">
                 <a href="#failure-analysis" class="anchor-link">#</a>
                 Failure Analysis
@@ -584,9 +616,10 @@
             </p>
 
             <p>
-                We thank <a href="https://www.ryanlindeborg.com/about/">Ryan Lindeborg</a> for deploying TiPToP on his Trossen WidowX AI and for providing installation and debugging feedback.
                 We thank <a href="https://www.jessezhang.net/" target="_blank">Jesse Zhang</a> for testing TiPToP at the University of Washington.
-                We thank <a href="https://wenlong.page/" target="_blank">Wenlong Huang</a> for help setting up <a href="https://nvlabs.github.io/FoundationStereo/" target="_blank">FoundationStereo</a> to improve point cloud accuracy, as well as several helpful discussions. We also thank <a href="https://tomsilver.github.io/" target="_blank">Tom Silver</a>, <a href="https://www.chrisagia.com/" target="_blank">Chris Agia</a>, <a href="https://joeyhejna.com/" target="_blank">Joey Hejna</a>, <a href="https://kpertsch.github.io/" target="_blank">Karl Pertsch</a>, <a href="https://dannydriess.github.io/" target="_blank">Danny Driess</a>, and <a href="https://fabioramos.github.io/Home.html" target="_blank">Fabio Ramos</a> for helpful discussions and feedback on earlier drafts of this work.
+                We thank <a href="https://wenlong.page/" target="_blank">Wenlong Huang</a> for help setting up <a href="https://nvlabs.github.io/FoundationStereo/" target="_blank">FoundationStereo</a> to improve point cloud accuracy, as well as several helpful discussions.
+                We thank <a href="https://orayyan.com/" target="_blank">Omar Rayyan</a>, <a href="http://maxargus.com/" target="_blank">Maximilian Argus</a>, <a href="https://wpumacay.github.io/" target="_blank">Wilbert Pumacay</a>, and <a href="https://mahis.life/" target="_blank">Mahi Shafiullah</a> for their encouragement and invaluable debugging support, which enabled us to integrate TiPToP with MolmoSpaces, and for adding our results to the public leaderboard.
+                We also thank <a href="https://tomsilver.github.io/" target="_blank">Tom Silver</a>, <a href="https://www.chrisagia.com/" target="_blank">Chris Agia</a>, <a href="https://joeyhejna.com/" target="_blank">Joey Hejna</a>, <a href="https://kpertsch.github.io/" target="_blank">Karl Pertsch</a>, <a href="https://dannydriess.github.io/" target="_blank">Danny Driess</a>, and <a href="https://fabioramos.github.io/Home.html" target="_blank">Fabio Ramos</a> for helpful discussions and feedback on earlier drafts of this work.
             </p>
 
             <h2 id="contributions" class="heading-anchor">
@@ -595,7 +628,7 @@
             </h2>
 
             <p>
-                <strong>William Shen</strong> and <strong>Nishanth Kumar</strong> contributed equally to this work. William adapted and improved the core <a href="https://cutamp.github.io/" target="_blank">cuTAMP</a> system to be suitable (simpler to use, faster) for our purposes. Nishanth implemented the perception interface to Gemini and SAM. Both William and Nishanth worked on integrating additional models (FoundationStereo, M2T2) into the system, packaging all components to be easily used, benchmarking system capabilities, and compiling this post.
+                <strong>William Shen</strong> and <strong>Nishanth Kumar</strong> contributed equally to this work. William adapted and improved the core <a href="https://cutamp.github.io/" target="_blank">cuTAMP</a> system to be suitable (simpler to use, faster) for our purposes. Nishanth implemented the perception interface to Gemini and SAM. Both William and Nishanth worked on integrating additional models (FoundationStereo, M2T2) into the system, packaging all components to be easily used, benchmarking system capabilities, and compiling this post. They also supported the MolmoSpaces integration and helped analyze and present results.
             </p>
 
             <p>
@@ -603,11 +636,15 @@
             </p>
 
             <p>
+                <strong>Ryan Lindeborg</strong> led the TiPToP integration with MolmoSpaces and gathered and analyzed the results. He also deployed TiPToP on his Trossen WidowX AI robot and provided installation and debugging feedback.
+            </p>
+
+            <p>
                 <strong>Jie Wang</strong> led the evaluations conducted at the University of Pennsylvania, and assisted with analysis and experimental design. <strong>Christopher Watson</strong> set up TiPToP and assisted with evaluations, experimental design and analysis. <strong>Edward S. Hu</strong> assisted with TiPToP setup and contributed to experimental design and analysis. <strong>Dinesh Jayaraman</strong> advised the evaluations and provided lab resources.
             </p>
 
             <p>
-                <strong>Jing Cao</strong> set up the simulator and ran simulation experiments comparing \(\pi_{0.5}\text{-DROID}\) to TiPToP, and analyzed the results.
+                <strong>Jing Cao</strong> set up the IsaacSim simulator and ran simulation experiments comparing \(\pi_{0.5}\text{-DROID}\) to TiPToP, and analyzed the results.
             </p>
 
             <p>
@@ -625,8 +662,8 @@
 
             <div class="code-block-wrapper" style="position: relative;">
                 <pre style="background-color: var(--color-bg-secondary); padding: 1rem; border-radius: 8px; overflow-x: auto; font-family: 'JetBrains Mono', monospace; font-size: 0.85rem;"><code id="bibtex-code">@article{shen2026tiptop,
-    title={{TiPToP}: A Modular Open-Vocabulary Planning System for Robotic Manipulation},
-    author={Shen, William and Kumar, Nishanth and Chintalapudi, Sahit and Wang, Jie and Watson, Christopher and Hu, Edward S. and Cao, Jing and Jayaraman, Dinesh and Kaelbling, Leslie Pack and Lozano-P{\'e}rez, Tom{\'a}s},
+    title={{TiPToP}: A Modular Open-Vocabulary Robot Manipulation System That Plans},
+    author={Shen, William and Kumar, Nishanth and Chintalapudi, Sahit and Lindeborg, Ryan and Wang, Jie and Watson, Christopher and Hu, Edward S. and Cao, Jing and Jayaraman, Dinesh and Kaelbling, Leslie Pack and Lozano-P{\'e}rez, Tom{\'a}s},
     journal={arXiv preprint arXiv:2603.09971},
     year={2026}
 }</code></pre>

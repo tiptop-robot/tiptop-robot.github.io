@@ -1,6 +1,6 @@
 # TiPToP Website
 
-Website for TiPToP: A Modular Open-Vocabulary Planning System for Robotic Manipulation.
+Website for TiPToP: A Modular Open-Vocabulary Robot Manipulation System That Plans.
 Live at [tiptop-robot.github.io](https://tiptop-robot.github.io).
 
 ## Structure
